@@ -1,0 +1,174 @@
+{
+  "contractName": "DataHelper",
+  "abi": [],
+  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a72305820c746e723617957ebeb67c29b3e6b9ae282b891577e75227e4811f3b7674513e20029",
+  "deployedBytecode": "0x6060604052600080fd00a165627a7a72305820c746e723617957ebeb67c29b3e6b9ae282b891577e75227e4811f3b7674513e20029",
+  "sourceMap": "25:150:3:-;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "25:150:3:-;;;;;",
+  "source": "pragma solidity ^0.4.4;\n\nlibrary DataHelper {\n    enum Stage { Active, Cancelled, Expired }\n\n    struct Endorsement {\n        bytes32 name;\n        string description;\n    }\n}\n",
+  "sourcePath": "/Users/luismatasalvatierra/CW_REPOS/bcois-cw/contracts/DataHelper.sol",
+  "ast": {
+    "attributes": {
+      "absolutePath": "/Users/luismatasalvatierra/CW_REPOS/bcois-cw/contracts/DataHelper.sol",
+      "exportedSymbols": {
+        "DataHelper": [
+          463
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.4",
+            ".4"
+          ]
+        },
+        "id": 453,
+        "name": "PragmaDirective",
+        "src": "0:23:3"
+      },
+      {
+        "attributes": {
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "library",
+          "documentation": null,
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            463
+          ],
+          "name": "DataHelper",
+          "scope": 464
+        },
+        "children": [
+          {
+            "attributes": {
+              "canonicalName": "DataHelper.Stage",
+              "name": "Stage"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "name": "Active"
+                },
+                "id": 454,
+                "name": "EnumValue",
+                "src": "63:6:3"
+              },
+              {
+                "attributes": {
+                  "name": "Cancelled"
+                },
+                "id": 455,
+                "name": "EnumValue",
+                "src": "71:9:3"
+              },
+              {
+                "attributes": {
+                  "name": "Expired"
+                },
+                "id": 456,
+                "name": "EnumValue",
+                "src": "82:7:3"
+              }
+            ],
+            "id": 457,
+            "name": "EnumDefinition",
+            "src": "50:41:3"
+          },
+          {
+            "attributes": {
+              "canonicalName": "DataHelper.Endorsement",
+              "name": "Endorsement",
+              "scope": 463,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "name",
+                  "scope": 462,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "bytes32",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "bytes32",
+                      "type": "bytes32"
+                    },
+                    "id": 458,
+                    "name": "ElementaryTypeName",
+                    "src": "126:7:3"
+                  }
+                ],
+                "id": 459,
+                "name": "VariableDeclaration",
+                "src": "126:12:3"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "description",
+                  "scope": 462,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "string storage pointer",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "string",
+                      "type": "string storage pointer"
+                    },
+                    "id": 460,
+                    "name": "ElementaryTypeName",
+                    "src": "148:6:3"
+                  }
+                ],
+                "id": 461,
+                "name": "VariableDeclaration",
+                "src": "148:18:3"
+              }
+            ],
+            "id": 462,
+            "name": "StructDefinition",
+            "src": "97:76:3"
+          }
+        ],
+        "id": 463,
+        "name": "ContractDefinition",
+        "src": "25:150:3"
+      }
+    ],
+    "id": 464,
+    "name": "SourceUnit",
+    "src": "0:176:3"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.19+commit.c4cbbb05.Emscripten.clang"
+  },
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0xd54b47f8e6a1b97f3a84f63c867286272b273b7c"
+    }
+  },
+  "schemaVersion": "1.0.1",
+  "updatedAt": "2018-02-24T22:01:04.783Z"
+}
