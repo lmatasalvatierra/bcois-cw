@@ -10,14 +10,15 @@ contract('Doug', function(accounts) {
   beforeEach('setup test doug and doug_enabled object', async function () {
     doug = await Doug.deployed();
     doug_enabled = await DougEnabled.deployed();
-    console.log(doug);
-    console.log("******************");
-    console.log(doug_enabled);
-    console.log("******************");
+    await doug.addContract("test", doug_enabled.address);
   });
 
   it("should add dougEnabled contract", async function() {
-    await doug.addContract("test", doug_enabled.address);
-    expect(doug_enabled.address).to.equal(await doug.getContract.call("test"));
+    expect(await doug.getContract.call("test")).to.equal(doug_enabled.address);
   });
+
+  it("should remove dougEnabled contract", async function() {
+    await doug.removeContract("test");
+    expect(await doug.getContract.call("test")).to.equal("0x0000000000000000000000000000000000000000");
+  })
 });
