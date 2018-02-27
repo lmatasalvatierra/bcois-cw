@@ -23,6 +23,20 @@ contract Carrier is DougEnabled {
         return result;
     }
 
+    function getCoi(bytes32 policyNumber) public view
+        returns(address _carrier, DataHelper.Stage _status, bytes32 _effectiveDate, bytes32 _expirationDate)
+    {
+        address manager = Doug(DOUG).getContract("coiManager");
+        if (msg.sender != manager)
+            return;
+        address carrierDb = Doug(DOUG).getContract("carrierDB");
+        if (carrierDb == 0x0 )
+            return;
+
+        (_carrier, _status, _effectiveDate, _expirationDate) = CarrierDB(carrierDb).getCoi(policyNumber);
+        return (_carrier, _status, _effectiveDate, _expirationDate);
+    }
+
     function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
         address manager = Doug(DOUG).getContract("coiManager");
         if (msg.sender != manager)

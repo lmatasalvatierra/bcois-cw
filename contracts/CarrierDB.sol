@@ -32,6 +32,18 @@ contract CarrierDB is DougEnabled{
         return true;
     }
 
+    function getCoi(bytes32 policyNumber) public view
+        returns(address, DataHelper.Stage, bytes32, bytes32)
+    {
+        address name_carrier = Doug(DOUG).getContract("carrier");
+        if (msg.sender != name_carrier) {
+            return;
+        }
+        CoI memory coi;
+        coi = cois[policyNumber];
+        return (coi.carrier, coi.status, coi.effectiveDate, coi.expirationDate);
+    }
+
     function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
         address carrier = Doug(DOUG).getContract("carrier");
         if (msg.sender != carrier)

@@ -12,7 +12,7 @@
       "absolutePath": "/Users/luismatasalvatierra/CW_REPOS/bcois-cw/contracts/DataHelper.sol",
       "exportedSymbols": {
         "DataHelper": [
-          463
+          617
         ]
       }
     },
@@ -26,7 +26,7 @@
             ".4"
           ]
         },
-        "id": 453,
+        "id": 607,
         "name": "PragmaDirective",
         "src": "0:23:3"
       },
@@ -42,10 +42,10 @@
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            463
+            617
           ],
           "name": "DataHelper",
-          "scope": 464
+          "scope": 618
         },
         "children": [
           {
@@ -58,7 +58,7 @@
                 "attributes": {
                   "name": "Active"
                 },
-                "id": 454,
+                "id": 608,
                 "name": "EnumValue",
                 "src": "63:6:3"
               },
@@ -66,7 +66,7 @@
                 "attributes": {
                   "name": "Cancelled"
                 },
-                "id": 455,
+                "id": 609,
                 "name": "EnumValue",
                 "src": "71:9:3"
               },
@@ -74,12 +74,12 @@
                 "attributes": {
                   "name": "Expired"
                 },
-                "id": 456,
+                "id": 610,
                 "name": "EnumValue",
                 "src": "82:7:3"
               }
             ],
-            "id": 457,
+            "id": 611,
             "name": "EnumDefinition",
             "src": "50:41:3"
           },
@@ -87,7 +87,7 @@
             "attributes": {
               "canonicalName": "DataHelper.Endorsement",
               "name": "Endorsement",
-              "scope": 463,
+              "scope": 617,
               "visibility": "public"
             },
             "children": [
@@ -95,7 +95,7 @@
                 "attributes": {
                   "constant": false,
                   "name": "name",
-                  "scope": 462,
+                  "scope": 616,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "bytes32",
@@ -108,12 +108,12 @@
                       "name": "bytes32",
                       "type": "bytes32"
                     },
-                    "id": 458,
+                    "id": 612,
                     "name": "ElementaryTypeName",
                     "src": "126:7:3"
                   }
                 ],
-                "id": 459,
+                "id": 613,
                 "name": "VariableDeclaration",
                 "src": "126:12:3"
               },
@@ -121,7 +121,7 @@
                 "attributes": {
                   "constant": false,
                   "name": "description",
-                  "scope": 462,
+                  "scope": 616,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "string storage pointer",
@@ -134,27 +134,27 @@
                       "name": "string",
                       "type": "string storage pointer"
                     },
-                    "id": 460,
+                    "id": 614,
                     "name": "ElementaryTypeName",
                     "src": "148:6:3"
                   }
                 ],
-                "id": 461,
+                "id": 615,
                 "name": "VariableDeclaration",
                 "src": "148:18:3"
               }
             ],
-            "id": 462,
+            "id": 616,
             "name": "StructDefinition",
             "src": "97:76:3"
           }
         ],
-        "id": 463,
+        "id": 617,
         "name": "ContractDefinition",
         "src": "25:150:3"
       }
     ],
-    "id": 464,
+    "id": 618,
     "name": "SourceUnit",
     "src": "0:176:3"
   },
@@ -166,9 +166,9 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xd54b47f8e6a1b97f3a84f63c867286272b273b7c"
+      "address": "0xa4392264a2d8c998901d10c154c91725b1bf0158"
     }
   },
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-02-24T22:01:04.783Z"
+  "updatedAt": "2018-02-27T14:40:09.274Z"
 }
