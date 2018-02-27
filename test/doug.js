@@ -18,6 +18,6 @@ contract('Doug', function(accounts) {
 
   it("should add dougEnabled contract", async function() {
     await doug.addContract("test", doug_enabled.address);
-    expect(dougEnabled.address).to.equal(await doug.getContract.call("test"));
+    expect(doug_enabled.address).to.equal(await doug.getContract.call("test"));
   });
 });
