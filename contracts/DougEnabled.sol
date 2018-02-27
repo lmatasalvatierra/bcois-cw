@@ -15,4 +15,8 @@ contract DougEnabled {
             selfdestruct(DOUG);
         }
     }
+
+    function getDougAddress() public view returns (address) {
+        return DOUG;
+    }
 }
