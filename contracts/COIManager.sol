@@ -3,6 +3,7 @@ import "./Doug.sol";
 import "./DataHelper.sol";
 import "./Carrier.sol";
 import "./DougEnabled.sol";
+import "./Permission.sol";
 
 contract COIManager is DougEnabled {
     address owner;
@@ -50,5 +51,17 @@ contract COIManager is DougEnabled {
         return false;
       result = Carrier(carrier).cancelCOI(policyNumber);
       return result;
+    }
+
+    function setPermission(address _address, DataHelper.Permission _perm) public {
+        address perm = Doug(DOUG).getContract("perm");
+        require (perm != 0x0);
+        Permission(perm).setPermission(_address, _perm);
+    }
+
+    function getPermission(address _address) public view returns (DataHelper.Permission result) {
+        address perm = Doug(DOUG).getContract("perm");
+        require (perm != 0x0);
+        result = Permission(perm).getPermission(_address);
     }
 }
