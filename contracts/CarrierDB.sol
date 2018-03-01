@@ -22,9 +22,7 @@ contract CarrierDB is DougEnabled{
         public returns (bool result)
     {
         address name_carrier = Doug(DOUG).getContract("carrier");
-        if (msg.sender != name_carrier) {
-            return false;
-        }
+        require (msg.sender == name_carrier);
         CoI memory coi;
         DataHelper.Stage _status = DataHelper.Stage.Active;
         coi = CoI(_carrier, _status, _effectiveDate, _expirationDate);
@@ -36,9 +34,7 @@ contract CarrierDB is DougEnabled{
         returns(address, DataHelper.Stage, bytes32, bytes32)
     {
         address name_carrier = Doug(DOUG).getContract("carrier");
-        if (msg.sender != name_carrier) {
-            return;
-        }
+        require (msg.sender == name_carrier);
         CoI memory coi;
         coi = cois[policyNumber];
         return (coi.carrier, coi.status, coi.effectiveDate, coi.expirationDate);
@@ -46,8 +42,7 @@ contract CarrierDB is DougEnabled{
 
     function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
         address carrier = Doug(DOUG).getContract("carrier");
-        if (msg.sender != carrier)
-            return false;
+        require (msg.sender == carrier);
         if (cois[policyNumber].status == DataHelper.Stage.Active) {
           return true;
         }
@@ -56,8 +51,7 @@ contract CarrierDB is DougEnabled{
 
     function cancelCOI(bytes32 policyNumber) public returns (bool result) {
       address carrier = Doug(DOUG).getContract("carrier");
-      if (msg.sender != carrier)
-          return false;
+      require (msg.sender == carrier);
       cois[policyNumber].status = DataHelper.Stage.Cancelled;
       return true;
     }

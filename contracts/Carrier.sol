@@ -14,11 +14,9 @@ contract Carrier is DougEnabled {
         public returns (bool result)
     {
         address manager = Doug(DOUG).getContract("coiManager");
-        if (msg.sender != manager)
-            return false;
+        require (msg.sender == manager);
         address carrierDb = Doug(DOUG).getContract("carrierDB");
-        if (carrierDb == 0x0 )
-          return false;
+        require (carrierDb != 0x0);
         result = CarrierDB(carrierDb).createCoi(policyNumber, carrier, effectiveDate, expirationDate);
         return result;
     }
@@ -27,11 +25,9 @@ contract Carrier is DougEnabled {
         returns(address _carrier, DataHelper.Stage _status, bytes32 _effectiveDate, bytes32 _expirationDate)
     {
         address manager = Doug(DOUG).getContract("coiManager");
-        if (msg.sender != manager)
-            return;
+        require (msg.sender == manager);
         address carrierDb = Doug(DOUG).getContract("carrierDB");
-        if (carrierDb == 0x0 )
-            return;
+        require (carrierDb != 0x0);
 
         (_carrier, _status, _effectiveDate, _expirationDate) = CarrierDB(carrierDb).getCoi(policyNumber);
         return (_carrier, _status, _effectiveDate, _expirationDate);
@@ -39,22 +35,18 @@ contract Carrier is DougEnabled {
 
     function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
         address manager = Doug(DOUG).getContract("coiManager");
-        if (msg.sender != manager)
-            return false;
+        require (msg.sender == manager);
         address carrierDb = Doug(DOUG).getContract("carrierDB");
-        if (carrierDb == 0x0 )
-          return false;
+        require (carrierDb != 0x0);
         result = CarrierDB(carrierDb).isCOIActive(policyNumber);
         return result;
     }
 
     function cancelCOI(bytes32 policyNumber) public returns (bool result) {
       address manager = Doug(DOUG).getContract("coiManager");
-      if (msg.sender != manager)
-          return false;
+      require (msg.sender == manager);
       address carrierDb = Doug(DOUG).getContract("carrierDB");
-      if (carrierDb == 0x0 )
-        return false;
+      require (carrierDb != 0x0);
       result = CarrierDB(carrierDb).cancelCOI(policyNumber);
       return result;
     }
