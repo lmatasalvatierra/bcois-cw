@@ -15,6 +15,7 @@ contract COIManager is DougEnabled {
     function createCoi(
         bytes32 policyNumber,
         address carrier,
+        address _owner,
         bytes32 effectiveDate,
         bytes32 expirationDate
     )
@@ -22,17 +23,17 @@ contract COIManager is DougEnabled {
     {
         address name_carrier = Doug(DOUG).getContract("carrier");
         require (name_carrier != 0x0);
-        result = Carrier(name_carrier).createCoi(policyNumber, carrier, effectiveDate, expirationDate);
+        result = Carrier(name_carrier).createCoi(policyNumber, carrier, _owner, effectiveDate, expirationDate);
         return result;
     }
 
     function getCoi(bytes32 policyNumber) public view
-        returns(address _carrier, DataHelper.Stage _status, bytes32 _effectiveDate, bytes32 _expirationDate)
+        returns(address _carrier, address _owner, DataHelper.Stage _status, bytes32 _effectiveDate, bytes32 _expirationDate)
     {
         address carrier = Doug(DOUG).getContract("carrier");
         require (carrier != 0x0);
-        (_carrier, _status, _effectiveDate, _expirationDate) = Carrier(carrier).getCoi(policyNumber);
-        return (_carrier, _status, _effectiveDate, _expirationDate);
+        (_carrier, _owner, _status, _effectiveDate, _expirationDate) = Carrier(carrier).getCoi(policyNumber);
+        return (_carrier, _owner, _status, _effectiveDate, _expirationDate);
     }
 
     function isCOIActive(bytes32 policyNumber) public view returns (bool result) {

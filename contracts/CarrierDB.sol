@@ -6,6 +6,7 @@ import "./DataHelper.sol";
 contract CarrierDB is DougEnabled{
     struct CoI {
         address carrier;
+        address owner;
         DataHelper.Stage status;
         bytes32 effectiveDate;
         bytes32 expirationDate;
@@ -16,6 +17,7 @@ contract CarrierDB is DougEnabled{
     function createCoi(
         bytes32 policyNumber,
         address _carrier,
+        address _owner,
         bytes32 _effectiveDate,
         bytes32 _expirationDate
     )
@@ -25,19 +27,19 @@ contract CarrierDB is DougEnabled{
         require (msg.sender == name_carrier);
         CoI memory coi;
         DataHelper.Stage _status = DataHelper.Stage.Active;
-        coi = CoI(_carrier, _status, _effectiveDate, _expirationDate);
+        coi = CoI(_carrier, _owner, _status, _effectiveDate, _expirationDate);
         cois[policyNumber] = coi;
         return true;
     }
 
     function getCoi(bytes32 policyNumber) public view
-        returns(address, DataHelper.Stage, bytes32, bytes32)
+        returns(address, address, DataHelper.Stage, bytes32, bytes32)
     {
         address name_carrier = Doug(DOUG).getContract("carrier");
         require (msg.sender == name_carrier);
         CoI memory coi;
         coi = cois[policyNumber];
-        return (coi.carrier, coi.status, coi.effectiveDate, coi.expirationDate);
+        return (coi.carrier, coi.owner, coi.status, coi.effectiveDate, coi.expirationDate);
     }
 
     function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
