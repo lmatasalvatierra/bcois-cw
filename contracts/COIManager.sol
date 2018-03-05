@@ -43,11 +43,11 @@ contract COIManager is DougEnabled {
         return result;
     }
 
-    function cancelCOI(bytes32 policyNumber) public returns (bool result) {
-      address carrier = Doug(DOUG).getContract("carrier");
-      require (carrier != 0x0);
-      result = Carrier(carrier).cancelCOI(policyNumber);
-      return result;
+    function cancelCOI(bytes32 policyNumber) isAgency public returns (bool result) {
+        address carrier = Doug(DOUG).getContract("carrier");
+        require (carrier != 0x0);
+        result = Carrier(carrier).cancelCOI(policyNumber);
+        return result;
     }
 
     function setPermission(address _address, DataHelper.Permission _perm) public {

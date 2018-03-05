@@ -52,9 +52,9 @@ contract CarrierDB is DougEnabled{
     }
 
     function cancelCOI(bytes32 policyNumber) public returns (bool result) {
-      address carrier = Doug(DOUG).getContract("carrier");
-      require (msg.sender == carrier);
-      cois[policyNumber].status = DataHelper.Stage.Cancelled;
-      return true;
+        address carrier = Doug(DOUG).getContract("carrier");
+        require (msg.sender == carrier);
+        cois[policyNumber].status = DataHelper.Stage.Cancelled;
+        return true;
     }
 }

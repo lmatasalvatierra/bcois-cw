@@ -44,11 +44,11 @@ contract Carrier is DougEnabled {
     }
 
     function cancelCOI(bytes32 policyNumber) public returns (bool result) {
-      address manager = Doug(DOUG).getContract("coiManager");
-      require (msg.sender == manager);
-      address carrierDb = Doug(DOUG).getContract("carrierDB");
-      require (carrierDb != 0x0);
-      result = CarrierDB(carrierDb).cancelCOI(policyNumber);
-      return result;
+        address manager = Doug(DOUG).getContract("coiManager");
+        require (msg.sender == manager);
+        address carrierDb = Doug(DOUG).getContract("carrierDB");
+        require (carrierDb != 0x0);
+        result = CarrierDB(carrierDb).cancelCOI(policyNumber);
+        return result;
     }
 }
