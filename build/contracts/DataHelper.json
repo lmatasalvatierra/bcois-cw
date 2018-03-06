@@ -1,18 +1,18 @@
 {
   "contractName": "DataHelper",
   "abi": [],
-  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a72305820c746e723617957ebeb67c29b3e6b9ae282b891577e75227e4811f3b7674513e20029",
-  "deployedBytecode": "0x6060604052600080fd00a165627a7a72305820c746e723617957ebeb67c29b3e6b9ae282b891577e75227e4811f3b7674513e20029",
-  "sourceMap": "25:150:3:-;;;;;;;;;;;;;;;;;",
-  "deployedSourceMap": "25:150:3:-;;;;;",
-  "source": "pragma solidity ^0.4.4;\n\nlibrary DataHelper {\n    enum Stage { Active, Cancelled, Expired }\n\n    struct Endorsement {\n        bytes32 name;\n        string description;\n    }\n}\n",
+  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a72305820f71c8d33005c39b077e155519c81866ce740616771eefda50ced322ca8ed3d810029",
+  "deployedBytecode": "0x6060604052600080fd00a165627a7a72305820f71c8d33005c39b077e155519c81866ce740616771eefda50ced322ca8ed3d810029",
+  "sourceMap": "25:214:3:-;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "25:214:3:-;;;;;",
+  "source": "pragma solidity ^0.4.4;\n\nlibrary DataHelper {\n    enum Stage { Active, Cancelled, Expired }\n\n    enum Permission { User, Owner, Agency, Government, Admin }\n\n    struct Endorsement {\n        bytes32 name;\n        string description;\n    }\n}\n",
   "sourcePath": "/Users/luismatasalvatierra/CW_REPOS/bcois-cw/contracts/DataHelper.sol",
   "ast": {
     "attributes": {
       "absolutePath": "/Users/luismatasalvatierra/CW_REPOS/bcois-cw/contracts/DataHelper.sol",
       "exportedSymbols": {
         "DataHelper": [
-          617
+          773
         ]
       }
     },
@@ -26,7 +26,7 @@
             ".4"
           ]
         },
-        "id": 607,
+        "id": 757,
         "name": "PragmaDirective",
         "src": "0:23:3"
       },
@@ -42,10 +42,10 @@
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            617
+            773
           ],
           "name": "DataHelper",
-          "scope": 618
+          "scope": 774
         },
         "children": [
           {
@@ -58,7 +58,7 @@
                 "attributes": {
                   "name": "Active"
                 },
-                "id": 608,
+                "id": 758,
                 "name": "EnumValue",
                 "src": "63:6:3"
               },
@@ -66,7 +66,7 @@
                 "attributes": {
                   "name": "Cancelled"
                 },
-                "id": 609,
+                "id": 759,
                 "name": "EnumValue",
                 "src": "71:9:3"
               },
@@ -74,20 +74,71 @@
                 "attributes": {
                   "name": "Expired"
                 },
-                "id": 610,
+                "id": 760,
                 "name": "EnumValue",
                 "src": "82:7:3"
               }
             ],
-            "id": 611,
+            "id": 761,
             "name": "EnumDefinition",
             "src": "50:41:3"
           },
           {
             "attributes": {
+              "canonicalName": "DataHelper.Permission",
+              "name": "Permission"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "name": "User"
+                },
+                "id": 762,
+                "name": "EnumValue",
+                "src": "115:4:3"
+              },
+              {
+                "attributes": {
+                  "name": "Owner"
+                },
+                "id": 763,
+                "name": "EnumValue",
+                "src": "121:5:3"
+              },
+              {
+                "attributes": {
+                  "name": "Agency"
+                },
+                "id": 764,
+                "name": "EnumValue",
+                "src": "128:6:3"
+              },
+              {
+                "attributes": {
+                  "name": "Government"
+                },
+                "id": 765,
+                "name": "EnumValue",
+                "src": "136:10:3"
+              },
+              {
+                "attributes": {
+                  "name": "Admin"
+                },
+                "id": 766,
+                "name": "EnumValue",
+                "src": "148:5:3"
+              }
+            ],
+            "id": 767,
+            "name": "EnumDefinition",
+            "src": "97:58:3"
+          },
+          {
+            "attributes": {
               "canonicalName": "DataHelper.Endorsement",
               "name": "Endorsement",
-              "scope": 617,
+              "scope": 773,
               "visibility": "public"
             },
             "children": [
@@ -95,7 +146,7 @@
                 "attributes": {
                   "constant": false,
                   "name": "name",
-                  "scope": 616,
+                  "scope": 772,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "bytes32",
@@ -108,20 +159,20 @@
                       "name": "bytes32",
                       "type": "bytes32"
                     },
-                    "id": 612,
+                    "id": 768,
                     "name": "ElementaryTypeName",
-                    "src": "126:7:3"
+                    "src": "190:7:3"
                   }
                 ],
-                "id": 613,
+                "id": 769,
                 "name": "VariableDeclaration",
-                "src": "126:12:3"
+                "src": "190:12:3"
               },
               {
                 "attributes": {
                   "constant": false,
                   "name": "description",
-                  "scope": 616,
+                  "scope": 772,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "string storage pointer",
@@ -134,29 +185,29 @@
                       "name": "string",
                       "type": "string storage pointer"
                     },
-                    "id": 614,
+                    "id": 770,
                     "name": "ElementaryTypeName",
-                    "src": "148:6:3"
+                    "src": "212:6:3"
                   }
                 ],
-                "id": 615,
+                "id": 771,
                 "name": "VariableDeclaration",
-                "src": "148:18:3"
+                "src": "212:18:3"
               }
             ],
-            "id": 616,
+            "id": 772,
             "name": "StructDefinition",
-            "src": "97:76:3"
+            "src": "161:76:3"
           }
         ],
-        "id": 617,
+        "id": 773,
         "name": "ContractDefinition",
-        "src": "25:150:3"
+        "src": "25:214:3"
       }
     ],
-    "id": 618,
+    "id": 774,
     "name": "SourceUnit",
-    "src": "0:176:3"
+    "src": "0:240:3"
   },
   "compiler": {
     "name": "solc",
@@ -166,9 +217,9 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xa4392264a2d8c998901d10c154c91725b1bf0158"
+      "address": "0xf25186b5081ff5ce73482ad761db0eb0d25abfbf"
     }
   },
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-02-27T14:40:09.274Z"
+  "updatedAt": "2018-03-06T16:44:23.315Z"
 }

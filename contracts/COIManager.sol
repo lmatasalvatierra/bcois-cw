@@ -12,6 +12,16 @@ contract COIManager is DougEnabled {
         owner = msg.sender;
     }
 
+    modifier isAdmin() {
+        require(getPermission(msg.sender) == DataHelper.Permission.Admin);
+        _;
+    }
+
+    modifier isAgency() {
+        require(getPermission(msg.sender) == DataHelper.Permission.Agency);
+        _;
+    }
+
     function createCoi(
         bytes32 policyNumber,
         address carrier,
@@ -19,10 +29,10 @@ contract COIManager is DougEnabled {
         bytes32 effectiveDate,
         bytes32 expirationDate
     )
-        public returns (bool result)
+        isAgency public returns (bool result)
     {
         address name_carrier = Doug(DOUG).getContract("carrier");
-        require (name_carrier != 0x0);
+        require(name_carrier != 0x0);
         result = Carrier(name_carrier).createCoi(policyNumber, carrier, _owner, effectiveDate, expirationDate);
         return result;
     }
@@ -33,6 +43,7 @@ contract COIManager is DougEnabled {
         address carrier = Doug(DOUG).getContract("carrier");
         require (carrier != 0x0);
         (_carrier, _owner, _status, _effectiveDate, _expirationDate) = Carrier(carrier).getCoi(policyNumber);
+        assert(msg.sender == _owner || msg.sender == _carrier || uint(getPermission(msg.sender)) > 2);
         return (_carrier, _owner, _status, _effectiveDate, _expirationDate);
     }
 
@@ -50,13 +61,13 @@ contract COIManager is DougEnabled {
         return result;
     }
 
-    function setPermission(address _address, DataHelper.Permission _perm) public {
+    function setPermission(address _address, DataHelper.Permission _perm) isAdmin public {
         address perm = Doug(DOUG).getContract("perm");
         require (perm != 0x0);
         Permission(perm).setPermission(_address, _perm);
     }
 
-    function getPermission(address _address) public view returns (DataHelper.Permission result) {
+    function getPermission(address _address) private view returns (DataHelper.Permission result) {
         address perm = Doug(DOUG).getContract("perm");
         require (perm != 0x0);
         result = Permission(perm).getPermission(_address);
