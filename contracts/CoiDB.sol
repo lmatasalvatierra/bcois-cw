@@ -42,15 +42,6 @@ contract CoiDB is DougEnabled{
         return (coi.carrier, coi.owner, coi.status, coi.effectiveDate, coi.expirationDate);
     }
 
-    function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
-        address addressCoi = Doug(DOUG).getContract("coi");
-        require (msg.sender == addressCoi);
-        if (cois[policyNumber].status == DataHelper.Stage.Active) {
-          return true;
-        }
-        return false;
-    }
-
     function cancelCOI(bytes32 policyNumber) public returns (bool result) {
         address addressCoi = Doug(DOUG).getContract("coi");
         require (msg.sender == addressCoi);

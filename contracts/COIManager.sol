@@ -47,11 +47,11 @@ contract COIManager is DougEnabled {
         return (_carrier, _owner, _status, _effectiveDate, _expirationDate);
     }
 
-    function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
+    function getCoiStatus(bytes32 policyNumber) public view returns (DataHelper.Stage _status) {
         address addressCoi = Doug(DOUG).getContract("coi");
         require(addressCoi != 0x0);
-        result = Coi(addressCoi).isCOIActive(policyNumber);
-        return result;
+        _status = Coi(addressCoi).getCoiStatus(policyNumber);
+        return _status;
     }
 
     function cancelCOI(bytes32 policyNumber) isAgency public returns (bool result) {

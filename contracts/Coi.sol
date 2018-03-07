@@ -34,13 +34,14 @@ contract Coi is DougEnabled {
         return (_carrier, _owner, _status, _effectiveDate, _expirationDate);
     }
 
-    function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
+    function getCoiStatus(bytes32 policyNumber) public view returns (DataHelper.Stage _status) {
         address manager = Doug(DOUG).getContract("coiManager");
         require (msg.sender == manager);
         address coiDb = Doug(DOUG).getContract("coiDB");
         require (coiDb != 0x0);
-        result = CoiDB(coiDb).isCOIActive(policyNumber);
-        return result;
+
+        (, , _status, , ) = CoiDB(coiDb).getCoi(policyNumber);
+        return _status;
     }
 
     function cancelCOI(bytes32 policyNumber) public returns (bool result) {
