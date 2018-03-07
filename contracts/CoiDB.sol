@@ -3,7 +3,7 @@ import "./DougEnabled.sol";
 import "./Doug.sol";
 import "./DataHelper.sol";
 
-contract CarrierDB is DougEnabled{
+contract CoiDB is DougEnabled{
     struct CoI {
         address carrier;
         address owner;
@@ -23,8 +23,8 @@ contract CarrierDB is DougEnabled{
     )
         public returns (bool result)
     {
-        address name_carrier = Doug(DOUG).getContract("carrier");
-        require (msg.sender == name_carrier);
+        address addressCoi = Doug(DOUG).getContract("coi");
+        require (msg.sender == addressCoi);
         CoI memory coi;
         DataHelper.Stage _status = DataHelper.Stage.Active;
         coi = CoI(_carrier, _owner, _status, _effectiveDate, _expirationDate);
@@ -35,16 +35,16 @@ contract CarrierDB is DougEnabled{
     function getCoi(bytes32 policyNumber) public view
         returns(address, address, DataHelper.Stage, bytes32, bytes32)
     {
-        address name_carrier = Doug(DOUG).getContract("carrier");
-        require (msg.sender == name_carrier);
+        address addressCoi = Doug(DOUG).getContract("coi");
+        require (msg.sender == addressCoi);
         CoI memory coi;
         coi = cois[policyNumber];
         return (coi.carrier, coi.owner, coi.status, coi.effectiveDate, coi.expirationDate);
     }
 
     function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
-        address carrier = Doug(DOUG).getContract("carrier");
-        require (msg.sender == carrier);
+        address addressCoi = Doug(DOUG).getContract("coi");
+        require (msg.sender == addressCoi);
         if (cois[policyNumber].status == DataHelper.Stage.Active) {
           return true;
         }
@@ -52,8 +52,8 @@ contract CarrierDB is DougEnabled{
     }
 
     function cancelCOI(bytes32 policyNumber) public returns (bool result) {
-        address carrier = Doug(DOUG).getContract("carrier");
-        require (msg.sender == carrier);
+        address addressCoi = Doug(DOUG).getContract("coi");
+        require (msg.sender == addressCoi);
         cois[policyNumber].status = DataHelper.Stage.Cancelled;
         return true;
     }

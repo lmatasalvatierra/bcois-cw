@@ -1,7 +1,7 @@
 pragma solidity ^0.4.4;
 import "./Doug.sol";
 import "./DataHelper.sol";
-import "./Carrier.sol";
+import "./Coi.sol";
 import "./DougEnabled.sol";
 import "./Permission.sol";
 
@@ -31,33 +31,33 @@ contract COIManager is DougEnabled {
     )
         isAgency public returns (bool result)
     {
-        address name_carrier = Doug(DOUG).getContract("carrier");
-        require(name_carrier != 0x0);
-        result = Carrier(name_carrier).createCoi(policyNumber, carrier, _owner, effectiveDate, expirationDate);
+        address addressCoi = Doug(DOUG).getContract("coi");
+        require(addressCoi != 0x0);
+        result = Coi(addressCoi).createCoi(policyNumber, carrier, _owner, effectiveDate, expirationDate);
         return result;
     }
 
     function getCoi(bytes32 policyNumber) public view
         returns(address _carrier, address _owner, DataHelper.Stage _status, bytes32 _effectiveDate, bytes32 _expirationDate)
     {
-        address carrier = Doug(DOUG).getContract("carrier");
-        require (carrier != 0x0);
-        (_carrier, _owner, _status, _effectiveDate, _expirationDate) = Carrier(carrier).getCoi(policyNumber);
+        address addressCoi = Doug(DOUG).getContract("coi");
+        require(addressCoi != 0x0);
+        (_carrier, _owner, _status, _effectiveDate, _expirationDate) = Coi(addressCoi).getCoi(policyNumber);
         assert(msg.sender == _owner || msg.sender == _carrier || uint(getPermission(msg.sender)) > 2);
         return (_carrier, _owner, _status, _effectiveDate, _expirationDate);
     }
 
     function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
-        address carrier = Doug(DOUG).getContract("carrier");
-        require (carrier != 0x0);
-        result = Carrier(carrier).isCOIActive(policyNumber);
+        address addressCoi = Doug(DOUG).getContract("coi");
+        require(addressCoi != 0x0);
+        result = Coi(addressCoi).isCOIActive(policyNumber);
         return result;
     }
 
     function cancelCOI(bytes32 policyNumber) isAgency public returns (bool result) {
-        address carrier = Doug(DOUG).getContract("carrier");
-        require (carrier != 0x0);
-        result = Carrier(carrier).cancelCOI(policyNumber);
+        address addressCoi = Doug(DOUG).getContract("coi");
+        require(addressCoi != 0x0);
+        result = Coi(addressCoi).cancelCOI(policyNumber);
         return result;
     }
 

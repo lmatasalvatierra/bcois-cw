@@ -2,9 +2,9 @@ pragma solidity ^0.4.4;
 import "./DougEnabled.sol";
 import "./Doug.sol";
 import "./DataHelper.sol";
-import "./CarrierDB.sol";
+import "./CoiDB.sol";
 
-contract Carrier is DougEnabled {
+contract Coi is DougEnabled {
     function createCoi(
         bytes32 policyNumber,
         address carrier,
@@ -16,9 +16,9 @@ contract Carrier is DougEnabled {
     {
         address manager = Doug(DOUG).getContract("coiManager");
         require (msg.sender == manager);
-        address carrierDb = Doug(DOUG).getContract("carrierDB");
-        require (carrierDb != 0x0);
-        result = CarrierDB(carrierDb).createCoi(policyNumber, carrier, owner, effectiveDate, expirationDate);
+        address coiDb = Doug(DOUG).getContract("coiDB");
+        require (coiDb != 0x0);
+        result = CoiDB(coiDb).createCoi(policyNumber, carrier, owner, effectiveDate, expirationDate);
         return result;
     }
 
@@ -27,28 +27,28 @@ contract Carrier is DougEnabled {
     {
         address manager = Doug(DOUG).getContract("coiManager");
         require (msg.sender == manager);
-        address carrierDb = Doug(DOUG).getContract("carrierDB");
-        require (carrierDb != 0x0);
+        address coiDb = Doug(DOUG).getContract("coiDB");
+        require (coiDb != 0x0);
 
-        (_carrier, _owner, _status, _effectiveDate, _expirationDate) = CarrierDB(carrierDb).getCoi(policyNumber);
+        (_carrier, _owner, _status, _effectiveDate, _expirationDate) = CoiDB(coiDb).getCoi(policyNumber);
         return (_carrier, _owner, _status, _effectiveDate, _expirationDate);
     }
 
     function isCOIActive(bytes32 policyNumber) public view returns (bool result) {
         address manager = Doug(DOUG).getContract("coiManager");
         require (msg.sender == manager);
-        address carrierDb = Doug(DOUG).getContract("carrierDB");
-        require (carrierDb != 0x0);
-        result = CarrierDB(carrierDb).isCOIActive(policyNumber);
+        address coiDb = Doug(DOUG).getContract("coiDB");
+        require (coiDb != 0x0);
+        result = CoiDB(coiDb).isCOIActive(policyNumber);
         return result;
     }
 
     function cancelCOI(bytes32 policyNumber) public returns (bool result) {
         address manager = Doug(DOUG).getContract("coiManager");
         require (msg.sender == manager);
-        address carrierDb = Doug(DOUG).getContract("carrierDB");
-        require (carrierDb != 0x0);
-        result = CarrierDB(carrierDb).cancelCOI(policyNumber);
+        address coiDb = Doug(DOUG).getContract("coiDB");
+        require (coiDb != 0x0);
+        result = CoiDB(coiDb).cancelCOI(policyNumber);
         return result;
     }
 }
