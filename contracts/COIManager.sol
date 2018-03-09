@@ -8,17 +8,25 @@ import "./Permission.sol";
 contract COIManager is DougEnabled {
     address owner;
 
+    event Status(uint indexed statusCode);
+
     function COIManager() public {
         owner = msg.sender;
     }
 
     modifier isAdmin() {
-        require(getPermission(msg.sender) == DataHelper.Permission.Admin);
+        if(getPermission(msg.sender) != DataHelper.Permission.Admin){
+            Status(101);
+            return;
+        }
         _;
     }
 
     modifier isAgency() {
-        require(getPermission(msg.sender) == DataHelper.Permission.Agency);
+        if(getPermission(msg.sender) != DataHelper.Permission.Agency){
+            Status(101);
+            return;
+        }
         _;
     }
 

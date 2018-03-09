@@ -6,12 +6,17 @@ contract Doug {
 
     mapping (bytes32 => address) contracts;
 
+    event Status(uint indexed statusCode);
+
     function Doug() public  {
         owner = msg.sender;
     }
 
     modifier isOwner() {
-        require(msg.sender == owner);
+        if(msg.sender != owner){
+            Status(101);
+            return;
+        }
         _;
     }
 
