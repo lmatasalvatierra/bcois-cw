@@ -14,6 +14,12 @@ contract CoiDB is DougEnabled{
 
     mapping (bytes32 => CoI) public cois;
 
+    modifier senderIsController() {
+        address _contractAddress = Doug(DOUG).getContract("coi");
+        require (msg.sender == _contractAddress);
+        _;
+    }
+
     function createCoi(
         bytes32 policyNumber,
         address _carrier,
@@ -21,10 +27,8 @@ contract CoiDB is DougEnabled{
         bytes32 _effectiveDate,
         bytes32 _expirationDate
     )
-        public returns (bool result)
+        senderIsController public returns (bool result)
     {
-        address addressCoi = Doug(DOUG).getContract("coi");
-        require (msg.sender == addressCoi);
         CoI memory coi;
         DataHelper.Stage _status = DataHelper.Stage.Active;
         coi = CoI(_carrier, _owner, _status, _effectiveDate, _expirationDate);
@@ -32,19 +36,15 @@ contract CoiDB is DougEnabled{
         return true;
     }
 
-    function getCoi(bytes32 policyNumber) public view
+    function getCoi(bytes32 policyNumber) senderIsController public view
         returns(address, address, DataHelper.Stage, bytes32, bytes32)
     {
-        address addressCoi = Doug(DOUG).getContract("coi");
-        require (msg.sender == addressCoi);
         CoI memory coi;
         coi = cois[policyNumber];
         return (coi.carrier, coi.owner, coi.status, coi.effectiveDate, coi.expirationDate);
     }
 
-    function cancelCOI(bytes32 policyNumber) public returns (bool result) {
-        address addressCoi = Doug(DOUG).getContract("coi");
-        require (msg.sender == addressCoi);
+    function cancelCOI(bytes32 policyNumber) senderIsController public returns (bool result) {
         cois[policyNumber].status = DataHelper.Stage.Cancelled;
         return true;
     }
