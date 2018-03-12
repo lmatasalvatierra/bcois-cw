@@ -1,0 +1,10 @@
+{
+  "name": "bcois-cw",
+  "version": "0.0.1",
+  "description": "CoI Managing using truffle",
+  "author": "Luis Mata Salvatierra",
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "chai": "^4.1.0"
+  }
+}
