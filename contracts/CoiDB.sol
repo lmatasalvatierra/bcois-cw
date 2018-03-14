@@ -8,8 +8,8 @@ contract CoiDB is DougEnabled{
         address carrier;
         address owner;
         DataHelper.Stage status;
-        bytes32 effectiveDate;
-        bytes32 expirationDate;
+        uint effectiveDate;
+        uint expirationDate;
     }
 
     mapping (bytes32 => CoI) public cois;
@@ -24,8 +24,8 @@ contract CoiDB is DougEnabled{
         bytes32 policyNumber,
         address _carrier,
         address _owner,
-        bytes32 _effectiveDate,
-        bytes32 _expirationDate
+        uint _effectiveDate,
+        uint _expirationDate
     )
         senderIsController public returns (bool result)
     {
@@ -37,15 +37,15 @@ contract CoiDB is DougEnabled{
     }
 
     function getCoi(bytes32 policyNumber) senderIsController public view
-        returns(address, address, DataHelper.Stage, bytes32, bytes32)
+        returns(address, address, DataHelper.Stage, uint, uint)
     {
         CoI memory coi;
         coi = cois[policyNumber];
         return (coi.carrier, coi.owner, coi.status, coi.effectiveDate, coi.expirationDate);
     }
 
-    function cancelCOI(bytes32 policyNumber) senderIsController public returns (bool result) {
-        cois[policyNumber].status = DataHelper.Stage.Cancelled;
+    function updateStatus(bytes32 policyNumber, DataHelper.Stage _status) senderIsController public returns (bool result) {
+        cois[policyNumber].status = _status;
         return true;
     }
 }

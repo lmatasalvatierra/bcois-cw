@@ -26,8 +26,8 @@ contract COIManager is DougEnabled {
         bytes32 policyNumber,
         address carrier,
         address _owner,
-        bytes32 effectiveDate,
-        bytes32 expirationDate
+        uint effectiveDate,
+        uint expirationDate
     )
         isAgency public returns (bool result)
     {
@@ -37,7 +37,7 @@ contract COIManager is DougEnabled {
     }
 
     function getCoi(bytes32 policyNumber) public view
-        returns(address _carrier, address _owner, DataHelper.Stage _status, bytes32 _effectiveDate, bytes32 _expirationDate)
+        returns(address _carrier, address _owner, DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
     {
         address addressCoi = obtainControllerContract("coi");
         (_carrier, _owner, _status, _effectiveDate, _expirationDate) = Coi(addressCoi).getCoi(policyNumber);

@@ -15,8 +15,8 @@ contract Coi is DougEnabled {
         bytes32 policyNumber,
         address carrier,
         address owner,
-        bytes32 effectiveDate,
-        bytes32 expirationDate
+        uint effectiveDate,
+        uint expirationDate
     )
         senderIsManager public returns (bool result)
     {
@@ -26,7 +26,7 @@ contract Coi is DougEnabled {
     }
 
     function getCoi(bytes32 policyNumber) senderIsManager public view
-        returns(address _carrier, address _owner, DataHelper.Stage _status, bytes32 _effectiveDate, bytes32 _expirationDate)
+        returns(address _carrier, address _owner, DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
     {
         address coiDb = obtainDBContract("coiDB");
 
@@ -44,7 +44,7 @@ contract Coi is DougEnabled {
     function cancelCOI(bytes32 policyNumber) senderIsManager public returns (bool result) {
         address coiDb = obtainDBContract("coiDB");
 
-        result = CoiDB(coiDb).cancelCOI(policyNumber);
+        result = CoiDB(coiDb).updateStatus(policyNumber, DataHelper.Stage.Cancelled);
         return result;
     }
 
