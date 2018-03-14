@@ -48,6 +48,11 @@ contract Coi is DougEnabled {
         return result;
     }
 
+    function changeToExpired() senderIsManager public {
+        address coiDb = obtainDBContract("coiDB");
+        CoiDB(coiDb).changeToExpired();
+    }
+
     function obtainDBContract(bytes32 DB) private view returns (address _contractAddress) {
         _contractAddress = Doug(DOUG).getContract(DB);
         require (_contractAddress != 0x0);

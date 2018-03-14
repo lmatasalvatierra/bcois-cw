@@ -57,6 +57,11 @@ contract COIManager is DougEnabled {
         return result;
     }
 
+    function changeToExpired() isAdmin public {
+        address addressCoi = obtainControllerContract("coi");
+        Coi(addressCoi).changeToExpired();
+    }
+
     function setPermission(address _address, DataHelper.Permission _perm) isAdmin public {
         address perm = obtainControllerContract("perm");
         Permission(perm).setPermission(_address, _perm);

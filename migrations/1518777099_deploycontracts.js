@@ -14,6 +14,8 @@ module.exports = function(deployer) {
   deployer.deploy(Doug);
   deployer.deploy(DataHelper);
   deployer.deploy(DougEnabled);
+  deployer.deploy(DateTime);
+  deployer.link(DateTime, CoiDB);
   deployer.deploy(CoiDB);
   deployer.deploy(Coi);
   deployer.deploy(COIManager);

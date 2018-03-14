@@ -57,6 +57,24 @@ contract('COIManager', function(accounts) {
     })
   });
 
+  describe("changeToExpired", function() {
+    it("should change a coi state to expired", async function() {
+      let oneYearBeforeNow = timeNow - 31556926;
+      let oneDayBeforeNow = timeNow - 86400;
+      await manager.createCoi(web3.fromAscii("123456"), accounts[1], accounts[2], oneYearBeforeNow, oneDayBeforeNow, {from: accounts[1]});
+      await manager.changeToExpired();
+      let status = await manager.getCoiStatus(web3.fromAscii("123456"));
+      expect(status.toNumber()).to.equal(2);
+    });
+
+    it("should not change a coi state to expired", async function() {
+      await manager.createCoi(web3.fromAscii("123456"), accounts[1], accounts[2], timeNow, oneYearFromNow, {from: accounts[1]});
+      await manager.changeToExpired();
+      let status = await manager.getCoiStatus(web3.fromAscii("123456"));
+      expect(status.toNumber()).to.equal(0);
+    });
+  });
+
   describe("setPermission", function() {
     it("should set permission of Agency", async function() {
       await manager.setPermission(accounts[1], 2);
