@@ -11,6 +11,7 @@ contract CoiDB is DougEnabled{
         DataHelper.Stage status;
         uint effectiveDate;
         uint expirationDate;
+        address[] allowedGetters;
     }
 
     uint numIds;
@@ -38,7 +39,7 @@ contract CoiDB is DougEnabled{
     {
         CoI memory coi;
         DataHelper.Stage _status = DataHelper.Stage.Active;
-        coi = CoI(_carrier, _owner, _status, _effectiveDate, _expirationDate);
+        coi = CoI(_carrier, _owner, _status, _effectiveDate, _expirationDate, new address[](10));
         ids[policyNumber] = numIds;
         cois[numIds] = coi;
         numIds++;
@@ -71,5 +72,9 @@ contract CoiDB is DougEnabled{
                     cois[i].status = DataHelper.Stage.Expired;
             }
         }
+    }
+
+    function allowToGetCoi(bytes32 policyNumber, address getter) senderIsController public {
+        cois[ids[policyNumber]].allowedGetters.push(getter);
     }
 }
