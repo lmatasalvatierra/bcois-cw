@@ -13,12 +13,7 @@ contract COIManager is DougEnabled {
     }
 
     modifier isAdmin() {
-        require(getPermission(msg.sender) == DataHelper.Permission.Admin);
-        _;
-    }
-
-    modifier isAgency() {
-        require(getPermission(msg.sender) == DataHelper.Permission.Agency);
+        require(msg.sender == owner);
         _;
     }
 
@@ -29,20 +24,24 @@ contract COIManager is DougEnabled {
         uint effectiveDate,
         uint expirationDate
     )
-        isAgency public returns (bool result)
+        public returns (bool result)
     {
         address addressCoi = obtainControllerContract("coi");
-        result = Coi(addressCoi).createCoi(policyNumber, carrier, _owner, effectiveDate, expirationDate);
+
+        result = Coi(addressCoi).createCoi(policyNumber, effectiveDate, expirationDate);
+        setPermission(policyNumber, carrier, _owner);
         return result;
     }
 
     function getCoi(bytes32 policyNumber) public view
-        returns(address _carrier, address _owner, DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
+        returns(DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
     {
         address addressCoi = obtainControllerContract("coi");
-        (_carrier, _owner, _status, _effectiveDate, _expirationDate) = Coi(addressCoi).getCoi(policyNumber);
-        assert(msg.sender == _owner || msg.sender == _carrier || uint(getPermission(msg.sender)) > 2);
-        return (_carrier, _owner, _status, _effectiveDate, _expirationDate);
+        address perm = obtainControllerContract("perm");
+        require(Permission(perm).isPermittedToGetCoi(policyNumber, msg.sender));
+
+        (_status, _effectiveDate, _expirationDate) = Coi(addressCoi).getCoi(policyNumber);
+        return (_status, _effectiveDate, _expirationDate);
     }
 
     function getCoiStatus(bytes32 policyNumber) public view returns (DataHelper.Stage _status) {
@@ -51,7 +50,7 @@ contract COIManager is DougEnabled {
         return _status;
     }
 
-    function cancelCOI(bytes32 policyNumber) isAgency public returns (bool result) {
+    function cancelCOI(bytes32 policyNumber) public returns (bool result) {
         address addressCoi = obtainControllerContract("coi");
         result = Coi(addressCoi).cancelCOI(policyNumber);
         return result;
@@ -62,14 +61,14 @@ contract COIManager is DougEnabled {
         Coi(addressCoi).changeToExpired();
     }
 
-    function setPermission(address _address, DataHelper.Permission _perm) isAdmin public {
+    function allowGuestToCheckCoi(bytes32 policyNumber, address guest) public {
         address perm = obtainControllerContract("perm");
-        Permission(perm).setPermission(_address, _perm);
+        Permission(perm).addGuest(guest, policyNumber, msg.sender);
     }
 
-    function getPermission(address _address) private view returns (DataHelper.Permission result) {
+    function setPermission(bytes32 policyNumber, address _agency, address _owner) private {
         address perm = obtainControllerContract("perm");
-        result = Permission(perm).getPermission(_address);
+        Permission(perm).setPermission(policyNumber, _agency, _owner);
     }
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {

@@ -5,7 +5,14 @@ import "./DougEnabled.sol";
 import "./Doug.sol";
 
 contract PermissionDB is DougEnabled{
-    mapping (address => DataHelper.Permission) permissions;
+    struct Permit {
+        address agency;
+        address owner;
+        address[10] guests;
+        uint numGuests;
+    }
+
+    mapping (bytes32 => Permit) permissions;
 
     modifier senderIsController() {
         address _contractAddress = Doug(DOUG).getContract("perm");
@@ -13,15 +20,20 @@ contract PermissionDB is DougEnabled{
         _;
     }
 
-    function PermissionDB() public {
-        permissions[msg.sender] = DataHelper.Permission.Admin;
+    function setPermission(bytes32 policyNumber, address _agency, address _owner) senderIsController public {
+        Permit storage permit = permissions[policyNumber];
+        permit.agency = _agency;
+        permit.owner = _owner;
+        permit.numGuests = 0;
     }
 
-    function setPermission(address _address, DataHelper.Permission _perm) senderIsController public {
-        permissions[_address] = _perm;
+    function getPermission(bytes32 policyNumber) senderIsController public view returns(address, address, address[10]) {
+        return (permissions[policyNumber].agency, permissions[policyNumber].owner, permissions[policyNumber].guests);
     }
 
-    function getPermission(address _address) senderIsController public view returns (DataHelper.Permission) {
-        return permissions[_address];
+    function addGuest(address guest, bytes32 policyNumber) senderIsController public {
+        Permit storage permit = permissions[policyNumber];
+        permit.guests[permit.numGuests] =  guest;
+        permit.numGuests++;
     }
 }

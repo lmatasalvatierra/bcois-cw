@@ -6,8 +6,6 @@ import "./DateTime.sol";
 
 contract CoiDB is DougEnabled{
     struct CoI {
-        address carrier;
-        address owner;
         DataHelper.Stage status;
         uint effectiveDate;
         uint expirationDate;
@@ -29,8 +27,6 @@ contract CoiDB is DougEnabled{
 
     function createCoi(
         bytes32 policyNumber,
-        address _carrier,
-        address _owner,
         uint _effectiveDate,
         uint _expirationDate
     )
@@ -38,7 +34,7 @@ contract CoiDB is DougEnabled{
     {
         CoI memory coi;
         DataHelper.Stage _status = DataHelper.Stage.Active;
-        coi = CoI(_carrier, _owner, _status, _effectiveDate, _expirationDate);
+        coi = CoI(_status, _effectiveDate, _expirationDate);
         ids[policyNumber] = numIds;
         cois[numIds] = coi;
         numIds++;
@@ -46,11 +42,11 @@ contract CoiDB is DougEnabled{
     }
 
     function getCoi(bytes32 policyNumber) senderIsController public view
-        returns(address, address, DataHelper.Stage, uint, uint)
+        returns(DataHelper.Stage, uint, uint)
     {
         CoI memory coi;
         coi = cois[ids[policyNumber]];
-        return (coi.carrier, coi.owner, coi.status, coi.effectiveDate, coi.expirationDate);
+        return (coi.status, coi.effectiveDate, coi.expirationDate);
     }
 
     function updateStatus(bytes32 policyNumber, DataHelper.Stage _status) senderIsController public returns (bool result) {

@@ -13,31 +13,29 @@ contract Coi is DougEnabled {
 
     function createCoi(
         bytes32 policyNumber,
-        address carrier,
-        address owner,
         uint effectiveDate,
         uint expirationDate
     )
         senderIsManager public returns (bool result)
     {
         address coiDb = obtainDBContract("coiDB");
-        result = CoiDB(coiDb).createCoi(policyNumber, carrier, owner, effectiveDate, expirationDate);
+        result = CoiDB(coiDb).createCoi(policyNumber, effectiveDate, expirationDate);
         return result;
     }
 
     function getCoi(bytes32 policyNumber) senderIsManager public view
-        returns(address _carrier, address _owner, DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
+        returns(DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
     {
         address coiDb = obtainDBContract("coiDB");
 
-        (_carrier, _owner, _status, _effectiveDate, _expirationDate) = CoiDB(coiDb).getCoi(policyNumber);
-        return (_carrier, _owner, _status, _effectiveDate, _expirationDate);
+        (_status, _effectiveDate, _expirationDate) = CoiDB(coiDb).getCoi(policyNumber);
+        return (_status, _effectiveDate, _expirationDate);
     }
 
     function getCoiStatus(bytes32 policyNumber) senderIsManager public view returns (DataHelper.Stage _status) {
         address coiDb = obtainDBContract("coiDB");
 
-        (, , _status, , ) = CoiDB(coiDb).getCoi(policyNumber);
+        (_status, , ) = CoiDB(coiDb).getCoi(policyNumber);
         return _status;
     }
 

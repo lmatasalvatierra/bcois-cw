@@ -3,6 +3,8 @@ pragma solidity ^0.4.4;
 contract DougEnabled {
     address DOUG;
 
+    event Status(uint statusCode, bytes32 message);
+
     function setDougAddress(address dougAddress) public returns (bool) {
         if(DOUG != 0x0 && msg.sender != DOUG)
             return false;
