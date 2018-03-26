@@ -18,16 +18,15 @@ contract User is DougEnabled {
         result = UserDB(userdb).login(email, password);
     }
 
-    function signUp(bytes32 email, bytes32 password) public returns (bytes32 result) {
+    function signUp(bytes32 email, bytes32 password) public {
         address userdb = obtainDBContract('userDB');
-        result = UserDB(userdb).signUp(email, password);
+        UserDB(userdb).signUp(email, password);
     }
 
     function update(bytes32 email, bytes32 password) public
-    onlyValidEmail(email)
-    returns (bytes32 result) {
+    onlyValidEmail(email) {
         address userdb = obtainDBContract('userDB');
-        result = UserDB(userdb).update(email, password);
+        UserDB(userdb).update(email, password);
     }
 
     function obtainDBContract(bytes32 DB) private view returns (address _contractAddress) {

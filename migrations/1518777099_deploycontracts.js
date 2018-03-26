@@ -7,6 +7,8 @@ var COIManager = artifacts.require("./COIManager.sol");
 var Permission = artifacts.require("./Permission.sol");
 var PermissionDB = artifacts.require("./PermissionDB.sol");
 var DateTime = artifacts.require("./DateTime.sol");
+var User = artifacts.require("./User.sol");
+var UserDB = artifacts.require("./UserDB.sol");
 
 
 
@@ -21,4 +23,6 @@ module.exports = function(deployer) {
   deployer.deploy(COIManager);
   deployer.deploy(Permission);
   deployer.deploy(PermissionDB);
+  deployer.deploy(User);
+  deployer.deploy(UserDB);
 };

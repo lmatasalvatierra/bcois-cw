@@ -28,34 +28,26 @@ contract UserDB is DougEnabled {
         return (users[email] == password);
     }
 
-    function signUp(bytes32 email, bytes32 password) senderIsController() public returns (bytes32) {
+    function signUp(bytes32 email, bytes32 password) senderIsController() public {
         // Check if user exists.
         // If yes, return user name.
         // If no, check if name was sent.
         // If yes, create and return user.
-
         if (users[email] == 0x0)
         {
             users[email] = password;
-
-            return (email);
         }
-
-        return (email);
     }
 
     function update(bytes32 email, bytes32 password)
     public
     senderIsController()
-    onlyExistingUser(email)
-    returns (bytes32) {
+    onlyExistingUser(email) {
         // Update user name.
 
         if (users[email] != 0x0)
         {
             users[email] = password;
-
-            return (email);
         }
     }
 }
