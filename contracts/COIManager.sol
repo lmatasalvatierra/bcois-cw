@@ -77,19 +77,38 @@ contract COIManager is DougEnabled {
 
 // User Methods
 
-    function login(bytes32 email, bytes32 password) public view returns (bool result) {
-        address user = obtainControllerContract("user");
-        result = User(user).login(email, password);
+    function createOwner(
+        bytes32 _email,
+        bytes32 _password,
+        bytes32 _name,
+        bytes32 _addressLine
+    )
+    public
+    {
+        address user = obtainControllerContract('user');
+
+        User(user).createOwner(_email, _password, _name, _addressLine);
     }
 
-    function signUp(bytes32 email, bytes32 password) public {
-        address user = obtainControllerContract("user");
-        User(user).signUp(email, password);
+    function loginOwner(bytes32 email, bytes32 password) public view
+    returns (bool result) {
+        address user = obtainControllerContract('user');
+        result = User(user).loginOwner(email, password);
     }
 
-    function update(bytes32 email, bytes32 password) public {
-        address user = obtainControllerContract("user");
-        User(user).update(email, password);
+    function addCertificate(bytes32 email, uint id) public {
+        address user = obtainControllerContract('user');
+        User(user).addCertificate(email, id);
+    }
+
+    function getOwner(bytes32 email)
+    public
+    view
+    returns (bytes32 _email, bytes32 _name, bytes32 _addressLine, uint[20] _certificates)
+    {
+        address user = obtainControllerContract('user');
+        (_email, _name, _addressLine, _certificates) = User(user).getOwner(email);
+        return (_email, _name, _addressLine, _certificates);
     }
 
 // Helper Methods

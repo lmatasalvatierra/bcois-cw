@@ -15,17 +15,17 @@ contract OwnerDB is UserDB{
 
     mapping (uint => Owner) owners;
 
-    uint numOwners;
-
     function createOwner(
+        uint index,
         bytes32 _email,
+        bytes32 _password,
         bytes32 _name,
         bytes32 _addressLine
     )
     public
     {
-        numOwners++;
-        Owner storage owner = owners[numOwners];
+        users[_email] = _password;
+        Owner storage owner = owners[index];
         owner.email = _email;
         owner.name = _name;
         owner.addressLine = _addressLine;

@@ -6,6 +6,7 @@ var Doug = artifacts.require("./Doug.sol");
 var CoiDB = artifacts.require("./CoiDB.sol");
 var User = artifacts.require("./User.sol");
 var UserDB = artifacts.require("./UserDB.sol");
+var OwnerDB = artifacts.require("./OwnerDB.sol");
 var expect = require("chai").expect;
 
 contract('COIManager', function(accounts) {
@@ -25,6 +26,7 @@ contract('COIManager', function(accounts) {
     permdb = await PermissionDB.deployed();
     user = await User.deployed();
     userdb = await UserDB.deployed();
+    ownerdb = await OwnerDB.deployed();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -33,6 +35,7 @@ contract('COIManager', function(accounts) {
     await doug.addContract("permDB", permdb.address);
     await doug.addContract("user", user.address);
     await doug.addContract("userDB", userdb.address);
+    await doug.addContract("ownerDB", ownerdb.address);
   });
 
   describe("CreateCoi", function() {
@@ -99,28 +102,26 @@ contract('COIManager', function(accounts) {
     });
   });
 
-  describe("User signUp", function() {
-    it("should sign up correctly", async function() {
-      await manager.signUp(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
-      let result = await manager.login(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
-      expect(result).to.equal(true);
-    })
-  })
+  describe("Owner", function() {
+    it("should be created correctly", async function() {
+      await manager.createOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+      let values = await manager.getOwner(web3.fromAscii("Hola@cosa.com"));
+      expect(web3.toAscii(values[0])).to.include("Hola@cosa.com");
+      expect(web3.toAscii(values[1])).to.include("cosa");
+      expect(web3.toAscii(values[2])).to.include("Alcala 21");
+    });
 
-  describe("User Login", function() {
-    it("should log in correctly", async function(){
-      await manager.signUp(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
-      let result = await manager.login(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
+    it("should have added a certificate to Owner", async function() {
+      await manager.createOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+      await manager.addCertificate(web3.fromAscii("Hola@cosa.com"), 252342);
+      let values = await manager.getOwner(web3.fromAscii("Hola@cosa.com"));
+      expect(values[3][0].toNumber()).to.equal(252342);
+    })
+
+    it("should login correctly", async function() {
+      await manager.createOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+      let result = await manager.loginOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
       expect(result).to.equal(true);
     });
-  });
-
-  describe("User Update", function() {
-    it("should update password", async function() {
-      await manager.signUp(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
-      await manager.update(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("12345"));
-      let result = await manager.login(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("12345"));
-      expect(result).to.equal(true);
-    })
   });
 });
