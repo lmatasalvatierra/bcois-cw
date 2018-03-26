@@ -4,6 +4,8 @@ var COIManager = artifacts.require("./COIManager.sol");
 var Coi = artifacts.require("./Coi.sol");
 var Doug = artifacts.require("./Doug.sol");
 var CoiDB = artifacts.require("./CoiDB.sol");
+var User = artifacts.require("./User.sol");
+var UserDB = artifacts.require("./UserDB.sol");
 var expect = require("chai").expect;
 
 contract('COIManager', function(accounts) {
@@ -21,11 +23,16 @@ contract('COIManager', function(accounts) {
     coiDb = await CoiDB.deployed();
     perm = await Permission.deployed();
     permdb = await PermissionDB.deployed();
+    user = await User.deployed();
+    userdb = await UserDB.deployed();
+
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
     await doug.addContract("coiDB", coiDb.address);
     await doug.addContract("perm", perm.address);
     await doug.addContract("permDB", permdb.address);
+    await doug.addContract("user", user.address);
+    await doug.addContract("userDB", userdb.address);
   });
 
   describe("CreateCoi", function() {
@@ -90,5 +97,30 @@ contract('COIManager', function(accounts) {
       let result = await manager.allowGuestToCheckCoi(web3.fromAscii("123456"), guest, {from: guest});
       expect(result.logs[0].args.statusCode.c[0]).to.equal(101);
     });
+  });
+
+  describe("User signUp", function() {
+    it("should sign up correctly", async function() {
+      await manager.signUp(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
+      let result = await manager.login(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
+      expect(result).to.equal(true);
+    })
+  })
+
+  describe("User Login", function() {
+    it("should log in correctly", async function(){
+      await manager.signUp(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
+      let result = await manager.login(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
+      expect(result).to.equal(true);
+    });
+  });
+
+  describe("User Update", function() {
+    it("should update password", async function() {
+      await manager.signUp(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
+      await manager.update(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("12345"));
+      let result = await manager.login(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("12345"));
+      expect(result).to.equal(true);
+    })
   });
 });

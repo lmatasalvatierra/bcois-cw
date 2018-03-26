@@ -4,6 +4,7 @@ import "./DataHelper.sol";
 import "./Coi.sol";
 import "./DougEnabled.sol";
 import "./Permission.sol";
+import "./User.sol";
 
 contract COIManager is DougEnabled {
     address owner;
@@ -16,6 +17,7 @@ contract COIManager is DougEnabled {
         require(msg.sender == owner);
         _;
     }
+// COI Methods
 
     function createCoi(
         bytes32 policyNumber,
@@ -61,6 +63,8 @@ contract COIManager is DougEnabled {
         Coi(addressCoi).changeToExpired();
     }
 
+// Permission Methods
+
     function allowGuestToCheckCoi(bytes32 policyNumber, address guest) public {
         address perm = obtainControllerContract("perm");
         Permission(perm).addGuest(guest, policyNumber, msg.sender);
@@ -70,6 +74,25 @@ contract COIManager is DougEnabled {
         address perm = obtainControllerContract("perm");
         Permission(perm).setPermission(policyNumber, _agency, _owner);
     }
+
+// User Methods
+
+    function login(bytes32 email, bytes32 password) public view returns (bool result) {
+        address user = obtainControllerContract("user");
+        result = User(user).login(email, password);
+    }
+
+    function signUp(bytes32 email, bytes32 password) public {
+        address user = obtainControllerContract("user");
+        User(user).signUp(email, password);
+    }
+
+    function update(bytes32 email, bytes32 password) public {
+        address user = obtainControllerContract("user");
+        User(user).update(email, password);
+    }
+
+// Helper Methods
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {
         _contractAddress = Doug(DOUG).getContract(controller);
