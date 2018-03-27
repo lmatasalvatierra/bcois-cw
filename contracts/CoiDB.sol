@@ -5,16 +5,8 @@ import "./DataHelper.sol";
 import "./DateTime.sol";
 
 contract CoiDB is DougEnabled{
-    struct CoI {
-        uint certificateNumber;
-        uint ownerId;
-        DataHelper.Stage status;
-        uint effectiveDate;
-        uint expirationDate;
-    }
-
     uint numCertificates = 0;
-    mapping (uint => CoI) cois;
+    mapping (uint => DataHelper.CoI) cois;
 
     modifier senderIsController() {
         address _contractAddress = Doug(DOUG).getContract("coi");
@@ -30,9 +22,9 @@ contract CoiDB is DougEnabled{
         senderIsController public returns (uint id)
     {
         numCertificates++;
-        CoI memory coi;
+        DataHelper.CoI memory coi;
         DataHelper.Stage _status = DataHelper.Stage.Active;
-        coi = CoI(numCertificates, ownerId, _status, _effectiveDate, _expirationDate);
+        coi = DataHelper.CoI(numCertificates, ownerId, _status, _effectiveDate, _expirationDate);
         cois[numCertificates] = coi;
         return numCertificates;
     }
@@ -40,7 +32,7 @@ contract CoiDB is DougEnabled{
     function getCoi(uint certificateNumber) senderIsController public view
         returns(uint, uint, DataHelper.Stage, uint, uint)
     {
-        CoI storage coi = cois[certificateNumber];
+        DataHelper.CoI storage coi = cois[certificateNumber];
         return (coi.certificateNumber, coi.ownerId, coi.status, coi.effectiveDate, coi.expirationDate);
     }
 

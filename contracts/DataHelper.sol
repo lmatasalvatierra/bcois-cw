@@ -9,4 +9,12 @@ library DataHelper {
         bytes32 name;
         string description;
     }
+
+    struct CoI {
+        uint certificateNumber;
+        uint ownerId;
+        DataHelper.Stage status;
+        uint effectiveDate;
+        uint expirationDate;
+    }
 }
