@@ -1,18 +1,10 @@
 pragma solidity ^0.4.4;
 
 import "./DataHelper.sol";
-import "./DougEnabled.sol";
-import "./Doug.sol";
+import "./Controller.sol";
 import "./PermissionDB.sol";
 
-contract Permission is DougEnabled{
-
-    modifier senderIsManager() {
-        address _contractAddress = Doug(DOUG).getContract("coiManager");
-        require (msg.sender == _contractAddress);
-        _;
-    }
-
+contract Permission is Controller{
     function setPermission(bytes32 policyNumber, address _agency, address _owner) senderIsManager public {
         address permdb = obtainDBContract("permDB");
 
@@ -48,12 +40,6 @@ contract Permission is DougEnabled{
             Status(101, "Not owner of COI");
             return;
         }
-    }
-
-    function obtainDBContract(bytes32 DB) private view returns (address _contractAddress) {
-        _contractAddress = Doug(DOUG).getContract(DB);
-        require (_contractAddress != 0x0);
-        return _contractAddress;
     }
 
     function isOwner(bytes32 policyNumber, address who, address permdb) senderIsManager private view returns (bool) {

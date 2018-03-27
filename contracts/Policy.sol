@@ -1,76 +1,63 @@
 pragma solidity ^0.4.4;
 
-import "./DougEnabled.sol";
-import "./Doug.sol";
+import "./Controller.sol";
 import "./DataHelper.sol";
 import "./PolicyDB.sol";
 
-contract Policy is DougEnabled {
-  modifier senderIsManager() {
-      address _contractAddress = Doug(DOUG).getContract("coiManager");
-      require (msg.sender == _contractAddress);
-      _;
-  }
+contract Policy is Controller {
+    function createPolicy(
+        uint _ownerId,
+        bytes32 _name,
+        uint _effectiveDate,
+        uint _expirationDate
+    )
+        senderIsManager public returns (uint result)
+    {
+        address policydb = obtainDBContract("policyDB");
+        result = PolicyDB(policydb).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate);
+        return result;
+    }
 
-  function createPolicy(
+    function getPolicy(
+      uint policyNumber
+    )
+    senderIsManager
+    public view
+    returns(
+      uint _policyNumber,
       uint _ownerId,
       bytes32 _name,
+      DataHelper.Stage _status,
       uint _effectiveDate,
-      uint _expirationDate
-  )
-      senderIsManager public returns (uint result)
-  {
-      address policydb = obtainDBContract("policyDB");
-      result = PolicyDB(policydb).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate);
-      return result;
-  }
+      uint _expirationDate)
+    {
+        address policydb = obtainDBContract("policyDB");
 
-  function getPolicy(
-    uint policyNumber
-  )
-  senderIsManager
-  public view
-  returns(
-    uint _policyNumber,
-    uint _ownerId,
-    bytes32 _name,
-    DataHelper.Stage _status,
-    uint _effectiveDate,
-    uint _expirationDate)
-  {
-      address policydb = obtainDBContract("policyDB");
+        (_policyNumber,
+         _ownerId,
+         _name,
+         _status,
+         _effectiveDate,
+         _expirationDate
+        ) = PolicyDB(policydb).getPolicy(policyNumber);
+        return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate);
+    }
 
-      (_policyNumber,
-       _ownerId,
-       _name,
-       _status,
-       _effectiveDate,
-       _expirationDate
-      ) = PolicyDB(policydb).getPolicy(policyNumber);
-      return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate);
-  }
+    function getPolicyStatus(uint _policyNumber) senderIsManager public view returns (DataHelper.Stage _status) {
+        address policydb = obtainDBContract("policyDB");
 
-  function getPolicyStatus(uint _policyNumber) senderIsManager public view returns (DataHelper.Stage _status) {
-      address policydb = obtainDBContract("policyDB");
+        (, , , _status, , ) = PolicyDB(policydb).getPolicy(_policyNumber);
+        return _status;
+    }
 
-      (, , , _status, , ) = PolicyDB(policydb).getPolicy(_policyNumber);
-      return _status;
-  }
+    function cancelPolicy(uint _policyNumber) senderIsManager public {
+        address policydb = obtainDBContract("policyDB");
 
-  function cancelPolicy(uint _policyNumber) senderIsManager public {
-      address policydb = obtainDBContract("policyDB");
+        PolicyDB(policydb).updateStatus(_policyNumber, DataHelper.Stage.Cancelled);
+    }
 
-      PolicyDB(policydb).updateStatus(_policyNumber, DataHelper.Stage.Cancelled);
-  }
-
-  function changePolicyToExpired() senderIsManager public {
-      address policydb = obtainDBContract("policyDB");
-      PolicyDB(policydb).changeToExpired();
-  }
-
-  function obtainDBContract(bytes32 DB) private view returns (address _contractAddress) {
-      _contractAddress = Doug(DOUG).getContract(DB);
-      require (_contractAddress != 0x0);
-      return _contractAddress;
-  }
+    function changePolicyToExpired() senderIsManager public {
+        address policydb = obtainDBContract("policyDB");
+        PolicyDB(policydb).changeToExpired();
+    }
 }
