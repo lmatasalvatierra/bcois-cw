@@ -5,8 +5,10 @@ var Coi = artifacts.require("./Coi.sol");
 var Doug = artifacts.require("./Doug.sol");
 var CoiDB = artifacts.require("./CoiDB.sol");
 var User = artifacts.require("./User.sol");
+var Policy = artifacts.require("./Policy.sol")
 var UserDB = artifacts.require("./UserDB.sol");
 var OwnerDB = artifacts.require("./OwnerDB.sol");
+var PolicyDB = artifacts.require("./PolicyDB.sol");
 var expect = require("chai").expect;
 
 contract('COIManager', function(accounts) {
@@ -27,6 +29,8 @@ contract('COIManager', function(accounts) {
     user = await User.deployed();
     userdb = await UserDB.deployed();
     ownerdb = await OwnerDB.deployed();
+    policy = await Policy.deployed();
+    policydb = await PolicyDB.deployed();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -36,9 +40,11 @@ contract('COIManager', function(accounts) {
     await doug.addContract("user", user.address);
     await doug.addContract("userDB", userdb.address);
     await doug.addContract("ownerDB", ownerdb.address);
+    await doug.addContract("policy", policy.address);
+    await doug.addContract("policyDB", policydb.address);
   });
 
-  describe("CreateCoi", function() {
+  describe("Certificate", function() {
     it("should create coi with given details", async function() {
       // COI Number 1
       await manager.createCoi(web3.fromAscii("TestCreate@cosa.com"),  timeNow, oneYearFromNow);
@@ -49,9 +55,7 @@ contract('COIManager', function(accounts) {
       expect(values[2].toNumber()).to.equal(timeNow);
       expect(values[3].toNumber()).to.equal(oneYearFromNow);
     });
-  });
 
-  describe("cancelCoi", function() {
     it("should cancel coi of given policy", async function() {
       // COI Number 2
       await manager.createCoi(web3.fromAscii("TestCancel@cosa.com"), timeNow, oneYearFromNow);
@@ -60,18 +64,14 @@ contract('COIManager', function(accounts) {
       // Cancelled status = 1
       expect(isCanceled.toNumber()).to.equal(1);
     });
-  });
 
-  describe("getCoiStatus", function () {
     it("should return a state of Active of a new COI", async function() {
       // COI Number 3
       await manager.createCoi(web3.fromAscii("testStatus@cosa.com"), timeNow, oneYearFromNow);
       let status = await manager.getCoiStatus(2);
       expect(status.toNumber()).to.equal(0);
-    })
-  });
+    });
 
-  describe("changeToExpired", function() {
     it("should change a coi state to expired", async function() {
       let oneYearBeforeNow = timeNow - 31556926;
       let oneDayBeforeNow = timeNow - 86400;
@@ -90,9 +90,7 @@ contract('COIManager', function(accounts) {
       let status = await manager.getCoiStatus(5);
       expect(status.toNumber()).to.equal(0);
     });
-  });
 
-  describe("allowGuestToCheckCoi", function() {
     it("should allow guest to read Coi from owner after allowing it", async function(){
       // COI Number 6
       await manager.createCoi(web3.fromAscii("Hola@cosa.com"), timeNow, oneYearFromNow);
@@ -103,6 +101,42 @@ contract('COIManager', function(accounts) {
       expect(values[2].toNumber()).to.equal(timeNow);
       expect(values[3].toNumber()).to.equal(oneYearFromNow);
     });
+  });
+
+  describe("Policy", function() {
+    before("should create Policy", async function() {
+      await manager.createOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+      await manager.createPolicy(1, web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow);
+    });
+
+    it("should get a Policy", async function() {
+      // COI Number 7
+      let values = await manager.getPolicy(1);
+      expect(values[0].toNumber()).to.equal(1);
+      expect(values[1].toNumber()).to.equal(1);
+      expect(web3.toAscii(values[2])).to.include("Workers Comp");
+      expect(values[3].toNumber()).to.equal(0);
+      expect(values[4].toNumber()).to.equal(timeNow);
+      expect(values[5].toNumber()).to.equal(oneYearFromNow);
+    });
+
+    it("should cancel a Policy", async function() {
+      await manager.cancelPolicy(1);
+      let isCanceled = await manager.getPolicyStatus(1);
+      // Cancelled status = 1
+      expect(isCanceled.toNumber()).to.equal(1);
+    });
+
+    it("should change a Policy state to expired", async function() {
+      let oneYearBeforeNow = timeNow - 31556926;
+      let oneDayBeforeNow = timeNow - 86400;
+      await manager.createPolicy(1, web3.fromAscii("BOP"), oneYearBeforeNow, oneDayBeforeNow);
+      await manager.changePolicyToExpired();
+
+      let status = await manager.getPolicyStatus(2);
+      expect(status.toNumber()).to.equal(2);
+    });
+
   });
 
   describe("Owner", function() {

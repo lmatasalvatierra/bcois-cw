@@ -5,6 +5,7 @@ import "./Coi.sol";
 import "./DougEnabled.sol";
 import "./Permission.sol";
 import "./User.sol";
+import "./Policy.sol";
 
 contract COIManager is DougEnabled {
     address owner;
@@ -63,6 +64,63 @@ contract COIManager is DougEnabled {
     function changeToExpired() isAdmin public {
         address addressCoi = obtainControllerContract("coi");
         Coi(addressCoi).changeToExpired();
+    }
+
+    // Policy Methods
+
+    function createPolicy(
+      uint _ownerId,
+      bytes32 _name,
+      uint _effectiveDate,
+      uint _expirationDate
+    )
+     public returns (uint result)
+    {
+        address policy = obtainControllerContract("policy");
+        result = Policy(policy).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate);
+        return result;
+    }
+
+    function getPolicy(
+     uint policyNumber
+    )
+    public view
+    returns(
+     uint _policyNumber,
+     uint _ownerId,
+     bytes32 _name,
+     DataHelper.Stage _status,
+     uint _effectiveDate,
+     uint _expirationDate)
+    {
+        address policy = obtainControllerContract("policy");
+
+        (_policyNumber,
+         _ownerId,
+         _name,
+         _status,
+         _effectiveDate,
+         _expirationDate
+         ) = Policy(policy).getPolicy(policyNumber);
+         return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate);
+    }
+
+    function getPolicyStatus(uint _policyNumber) public view returns (DataHelper.Stage _status) {
+        address policy = obtainControllerContract("policy");
+
+        (, , , _status, , ) = Policy(policy).getPolicy(_policyNumber);
+        return _status;
+    }
+
+    function cancelPolicy(uint _policyNumber) public {
+        address policy = obtainControllerContract("policy");
+
+        Policy(policy).cancelPolicy(_policyNumber);
+    }
+
+    function changePolicyToExpired() public {
+        address policy = obtainControllerContract("policy");
+        Policy(policy).changePolicyToExpired();
     }
 
     // Permission Methods
