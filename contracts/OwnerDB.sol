@@ -1,7 +1,6 @@
 pragma solidity ^0.4.4;
 
 import "./UserDB.sol";
-import "./DougEnabled.sol";
 
 contract OwnerDB is UserDB{
 

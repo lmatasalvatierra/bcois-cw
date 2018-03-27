@@ -1,9 +1,8 @@
 pragma solidity ^0.4.4;
 
-import "./DougEnabled.sol";
-import "./Doug.sol";
+import "./Database.sol";
 
-contract UserDB is DougEnabled {
+contract UserDB is Database {
 
     mapping (bytes32 => bytes32) internal users;
 
@@ -14,16 +13,10 @@ contract UserDB is DougEnabled {
         _;
     }
 
-    modifier senderIsController() {
-        address _contractAddress = Doug(DOUG).getContract("user");
-        require (msg.sender == _contractAddress);
-        _;
-    }
-
     function login(bytes32 email, bytes32 password)
     public
     view
-    senderIsController()
+    senderIsController("user")
     onlyExistingUser(email)
     returns (bool) {
         return (users[email] == password);
