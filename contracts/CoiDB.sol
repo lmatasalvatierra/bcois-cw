@@ -21,4 +21,12 @@ contract CoiDB is Database {
         DataHelper.CoI storage coi = cois[certificateNumber];
         return (coi.certificateNumber, coi.ownerId);
     }
+
+    function addPolicy(uint certificateNumber, uint policyNumber) senderIsController("coi") public {
+        cois[certificateNumber].policyIds[cois[certificateNumber].numPolicies] = policyNumber;
+    }
+
+    function getPoliciesOfCoi(uint certificateNumber) senderIsController("coi") public view returns (uint[10]) {
+        return cois[certificateNumber].policyIds;
+    }
 }

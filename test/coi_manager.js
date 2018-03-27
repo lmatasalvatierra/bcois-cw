@@ -55,6 +55,19 @@ contract('COIManager', function(accounts) {
       expect(values[0].toNumber()).to.equal(1);
       expect(values[1].toNumber()).to.equal(1);
     });
+
+    it("add Policy to certificate", async function() {
+      await manager.createPolicy(1, web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow);
+      await manager.addPolicy(1, 1)
+      let result = await manager.getPoliciesOfCoi(1);
+      let values = await manager.getPolicy(result[0].toNumber());
+      expect(values[0].toNumber()).to.equal(1);
+      expect(values[1].toNumber()).to.equal(1);
+      expect(web3.toAscii(values[2])).to.include("Workers Comp");
+      expect(values[3].toNumber()).to.equal(0);
+      expect(values[4].toNumber()).to.equal(timeNow);
+      expect(values[5].toNumber()).to.equal(oneYearFromNow);
+    });
   });
 
   describe("Policy", function() {
@@ -86,7 +99,7 @@ contract('COIManager', function(accounts) {
       await manager.createPolicy(1, web3.fromAscii("BOP"), oneYearBeforeNow, oneDayBeforeNow);
       await manager.changePolicyToExpired();
 
-      let status = await manager.getPolicyStatus(2);
+      let status = await manager.getPolicyStatus(3);
       expect(status.toNumber()).to.equal(2);
     });
 

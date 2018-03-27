@@ -38,6 +38,19 @@ contract COIManager is DougEnabled {
         return (_certificateNumber, _ownerId);
     }
 
+    function addPolicy(uint certificateNumber, uint policyNumber) public {
+        require(getPolicyStatus(policyNumber) == DataHelper.Stage.Active);
+        address addressCoi = obtainControllerContract("coi");
+
+        Coi(addressCoi).addPolicy(certificateNumber, policyNumber);
+    }
+
+    function getPoliciesOfCoi(uint certificateNumber) public view returns (uint[10] policies) {
+        address addressCoi = obtainControllerContract("coi");
+
+        policies = Coi(addressCoi).getPoliciesOfCoi(certificateNumber);
+    }
+
     // Policy Methods
 
     function createPolicy(

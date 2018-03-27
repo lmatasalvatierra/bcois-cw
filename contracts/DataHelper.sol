@@ -13,6 +13,8 @@ library DataHelper {
     struct CoI {
         uint certificateNumber;
         uint ownerId;
+        uint[10] policyIds;
+        uint numPolicies;
     }
 
     struct Policy {
