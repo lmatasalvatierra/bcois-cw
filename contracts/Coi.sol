@@ -12,37 +12,37 @@ contract Coi is DougEnabled {
     }
 
     function createCoi(
-        bytes32 policyNumber,
+        uint ownerId,
         uint effectiveDate,
         uint expirationDate
     )
-        senderIsManager public returns (bool result)
+        senderIsManager public returns (uint result)
     {
         address coiDb = obtainDBContract("coiDB");
-        result = CoiDB(coiDb).createCoi(policyNumber, effectiveDate, expirationDate);
+        result = CoiDB(coiDb).createCoi(ownerId, effectiveDate, expirationDate);
         return result;
     }
 
-    function getCoi(bytes32 policyNumber) senderIsManager public view
-        returns(DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
+    function getCoi(uint certificateNumber) senderIsManager public view
+        returns(uint _certificateNumber, uint _ownerId, DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
     {
         address coiDb = obtainDBContract("coiDB");
 
-        (_status, _effectiveDate, _expirationDate) = CoiDB(coiDb).getCoi(policyNumber);
-        return (_status, _effectiveDate, _expirationDate);
+        (_certificateNumber, _ownerId, _status, _effectiveDate, _expirationDate) = CoiDB(coiDb).getCoi(certificateNumber);
+        return (_certificateNumber, _ownerId, _status, _effectiveDate, _expirationDate);
     }
 
-    function getCoiStatus(bytes32 policyNumber) senderIsManager public view returns (DataHelper.Stage _status) {
+    function getCoiStatus(uint certificateNumber) senderIsManager public view returns (DataHelper.Stage _status) {
         address coiDb = obtainDBContract("coiDB");
 
-        (_status, , ) = CoiDB(coiDb).getCoi(policyNumber);
+        (, , _status, , ) = CoiDB(coiDb).getCoi(certificateNumber);
         return _status;
     }
 
-    function cancelCOI(bytes32 policyNumber) senderIsManager public returns (bool result) {
+    function cancelCOI(uint certificateNumber) senderIsManager public returns (bool result) {
         address coiDb = obtainDBContract("coiDB");
 
-        result = CoiDB(coiDb).updateStatus(policyNumber, DataHelper.Stage.Cancelled);
+        result = CoiDB(coiDb).updateStatus(certificateNumber, DataHelper.Stage.Cancelled);
         return result;
     }
 

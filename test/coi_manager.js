@@ -17,7 +17,7 @@ contract('COIManager', function(accounts) {
   let owner = accounts[2];
   let guest = accounts[6];
 
-  beforeEach('setup manager', async function () {
+  before('setup manager', async function () {
     doug = await Doug.deployed();
     manager = await COIManager.deployed();
     coi = await Coi.deployed();
@@ -40,20 +40,23 @@ contract('COIManager', function(accounts) {
 
   describe("CreateCoi", function() {
     it("should create coi with given details", async function() {
-      await manager.createCoi(web3.fromAscii("123456"), agency, owner, timeNow, oneYearFromNow, {from: agency});
-      let values = await manager.getCoi(web3.fromAscii("123456"), {from: owner});
+      // COI Number 1
+      await manager.createCoi(web3.fromAscii("TestCreate@cosa.com"),  timeNow, oneYearFromNow);
+      let values = await manager.getCoi(1);
       // Active status = 0
-      expect(values[0].toNumber()).to.equal(0);
-      expect(values[1].toNumber()).to.equal(timeNow);
-      expect(values[2].toNumber()).to.equal(oneYearFromNow);
+      expect(values[0].toNumber()).to.equal(1);
+      expect(values[1].toNumber()).to.equal(0);
+      expect(values[2].toNumber()).to.equal(timeNow);
+      expect(values[3].toNumber()).to.equal(oneYearFromNow);
     });
   });
 
   describe("cancelCoi", function() {
     it("should cancel coi of given policy", async function() {
-      await manager.createCoi(web3.fromAscii("123456"), accounts[1], accounts[2], timeNow, oneYearFromNow, {from: accounts[1]});
-      await manager.cancelCOI(web3.fromAscii("123456"), {from: accounts[1]});
-      let isCanceled = await manager.getCoiStatus(web3.fromAscii("123456"));
+      // COI Number 2
+      await manager.createCoi(web3.fromAscii("TestCancel@cosa.com"), timeNow, oneYearFromNow);
+      await manager.cancelCOI(1);
+      let isCanceled = await manager.getCoiStatus(1);
       // Cancelled status = 1
       expect(isCanceled.toNumber()).to.equal(1);
     });
@@ -61,8 +64,9 @@ contract('COIManager', function(accounts) {
 
   describe("getCoiStatus", function () {
     it("should return a state of Active of a new COI", async function() {
-      await manager.createCoi(web3.fromAscii("123456"), accounts[1], accounts[2], timeNow, oneYearFromNow, {from: accounts[1]});
-      let status = await manager.getCoiStatus(web3.fromAscii("123456"));
+      // COI Number 3
+      await manager.createCoi(web3.fromAscii("testStatus@cosa.com"), timeNow, oneYearFromNow);
+      let status = await manager.getCoiStatus(2);
       expect(status.toNumber()).to.equal(0);
     })
   });
@@ -71,34 +75,33 @@ contract('COIManager', function(accounts) {
     it("should change a coi state to expired", async function() {
       let oneYearBeforeNow = timeNow - 31556926;
       let oneDayBeforeNow = timeNow - 86400;
-      await manager.createCoi(web3.fromAscii("123456"), accounts[1], accounts[2], oneYearBeforeNow, oneDayBeforeNow, {from: accounts[1]});
+      // COI Number 4
+      await manager.createCoi(web3.fromAscii("TestExpired@cosa.com"), oneYearBeforeNow, oneDayBeforeNow);
       await manager.changeToExpired();
-      let status = await manager.getCoiStatus(web3.fromAscii("123456"));
+
+      let status = await manager.getCoiStatus(4);
       expect(status.toNumber()).to.equal(2);
     });
 
     it("should not change a coi state to expired", async function() {
-      await manager.createCoi(web3.fromAscii("123456"), accounts[1], accounts[2], timeNow, oneYearFromNow, {from: accounts[1]});
+      // COI Number 5
+      await manager.createCoi(web3.fromAscii("TestNotExpired@cosa.com"), timeNow, oneYearFromNow);
       await manager.changeToExpired();
-      let status = await manager.getCoiStatus(web3.fromAscii("123456"));
+      let status = await manager.getCoiStatus(5);
       expect(status.toNumber()).to.equal(0);
     });
   });
 
   describe("allowGuestToCheckCoi", function() {
     it("should allow guest to read Coi from owner after allowing it", async function(){
-      await manager.createCoi(web3.fromAscii("123456"), agency, owner, timeNow, oneYearFromNow, {from: agency});
+      // COI Number 6
+      await manager.createCoi(web3.fromAscii("Hola@cosa.com"), timeNow, oneYearFromNow);
       await manager.allowGuestToCheckCoi(web3.fromAscii("123456"), guest, {from: owner});
-      let values = await manager.getCoi(web3.fromAscii("123456"), {from: guest});
-      expect(values[0].toNumber()).to.equal(0);
-      expect(values[1].toNumber()).to.equal(timeNow);
-      expect(values[2].toNumber()).to.equal(oneYearFromNow);
-    });
-
-    it("should allow guest to read Coi from owner after allowing it", async function(){
-      await manager.createCoi(web3.fromAscii("123456"), agency, owner, timeNow, oneYearFromNow, {from: agency});
-      let result = await manager.allowGuestToCheckCoi(web3.fromAscii("123456"), guest, {from: guest});
-      expect(result.logs[0].args.statusCode.c[0]).to.equal(101);
+      let values = await manager.getCoi(6, {from: guest});
+      expect(values[0].toNumber()).to.equal(6);
+      expect(values[1].toNumber()).to.equal(0);
+      expect(values[2].toNumber()).to.equal(timeNow);
+      expect(values[3].toNumber()).to.equal(oneYearFromNow);
     });
   });
 

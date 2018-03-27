@@ -50,6 +50,10 @@ contract User is DougEnabled {
         return (_email, _name, _addressLine, _certificates);
     }
 
+    function getOwnerId(bytes32 email) public view returns (uint ownerId) {
+        ownerId = indexes[email];
+    }
+
     // Helper Methods
 
     function obtainDBContract(bytes32 DB) private view returns (address _contractAddress) {
