@@ -50,20 +50,20 @@ contract Policy is DougEnabled {
       return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate);
   }
 
-  function getCoiStatus(uint _policyNumber) senderIsManager public view returns (DataHelper.Stage _status) {
+  function getPolicyStatus(uint _policyNumber) senderIsManager public view returns (DataHelper.Stage _status) {
       address policydb = obtainDBContract("policyDB");
 
       (, , , _status, , ) = PolicyDB(policydb).getPolicy(_policyNumber);
       return _status;
   }
 
-  function cancelCOI(uint _policyNumber) senderIsManager public {
+  function cancelPolicy(uint _policyNumber) senderIsManager public {
       address policydb = obtainDBContract("policyDB");
 
       PolicyDB(policydb).updateStatus(_policyNumber, DataHelper.Stage.Cancelled);
   }
 
-  function changeToExpired() senderIsManager public {
+  function changePolicyToExpired() senderIsManager public {
       address policydb = obtainDBContract("policyDB");
       PolicyDB(policydb).changeToExpired();
   }
