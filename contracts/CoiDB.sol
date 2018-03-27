@@ -5,15 +5,8 @@ import "./DataHelper.sol";
 import "./DateTime.sol";
 
 contract CoiDB is DougEnabled{
-    struct CoI {
-        DataHelper.Stage status;
-        uint effectiveDate;
-        uint expirationDate;
-    }
-
-    uint numIds;
-    mapping (uint => CoI) cois;
-    mapping (bytes32 => uint) ids;
+    uint numCertificates = 0;
+    mapping (uint => DataHelper.CoI) cois;
 
     modifier senderIsController() {
         address _contractAddress = Doug(DOUG).getContract("coi");
@@ -21,42 +14,36 @@ contract CoiDB is DougEnabled{
         _;
     }
 
-    function CoiDB() public {
-        numIds = 0;
-    }
-
     function createCoi(
-        bytes32 policyNumber,
+        uint ownerId,
         uint _effectiveDate,
         uint _expirationDate
     )
-        senderIsController public returns (bool result)
+        senderIsController public returns (uint id)
     {
-        CoI memory coi;
+        numCertificates++;
+        DataHelper.CoI memory coi;
         DataHelper.Stage _status = DataHelper.Stage.Active;
-        coi = CoI(_status, _effectiveDate, _expirationDate);
-        ids[policyNumber] = numIds;
-        cois[numIds] = coi;
-        numIds++;
-        return true;
+        coi = DataHelper.CoI(numCertificates, ownerId, _status, _effectiveDate, _expirationDate);
+        cois[numCertificates] = coi;
+        return numCertificates;
     }
 
-    function getCoi(bytes32 policyNumber) senderIsController public view
-        returns(DataHelper.Stage, uint, uint)
+    function getCoi(uint certificateNumber) senderIsController public view
+        returns(uint, uint, DataHelper.Stage, uint, uint)
     {
-        CoI memory coi;
-        coi = cois[ids[policyNumber]];
-        return (coi.status, coi.effectiveDate, coi.expirationDate);
+        DataHelper.CoI storage coi = cois[certificateNumber];
+        return (coi.certificateNumber, coi.ownerId, coi.status, coi.effectiveDate, coi.expirationDate);
     }
 
-    function updateStatus(bytes32 policyNumber, DataHelper.Stage _status) senderIsController public returns (bool result) {
-        cois[ids[policyNumber]].status = _status;
+    function updateStatus(uint certificateNumber, DataHelper.Stage _status) senderIsController public returns (bool result) {
+        cois[certificateNumber].status = _status;
         return true;
     }
 
     function changeToExpired() senderIsController public {
         uint _expirationDate;
-        for(uint i = 0; i < numIds; i++) {
+        for(uint i = 0; i <= numCertificates; i++) {
             _expirationDate = cois[i].expirationDate;
             if(
                 DateTime.getYear(now) >= DateTime.getYear(_expirationDate) &&

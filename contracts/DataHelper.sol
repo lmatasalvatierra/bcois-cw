@@ -9,4 +9,22 @@ library DataHelper {
         bytes32 name;
         string description;
     }
+
+    struct CoI {
+        uint certificateNumber;
+        uint ownerId;
+        DataHelper.Stage status;
+        uint effectiveDate;
+        uint expirationDate;
+    }
+
+    struct Policy {
+        uint policyNumber;
+        uint ownerId;
+        bytes32 name;
+        DataHelper.Stage status;
+        uint effectiveDate;
+        uint expirationDate;
+        bool[10] includedCoverages;
+    }
 }

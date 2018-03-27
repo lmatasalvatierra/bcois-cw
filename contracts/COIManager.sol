@@ -5,6 +5,7 @@ import "./Coi.sol";
 import "./DougEnabled.sol";
 import "./Permission.sol";
 import "./User.sol";
+import "./Policy.sol";
 
 contract COIManager is DougEnabled {
     address owner;
@@ -17,44 +18,46 @@ contract COIManager is DougEnabled {
         require(msg.sender == owner);
         _;
     }
-// COI Methods
+    // COI Methods
 
     function createCoi(
-        bytes32 policyNumber,
-        address carrier,
-        address _owner,
+        bytes32 email,
         uint effectiveDate,
         uint expirationDate
     )
-        public returns (bool result)
+        public
+    {
+        address addressCoi = obtainControllerContract("coi");
+        address user = obtainControllerContract("user");
+        uint ownerId = User(user).getOwnerId(email);
+
+        uint result = Coi(addressCoi).createCoi(ownerId, effectiveDate, expirationDate);
+        User(user).addCertificate(email, result);
+    }
+
+    function getCoi(uint certificateNumber) public view
+        returns(uint _certificateNumber, DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
     {
         address addressCoi = obtainControllerContract("coi");
 
-        result = Coi(addressCoi).createCoi(policyNumber, effectiveDate, expirationDate);
-        setPermission(policyNumber, carrier, _owner);
-        return result;
+        (_certificateNumber,
+         ,
+         _status,
+         _effectiveDate,
+         _expirationDate
+         ) = Coi(addressCoi).getCoi(certificateNumber);
+        return (_certificateNumber, _status, _effectiveDate, _expirationDate);
     }
 
-    function getCoi(bytes32 policyNumber) public view
-        returns(DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
-    {
+    function getCoiStatus(uint certificateNumber) public view returns (DataHelper.Stage _status) {
         address addressCoi = obtainControllerContract("coi");
-        address perm = obtainControllerContract("perm");
-        require(Permission(perm).isPermittedToGetCoi(policyNumber, msg.sender));
-
-        (_status, _effectiveDate, _expirationDate) = Coi(addressCoi).getCoi(policyNumber);
-        return (_status, _effectiveDate, _expirationDate);
-    }
-
-    function getCoiStatus(bytes32 policyNumber) public view returns (DataHelper.Stage _status) {
-        address addressCoi = obtainControllerContract("coi");
-        _status = Coi(addressCoi).getCoiStatus(policyNumber);
+        _status = Coi(addressCoi).getCoiStatus(certificateNumber);
         return _status;
     }
 
-    function cancelCOI(bytes32 policyNumber) public returns (bool result) {
+    function cancelCOI(uint certificateNumber) public returns (bool result) {
         address addressCoi = obtainControllerContract("coi");
-        result = Coi(addressCoi).cancelCOI(policyNumber);
+        result = Coi(addressCoi).cancelCOI(certificateNumber);
         return result;
     }
 
@@ -63,7 +66,64 @@ contract COIManager is DougEnabled {
         Coi(addressCoi).changeToExpired();
     }
 
-// Permission Methods
+    // Policy Methods
+
+    function createPolicy(
+      uint _ownerId,
+      bytes32 _name,
+      uint _effectiveDate,
+      uint _expirationDate
+    )
+     public returns (uint result)
+    {
+        address policy = obtainControllerContract("policy");
+        result = Policy(policy).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate);
+        return result;
+    }
+
+    function getPolicy(
+     uint policyNumber
+    )
+    public view
+    returns(
+     uint _policyNumber,
+     uint _ownerId,
+     bytes32 _name,
+     DataHelper.Stage _status,
+     uint _effectiveDate,
+     uint _expirationDate)
+    {
+        address policy = obtainControllerContract("policy");
+
+        (_policyNumber,
+         _ownerId,
+         _name,
+         _status,
+         _effectiveDate,
+         _expirationDate
+         ) = Policy(policy).getPolicy(policyNumber);
+         return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate);
+    }
+
+    function getPolicyStatus(uint _policyNumber) public view returns (DataHelper.Stage _status) {
+        address policy = obtainControllerContract("policy");
+
+        (, , , _status, , ) = Policy(policy).getPolicy(_policyNumber);
+        return _status;
+    }
+
+    function cancelPolicy(uint _policyNumber) public {
+        address policy = obtainControllerContract("policy");
+
+        Policy(policy).cancelPolicy(_policyNumber);
+    }
+
+    function changePolicyToExpired() public {
+        address policy = obtainControllerContract("policy");
+        Policy(policy).changePolicyToExpired();
+    }
+
+    // Permission Methods
 
     function allowGuestToCheckCoi(bytes32 policyNumber, address guest) public {
         address perm = obtainControllerContract("perm");
@@ -75,7 +135,7 @@ contract COIManager is DougEnabled {
         Permission(perm).setPermission(policyNumber, _agency, _owner);
     }
 
-// User Methods
+    // User Methods
 
     function createOwner(
         bytes32 _email,
@@ -85,19 +145,19 @@ contract COIManager is DougEnabled {
     )
     public
     {
-        address user = obtainControllerContract('user');
+        address user = obtainControllerContract("user");
 
         User(user).createOwner(_email, _password, _name, _addressLine);
     }
 
     function loginOwner(bytes32 email, bytes32 password) public view
     returns (bool result) {
-        address user = obtainControllerContract('user');
+        address user = obtainControllerContract("user");
         result = User(user).loginOwner(email, password);
     }
 
     function addCertificate(bytes32 email, uint id) public {
-        address user = obtainControllerContract('user');
+        address user = obtainControllerContract("user");
         User(user).addCertificate(email, id);
     }
 
@@ -106,12 +166,12 @@ contract COIManager is DougEnabled {
     view
     returns (bytes32 _email, bytes32 _name, bytes32 _addressLine, uint[20] _certificates)
     {
-        address user = obtainControllerContract('user');
+        address user = obtainControllerContract("user");
         (_email, _name, _addressLine, _certificates) = User(user).getOwner(email);
         return (_email, _name, _addressLine, _certificates);
     }
 
-// Helper Methods
+    // Helper Methods
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {
         _contractAddress = Doug(DOUG).getContract(controller);
