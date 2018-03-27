@@ -13,9 +13,6 @@ library DataHelper {
     struct CoI {
         uint certificateNumber;
         uint ownerId;
-        DataHelper.Stage status;
-        uint effectiveDate;
-        uint expirationDate;
     }
 
     struct Policy {
