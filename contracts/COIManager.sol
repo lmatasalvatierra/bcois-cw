@@ -20,50 +20,22 @@ contract COIManager is DougEnabled {
     }
     // COI Methods
 
-    function createCoi(
-        bytes32 email,
-        uint effectiveDate,
-        uint expirationDate
-    )
-        public
-    {
+    function createCoi(bytes32 email) public {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         uint ownerId = User(user).getOwnerId(email);
 
-        uint result = Coi(addressCoi).createCoi(ownerId, effectiveDate, expirationDate);
+        uint result = Coi(addressCoi).createCoi(ownerId);
         User(user).addCertificate(email, result);
     }
 
     function getCoi(uint certificateNumber) public view
-        returns(uint _certificateNumber, DataHelper.Stage _status, uint _effectiveDate, uint _expirationDate)
+        returns(uint _certificateNumber, uint _ownerId)
     {
         address addressCoi = obtainControllerContract("coi");
 
-        (_certificateNumber,
-         ,
-         _status,
-         _effectiveDate,
-         _expirationDate
-         ) = Coi(addressCoi).getCoi(certificateNumber);
-        return (_certificateNumber, _status, _effectiveDate, _expirationDate);
-    }
-
-    function getCoiStatus(uint certificateNumber) public view returns (DataHelper.Stage _status) {
-        address addressCoi = obtainControllerContract("coi");
-        _status = Coi(addressCoi).getCoiStatus(certificateNumber);
-        return _status;
-    }
-
-    function cancelCOI(uint certificateNumber) public returns (bool result) {
-        address addressCoi = obtainControllerContract("coi");
-        result = Coi(addressCoi).cancelCOI(certificateNumber);
-        return result;
-    }
-
-    function changeToExpired() isAdmin public {
-        address addressCoi = obtainControllerContract("coi");
-        Coi(addressCoi).changeToExpired();
+        (_certificateNumber, _ownerId) = Coi(addressCoi).getCoi(certificateNumber);
+        return (_certificateNumber, _ownerId);
     }
 
     // Policy Methods
