@@ -9,6 +9,7 @@ var Policy = artifacts.require("./Policy.sol")
 var UserDB = artifacts.require("./UserDB.sol");
 var OwnerDB = artifacts.require("./OwnerDB.sol");
 var PolicyDB = artifacts.require("./PolicyDB.sol");
+var CarrierDB = artifacts.require("./CarrierDB.sol");
 var expect = require("chai").expect;
 
 contract('COIManager', function(accounts) {
@@ -31,6 +32,7 @@ contract('COIManager', function(accounts) {
     ownerdb = await OwnerDB.deployed();
     policy = await Policy.deployed();
     policydb = await PolicyDB.deployed();
+    carrierdb = await CarrierDB.deployed();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -42,6 +44,7 @@ contract('COIManager', function(accounts) {
     await doug.addContract("ownerDB", ownerdb.address);
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
+    await doug.addContract("carrierDB", carrierdb.address);
   });
 
   describe("Certificate", function() {
@@ -124,6 +127,24 @@ contract('COIManager', function(accounts) {
     it("should login correctly", async function() {
       await manager.createOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
       let result = await manager.loginOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
+      expect(result).to.equal(true);
+    });
+  });
+
+  describe("Carrier", function() {
+    before("should Create Carrier", async function() {
+      await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"), web3.fromAscii("CNA"));
+    });
+
+    it("should get correctly", async function() {
+      let values = await manager.getCarrier(web3.fromAscii("TestCreation@Carrier.com"));
+      expect(web3.toAscii(values[2])).to.include("TestCreation@Carrier.com");
+      expect(values[1].toNumber()).to.equal(6);
+      expect(web3.toAscii(values[0])).to.include("CNA");
+    });
+
+    it("should login correctly", async function() {
+      let result = await manager.loginCarrier(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"));
       expect(result).to.equal(true);
     });
   });

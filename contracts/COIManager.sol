@@ -156,6 +156,35 @@ contract COIManager is DougEnabled {
         return (_email, _name, _addressLine, _certificates);
     }
 
+    function createCarrier(
+        bytes32 _email,
+        bytes32 _password,
+        bytes32 _name
+    )
+    public
+    {
+        address user = obtainControllerContract("user");
+
+        User(user).createCarrier(_email, _password, _name);
+    }
+
+    function getCarrier(bytes32 email)
+    public
+    view
+    returns (bytes32 _name, uint _naicCode, bytes32 _email)
+    {
+        address user = obtainControllerContract("user");
+
+        (_name, _naicCode, _email) = User(user).getCarrier(email);
+        return (_name, _naicCode, _email);
+    }
+
+    function loginCarrier(bytes32 email, bytes32 password) public view
+    returns (bool result) {
+        address user = obtainControllerContract("user");
+        result = User(user).loginCarrier(email, password);
+    }
+
     // Helper Methods
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {
