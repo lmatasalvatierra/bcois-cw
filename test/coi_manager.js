@@ -60,7 +60,7 @@ contract('COIManager', function(accounts) {
     });
 
     it("add Policy to certificate", async function() {
-      await manager.createPolicy(1, web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow);
+      await manager.createPolicy(1, web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1);
       await manager.addPolicy(1, 1)
       let result = await manager.getPoliciesOfCoi(1);
       let values = await manager.getPolicy(result[0].toNumber());
@@ -75,8 +75,9 @@ contract('COIManager', function(accounts) {
 
   describe("Policy", function() {
     before("should create Policy", async function() {
+      await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"), web3.fromAscii("CNA"));
       await manager.createOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
-      await manager.createPolicy(1, web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow);
+      await manager.createPolicy(1, web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1);
     });
 
     it("should get a Policy", async function() {
@@ -99,7 +100,7 @@ contract('COIManager', function(accounts) {
     it("should change a Policy state to expired", async function() {
       let oneYearBeforeNow = timeNow - 31556926;
       let oneDayBeforeNow = timeNow - 86400;
-      await manager.createPolicy(1, web3.fromAscii("BOP"), oneYearBeforeNow, oneDayBeforeNow);
+      await manager.createPolicy(1, web3.fromAscii("BOP"), oneYearBeforeNow, oneDayBeforeNow, 1);
       await manager.changePolicyToExpired();
 
       let status = await manager.getPolicyStatus(3);
@@ -140,7 +141,7 @@ contract('COIManager', function(accounts) {
     it("should get correctly", async function() {
       let values = await manager.getCarrier(web3.fromAscii("TestCreation@Carrier.com"));
       expect(web3.toAscii(values[2])).to.include("TestCreation@Carrier.com");
-      expect(values[1].toNumber()).to.equal(4);
+      expect(values[1].toNumber()).to.equal(5);
       expect(web3.toAscii(values[0])).to.include("CNA");
     });
 
