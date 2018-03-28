@@ -12,7 +12,7 @@ var CarrierDB = artifacts.require("./CarrierDB.sol");
 var expect = require("chai").expect;
 
 contract('COIManager', function(accounts) {
-  var doug, manager, coi, coiDb, perm, permdb;
+  var doug, manager, coi, coiDb, perm, permdb, user, ownerdb, policy, policydb, carriedb;
   let timeNow = Math.floor(Date.now() / 1000);
   let oneYearFromNow = timeNow + 31556926;
   let agency = accounts[1];
