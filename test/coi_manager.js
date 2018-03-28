@@ -109,24 +109,25 @@ contract('COIManager', function(accounts) {
   });
 
   describe("Owner", function() {
+    before("should Create Owner", async function() {
+      await manager.createOwner(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+    });
+
     it("should be created correctly", async function() {
-      await manager.createOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
-      let values = await manager.getOwner(web3.fromAscii("Hola@cosa.com"));
-      expect(web3.toAscii(values[0])).to.include("Hola@cosa.com");
+      let values = await manager.getOwner(web3.fromAscii("Test@Owner.com"));
+      expect(web3.toAscii(values[0])).to.include("Test@Owner.com");
       expect(web3.toAscii(values[1])).to.include("cosa");
       expect(web3.toAscii(values[2])).to.include("Alcala 21");
     });
 
     it("should have added a certificate to Owner", async function() {
-      await manager.createOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
-      await manager.addCertificate(web3.fromAscii("Hola@cosa.com"), 252342);
-      let values = await manager.getOwner(web3.fromAscii("Hola@cosa.com"));
+      await manager.addCertificate(web3.fromAscii("Test@Owner.com"), 252342);
+      let values = await manager.getOwner(web3.fromAscii("Test@Owner.com"));
       expect(values[3][0].toNumber()).to.equal(252342);
     })
 
     it("should login correctly", async function() {
-      await manager.createOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
-      let result = await manager.loginOwner(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("admin"));
+      let result = await manager.loginOwner(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"));
       expect(result).to.equal(true);
     });
   });
@@ -139,7 +140,7 @@ contract('COIManager', function(accounts) {
     it("should get correctly", async function() {
       let values = await manager.getCarrier(web3.fromAscii("TestCreation@Carrier.com"));
       expect(web3.toAscii(values[2])).to.include("TestCreation@Carrier.com");
-      expect(values[1].toNumber()).to.equal(6);
+      expect(values[1].toNumber()).to.equal(4);
       expect(web3.toAscii(values[0])).to.include("CNA");
     });
 
