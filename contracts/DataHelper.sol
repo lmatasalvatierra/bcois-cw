@@ -25,5 +25,6 @@ library DataHelper {
         uint effectiveDate;
         uint expirationDate;
         bool[10] includedCoverages;
+        uint carrierId;
     }
 }

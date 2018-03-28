@@ -9,12 +9,13 @@ contract Policy is Controller {
         uint _ownerId,
         bytes32 _name,
         uint _effectiveDate,
-        uint _expirationDate
+        uint _expirationDate,
+        uint carrierId
     )
         senderIsManager public returns (uint result)
     {
         address policydb = obtainDBContract("policyDB");
-        result = PolicyDB(policydb).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate);
+        result = PolicyDB(policydb).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate, carrierId);
         return result;
     }
 
@@ -29,7 +30,9 @@ contract Policy is Controller {
       bytes32 _name,
       DataHelper.Stage _status,
       uint _effectiveDate,
-      uint _expirationDate)
+      uint _expirationDate,
+      uint _carrierId
+    )
     {
         address policydb = obtainDBContract("policyDB");
 
@@ -38,15 +41,16 @@ contract Policy is Controller {
          _name,
          _status,
          _effectiveDate,
-         _expirationDate
+         _expirationDate,
+         _carrierId
         ) = PolicyDB(policydb).getPolicy(policyNumber);
-        return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate);
+        return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate, _carrierId);
     }
 
     function getPolicyStatus(uint _policyNumber) senderIsManager public view returns (DataHelper.Stage _status) {
         address policydb = obtainDBContract("policyDB");
 
-        (, , , _status, , ) = PolicyDB(policydb).getPolicy(_policyNumber);
+        (, , , _status, , , ) = PolicyDB(policydb).getPolicy(_policyNumber);
         return _status;
     }
 
