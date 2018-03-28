@@ -23,7 +23,8 @@ contract COIManager is DougEnabled {
     function createCoi(bytes32 email) public {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
-        uint ownerId = User(user).getOwnerId(email);
+        uint ownerId;
+        (ownerId, ) = User(user).getUserCredentials(email);
 
         uint result = Coi(addressCoi).createCoi(ownerId);
         User(user).addCertificate(email, result);

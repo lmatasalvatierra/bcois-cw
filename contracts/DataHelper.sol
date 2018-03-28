@@ -5,6 +5,8 @@ library DataHelper {
 
     enum Permission { User, Owner, Agency, Government, Admin }
 
+    enum UserType { Owner, Carrier }
+
     struct Endorsement {
         bytes32 name;
         string description;
