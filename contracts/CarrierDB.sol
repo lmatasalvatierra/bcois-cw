@@ -17,6 +17,7 @@ contract CarrierDB is UserDB {
         bytes32 _email,
         bytes32 _password
     )
+    senderIsController("user")
     public
     {
         users[_email] = _password;
@@ -27,6 +28,7 @@ contract CarrierDB is UserDB {
     }
 
     function getCarrier(uint _naicCode)
+    senderIsController("user")
     public
     view
     returns (bytes32, uint, bytes32)

@@ -3,6 +3,7 @@ pragma solidity ^0.4.4;
 import "./Controller.sol";
 import "./UserDB.sol";
 import "./OwnerDB.sol";
+import "./CarrierDB.sol";
 
 contract User is Controller {
 
@@ -53,5 +54,33 @@ contract User is Controller {
 
     function getOwnerId(bytes32 email) senderIsManager public view returns (uint ownerId) {
         ownerId = indexes[email];
+    }
+
+    // Carrier Methods
+
+    function createCarrier(
+        bytes32 _email,
+        bytes32 _password,
+        bytes32 _name
+    )
+    senderIsManager
+    public
+    {
+        address carrierdb = obtainDBContract('carrierDB');
+
+        indexUser++;
+        indexes[_email] = indexUser;
+        CarrierDB(carrierdb).createCarrier(_email, indexUser, _password, _name );
+    }
+
+    function getCarrier(bytes32 email)
+    public
+    view
+    returns (bytes32 _name, uint _naicCode, bytes32 _email)
+    {
+        address carrierdb = obtainDBContract('carrierDB');
+
+        (_name, _naicCode, _email) = CarrierDB(carrierdb).getCarrier(indexes[email]);
+        return (_name, _naicCode, _email);
     }
 }
