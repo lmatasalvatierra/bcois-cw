@@ -1,6 +1,7 @@
 pragma solidity ^0.4.4;
 
 import "./Controller.sol";
+import "./DataHelper.sol";
 import "./UserDB.sol";
 import "./OwnerDB.sol";
 import "./CarrierDB.sol";
@@ -8,8 +9,13 @@ import "./CarrierDB.sol";
 contract User is Controller {
 
     mapping (bytes32 => uint) indexes;
+    mapping (bytes32 => DataHelper.UserType) userTypes;
 
     uint indexUser;
+
+    function getUserCredentials(bytes32 email) public view returns (uint, DataHelper.UserType) {
+        return (indexes[email],userTypes[email]);
+    }
 
     // Owner Methods
 
@@ -50,10 +56,6 @@ contract User is Controller {
         address ownerdb = obtainDBContract('ownerDB');
         (_email, _name, _addressLine, _certificates) = OwnerDB(ownerdb).getOwner(indexes[email]);
         return (_email, _name, _addressLine, _certificates);
-    }
-
-    function getOwnerId(bytes32 email) senderIsManager public view returns (uint ownerId) {
-        ownerId = indexes[email];
     }
 
     // Carrier Methods
