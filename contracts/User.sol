@@ -70,7 +70,7 @@ contract User is Controller {
 
         indexUser++;
         indexes[_email] = indexUser;
-        CarrierDB(carrierdb).createCarrier(_email, indexUser, _password, _name );
+        CarrierDB(carrierdb).createCarrier(_name, indexUser, _email, _password );
     }
 
     function getCarrier(bytes32 email)
@@ -82,5 +82,11 @@ contract User is Controller {
 
         (_name, _naicCode, _email) = CarrierDB(carrierdb).getCarrier(indexes[email]);
         return (_name, _naicCode, _email);
+    }
+
+    function loginCarrier(bytes32 email, bytes32 password) senderIsManager public view
+    returns (bool result) {
+        address carriedb = obtainDBContract('carrierDB');
+        result = CarrierDB(carriedb).login(email, password);
     }
 }
