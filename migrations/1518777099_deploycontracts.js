@@ -8,7 +8,6 @@ var Permission = artifacts.require("./Permission.sol");
 var PermissionDB = artifacts.require("./PermissionDB.sol");
 var DateTime = artifacts.require("./DateTime.sol");
 var User = artifacts.require("./User.sol");
-var UserDB = artifacts.require("./UserDB.sol");
 var OwnerDB = artifacts.require("./OwnerDB.sol");
 var Policy = artifacts.require("./Policy.sol");
 var PolicyDB = artifacts.require("./PolicyDB.sol");
@@ -29,7 +28,6 @@ module.exports = function(deployer) {
   deployer.deploy(Permission);
   deployer.deploy(PermissionDB);
   deployer.deploy(User);
-  deployer.deploy(UserDB);
   deployer.deploy(OwnerDB);
   deployer.deploy(Policy);
   deployer.deploy(PolicyDB);

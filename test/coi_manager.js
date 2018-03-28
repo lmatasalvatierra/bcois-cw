@@ -5,8 +5,7 @@ var Coi = artifacts.require("./Coi.sol");
 var Doug = artifacts.require("./Doug.sol");
 var CoiDB = artifacts.require("./CoiDB.sol");
 var User = artifacts.require("./User.sol");
-var Policy = artifacts.require("./Policy.sol")
-var UserDB = artifacts.require("./UserDB.sol");
+var Policy = artifacts.require("./Policy.sol");
 var OwnerDB = artifacts.require("./OwnerDB.sol");
 var PolicyDB = artifacts.require("./PolicyDB.sol");
 var CarrierDB = artifacts.require("./CarrierDB.sol");
@@ -28,7 +27,6 @@ contract('COIManager', function(accounts) {
     perm = await Permission.deployed();
     permdb = await PermissionDB.deployed();
     user = await User.deployed();
-    userdb = await UserDB.deployed();
     ownerdb = await OwnerDB.deployed();
     policy = await Policy.deployed();
     policydb = await PolicyDB.deployed();
@@ -40,7 +38,6 @@ contract('COIManager', function(accounts) {
     await doug.addContract("perm", perm.address);
     await doug.addContract("permDB", permdb.address);
     await doug.addContract("user", user.address);
-    await doug.addContract("userDB", userdb.address);
     await doug.addContract("ownerDB", ownerdb.address);
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
