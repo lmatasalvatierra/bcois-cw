@@ -12,7 +12,8 @@ contract PolicyDB is Database {
         uint _ownerId,
         bytes32 _name,
         uint _effectiveDate,
-        uint _expirationDate
+        uint _expirationDate,
+        uint _carrierId
     )
         senderIsController("policy") public returns (uint id)
     {
@@ -24,14 +25,15 @@ contract PolicyDB is Database {
         policy.status = DataHelper.Stage.Active;
         policy.effectiveDate = _effectiveDate;
         policy.expirationDate = _expirationDate;
+        policy.carrierId = _carrierId;
         return numPolicies;
     }
 
     function getPolicy(uint _policyNumber) senderIsController("policy") public view
-        returns(uint, uint, bytes32, DataHelper.Stage, uint, uint)
+        returns(uint, uint, bytes32, DataHelper.Stage, uint, uint, uint)
     {
         DataHelper.Policy storage policy = policies[_policyNumber];
-        return (policy.policyNumber, policy.ownerId, policy.name, policy.status, policy.effectiveDate, policy.expirationDate);
+        return (policy.policyNumber, policy.ownerId, policy.name, policy.status, policy.effectiveDate, policy.expirationDate, policy.carrierId);
     }
 
     function updateStatus(uint policyNumber, DataHelper.Stage _status) senderIsController("policy") public {
