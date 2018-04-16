@@ -44,14 +44,22 @@ contract('COIManager', function(accounts) {
     await doug.addContract("carrierDB", carrierdb.address);
 
     await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"), web3.fromAscii("CNA"));
+    await manager.createOwner(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
   });
 
-  describe("Carrier", function() {
-    it("should get correctly", async function() {
-      let values = await manager.getCarrier(web3.fromAscii("TestCreation@Carrier.com"));
-      expect(web3.toAscii(values[2])).to.include("TestCreation@Carrier.com");
-      expect(values[1].toNumber()).to.equal(1);
-      expect(web3.toAscii(values[0])).to.include("CNA");
+  describe("Owner", function() {
+    it("should login correctly", async function() {
+      let result = await manager.login(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"));
+      expect(result.toNumber()).to.equal(0);
     });
   });
+  
+  describe("Carrier", function() {
+    it("should login correctly", async function() {
+      let result = await manager.login(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"));
+      expect(result.toNumber()).to.equal(1);
+    });
+  });
+
+
 });
