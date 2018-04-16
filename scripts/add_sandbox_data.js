@@ -2,6 +2,8 @@ var COIManager = artifacts.require("./COIManager.sol");
 
 module.exports = async function(callback) {
     var manager = await COIManager.deployed();
+    let timeNow = Math.floor(Date.now() / 1000);
+    let oneYearFromNow = timeNow + 31556926;
     try {
         await manager.createOwner(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
         await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"), web3.fromAscii("CNA"));
