@@ -16,7 +16,6 @@ contract UserDB is Database {
     function login(bytes32 email, bytes32 password)
     public
     view
-    senderIsController("user")
     onlyExistingUser(email)
     returns (bool) {
         return (users[email] == password);
