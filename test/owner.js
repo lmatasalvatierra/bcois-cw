@@ -59,11 +59,6 @@ contract('COIManager', function(accounts) {
       let values = await manager.getOwner(web3.fromAscii("Test@Owner.com"));
       expect(values[3][0].toNumber()).to.equal(252342);
     })
-
-    it("should login correctly", async function() {
-      let result = await manager.loginOwner(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"));
-      expect(result).to.equal(true);
-    });
   });
 
 });
