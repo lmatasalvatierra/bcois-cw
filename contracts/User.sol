@@ -17,6 +17,25 @@ contract User is Controller {
         return (indexes[email],userTypes[email]);
     }
 
+    function login(bytes32 email, bytes32 password) senderIsManager public view
+    returns (DataHelper.UserType result) {
+        bool userExists;
+        DataHelper.UserType user;
+        (, user) = getUserCredentials(email);
+        if(user == DataHelper.UserType.Owner){
+            address ownerdb = obtainDBContract('ownerDB');
+            userExists = OwnerDB(ownerdb).login(email, password);
+            assert(userExists);
+            return user;
+        } else if(user == DataHelper.UserType.Carrier){
+            address carrierdb = obtainDBContract('carrierDB');
+            userExists = CarrierDB(carrierdb).login(email, password);
+            assert(userExists);
+            return user;
+        }
+        return;
+    }
+
     // Owner Methods
 
     function createOwner(
@@ -32,13 +51,8 @@ contract User is Controller {
 
         indexUser++;
         indexes[_email] = indexUser;
+        userTypes[_email] = DataHelper.UserType.Owner;
         OwnerDB(ownerdb).createOwner(indexUser, _email, _password, _name, _addressLine);
-    }
-
-    function loginOwner(bytes32 email, bytes32 password) senderIsManager public view
-    returns (bool result) {
-        address ownerdb = obtainDBContract('ownerDB');
-        result = OwnerDB(ownerdb).login(email, password);
     }
 
     function addCertificate(bytes32 email, uint coi) senderIsManager public {
@@ -72,6 +86,7 @@ contract User is Controller {
 
         indexUser++;
         indexes[_email] = indexUser;
+        userTypes[_email] = DataHelper.UserType.Carrier;
         CarrierDB(carrierdb).createCarrier(_name, indexUser, _email, _password );
     }
 
@@ -84,11 +99,5 @@ contract User is Controller {
 
         (_name, _naicCode, _email) = CarrierDB(carrierdb).getCarrier(indexes[email]);
         return (_name, _naicCode, _email);
-    }
-
-    function loginCarrier(bytes32 email, bytes32 password) senderIsManager public view
-    returns (bool result) {
-        address carriedb = obtainDBContract('carrierDB');
-        result = CarrierDB(carriedb).login(email, password);
     }
 }

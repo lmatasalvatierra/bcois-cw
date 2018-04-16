@@ -126,6 +126,12 @@ contract COIManager is DougEnabled {
     }
 
     // User Methods
+    function login(bytes32 email, bytes32 password) public view
+    returns (DataHelper.UserType result) {
+        address user = obtainControllerContract("user");
+        result = User(user).login(email, password);
+        return result;
+    }
 
     function createOwner(
         bytes32 _email,
@@ -138,12 +144,6 @@ contract COIManager is DougEnabled {
         address user = obtainControllerContract("user");
 
         User(user).createOwner(_email, _password, _name, _addressLine);
-    }
-
-    function loginOwner(bytes32 email, bytes32 password) public view
-    returns (bool result) {
-        address user = obtainControllerContract("user");
-        result = User(user).loginOwner(email, password);
     }
 
     function addCertificate(bytes32 email, uint id) public {
@@ -182,12 +182,6 @@ contract COIManager is DougEnabled {
 
         (_name, _naicCode, _email) = User(user).getCarrier(email);
         return (_name, _naicCode, _email);
-    }
-
-    function loginCarrier(bytes32 email, bytes32 password) public view
-    returns (bool result) {
-        address user = obtainControllerContract("user");
-        result = User(user).loginCarrier(email, password);
     }
 
     // Helper Methods
