@@ -1,26 +1,31 @@
-var Permission = artifacts.require("./Permission.sol");
-var PermissionDB = artifacts.require("./PermissionDB.sol");
 var COIManager = artifacts.require("./COIManager.sol");
-var Carrier = artifacts.require("./Carrier.sol");
+var Coi = artifacts.require("./Coi.sol");
 var Doug = artifacts.require("./Doug.sol");
+var CoiDB = artifacts.require("./CoiDB.sol");
+var User = artifacts.require("./User.sol");
+var Policy = artifacts.require("./Policy.sol");
+var OwnerDB = artifacts.require("./OwnerDB.sol");
+var PolicyDB = artifacts.require("./PolicyDB.sol");
 var CarrierDB = artifacts.require("./CarrierDB.sol");
 
 module.exports = async function(callback) {
-  var doug = await Doug.deployed();
-  console.log("Doug: " + doug.address);
-  var manager = await COIManager.deployed();
-  console.log("COIManager: " + manager.address);
-  var carrier = await Carrier.deployed();
-  console.log("Carrier: " + carrier.address);
-  var carrierdb = await CarrierDB.deployed();
-  console.log("CarrierDB: " + carrierdb.address);
-  var perm = await Permission.deployed();
-  console.log("Permission: " + perm.address);
-  var permdb = await PermissionDB.deployed();
-  console.log("PermissionDB: " + permdb.address);
-  await doug.addContract("coiManager", manager.address);
-  await doug.addContract("carrier", carrier.address);
-  await doug.addContract("carrierDB", carrierdb.address);
-  await doug.addContract("perm", perm.address);
-  await doug.addContract("permDB", permdb.address);
+    var doug = await Doug.deployed();
+    var manager = await COIManager.deployed();
+    var coi = await Coi.deployed();
+    var coiDb = await CoiDB.deployed();
+    var user = await User.deployed();
+    var ownerdb = await OwnerDB.deployed();
+    var policy = await Policy.deployed();
+    var policydb = await PolicyDB.deployed();
+    var carrierdb = await CarrierDB.deployed();
+
+    await doug.addContract("coiManager", manager.address);
+    await doug.addContract("coi", coi.address);
+    await doug.addContract("coiDB", coiDb.address);
+    await doug.addContract("user", user.address);
+    await doug.addContract("ownerDB", ownerdb.address);
+    await doug.addContract("policy", policy.address);
+    await doug.addContract("policyDB", policydb.address);
+    await doug.addContract("carrierDB", carrierdb.address);
 };
+ 
