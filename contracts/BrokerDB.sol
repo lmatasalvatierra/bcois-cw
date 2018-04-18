@@ -4,7 +4,7 @@ import "./UserDB.sol";
 
 contract BrokerDB is UserDB {
     struct Broker {
-        uint carrierId;
+        uint brokerId;
         bytes32 name;
         bytes32 email;
         bytes32 contactPhone;
@@ -14,7 +14,7 @@ contract BrokerDB is UserDB {
     mapping (uint => Broker) brokers;
 
     function createBroker(
-        uint _carrierId,
+        uint _brokerId,
         bytes32 _email,
         bytes32 _password,
         bytes32 _name,
@@ -25,10 +25,10 @@ contract BrokerDB is UserDB {
     public
     {
         users[_email] = _password;
-        Broker storage broker = brokers[_carrierId];
+        Broker storage broker = brokers[_brokerId];
         broker.name = _name;
         broker.email = _email;
-        broker.carrierId = _carrierId;
+        broker.brokerId = _brokerId;
         broker.contactPhone = _contactPhone;
         broker.addressLine = _addressLine;
     }
