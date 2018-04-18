@@ -33,6 +33,11 @@ contract User is Controller {
             userExists = CarrierDB(carrierdb).login(email, password);
             assert(userExists);
             return user;
+        } else if(user == DataHelper.UserType.Broker){
+            address carrierdb = obtainDBContract('brokerDB');
+            userExists = BrokerDB(carrierdb).login(email, password);
+            assert(userExists);
+            return user;
         }
         return;
     }
