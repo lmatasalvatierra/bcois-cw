@@ -184,6 +184,31 @@ contract COIManager is DougEnabled {
         return (_name, _naicCode, _email);
     }
 
+    function createBroker(
+        bytes32 _email,
+        bytes32 _password,
+        bytes32 _name,
+        bytes32 _contactPhone,
+        bytes32 _addressLine
+    )
+    public
+    {
+        address user = obtainControllerContract("user");
+
+        User(user).createBroker(_email, _password, _name, _contactPhone, _addressLine);
+    }
+
+    function getBroker(bytes32 email)
+    public
+    view
+    returns (bytes32 _name, bytes32 _email, bytes32 _contactPhone , bytes32 _addressLine)
+    {
+        address user = obtainControllerContract("user");
+
+        (_name, _email, _contactPhone, _addressLine) = User(user).getBroker(email);
+        return (_name, _email, _contactPhone, _addressLine);
+    }
+
     // Helper Methods
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {
