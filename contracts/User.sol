@@ -5,6 +5,7 @@ import "./DataHelper.sol";
 import "./UserDB.sol";
 import "./OwnerDB.sol";
 import "./CarrierDB.sol";
+import "./BrokerDB.sol";
 
 contract User is Controller {
 
@@ -99,5 +100,36 @@ contract User is Controller {
 
         (_name, _naicCode, _email) = CarrierDB(carrierdb).getCarrier(indexes[email]);
         return (_name, _naicCode, _email);
+    }
+
+    // Broker Methods
+
+    function createBroker(
+        bytes32 _email,
+        bytes32 _password,
+        bytes32 _name,
+        bytes32 _contactPhone,
+        bytes32 _addressLine
+    )
+    senderIsManager
+    public
+    {
+        address brokerdb = obtainDBContract('brokerDB');
+
+        indexUser++;
+        indexes[_email] = indexUser;
+        userTypes[_email] = DataHelper.UserType.Broker;
+        BrokerDB(brokerdb).createBroker(indexUser, _email, _password, _name, _contactPhone, _addressLine );
+    }
+
+    function getBroker(bytes32 email)
+    public
+    view
+    returns (bytes32 _name, bytes32 _email, bytes32 _contactPhone , bytes32 _addressLine)
+    {
+        address brokerdb = obtainDBContract('brokerDB');
+
+        (_name, _email, _contactPhone, _addressLine) = BrokerDB(brokerdb).getBroker(indexes[email]);
+        return (_name, _email, _contactPhone, _addressLine);
     }
 }
