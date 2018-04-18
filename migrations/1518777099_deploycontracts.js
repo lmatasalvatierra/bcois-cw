@@ -12,6 +12,7 @@ var OwnerDB = artifacts.require("./OwnerDB.sol");
 var Policy = artifacts.require("./Policy.sol");
 var PolicyDB = artifacts.require("./PolicyDB.sol");
 var CarrierDB = artifacts.require("./CarrierDB.sol");
+var BrokerDB = artifacts.require("./BrokerDB.sol");
 
 
 
@@ -32,4 +33,5 @@ module.exports = function(deployer) {
   deployer.deploy(Policy);
   deployer.deploy(PolicyDB);
   deployer.deploy(CarrierDB);
+  deployer.deploy(BrokerDB);
 };
