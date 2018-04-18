@@ -1,12 +1,12 @@
-### Backend App for Umblocks
+# Backend App for Umblocks
 
 ## Getting Started
 
-# Prerequisites
+### Prerequisites
 
 You need to have installed ganache-cli and truffle framework to test this project
 
-# Setup
+### Setup
 
 Start a testing RPC using this command:
 
@@ -28,7 +28,7 @@ truffle exec scripts/initialregister.js
 truffle exec scripts/add_sandbox_data.js
 ```
 
-# Testing
+### Testing
 
 Once you have started the network with ganache-cli, you can execute the tests using the following command:
 
