@@ -46,31 +46,16 @@ contract('COIManager', function(accounts) {
     await doug.addContract("carrierDB", carrierdb.address);
     await doug.addContract("brokerDB", brokerdb.address);
 
-    await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"), web3.fromAscii("CNA"));
-    await manager.createOwner(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
     await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), web3.fromAscii("admin"), web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
   });
 
-  describe("Owner", function() {
-    it("should login correctly", async function() {
-      let result = await manager.login(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"));
-      expect(result.toNumber()).to.equal(0);
-    });
-  });
-  
-  describe("Carrier", function() {
-    it("should login correctly", async function() {
-      let result = await manager.login(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"));
-      expect(result.toNumber()).to.equal(1);
-    });
-  });
-
   describe("Broker", function() {
-    it("should login correctly", async function() {
-      let result = await manager.login(web3.fromAscii("TestCreation@Broker.com"), web3.fromAscii("admin"));
-      expect(result.toNumber()).to.equal(2);
+    it("should get correctly", async function() {
+      let values = await manager.getBroker(web3.fromAscii("TestCreation@Broker.com"));
+      expect(web3.toAscii(values[0])).to.include("Coverwallet");
+      expect(web3.toAscii(values[1])).to.include("TestCreation@Broker.com");
+      expect(web3.toAscii(values[2])).to.include("2128677475");
+      expect(web3.toAscii(values[3])).to.include("Alcala 21");
     });
   });
-
-
 });
