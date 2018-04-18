@@ -9,10 +9,11 @@ var Policy = artifacts.require("./Policy.sol");
 var OwnerDB = artifacts.require("./OwnerDB.sol");
 var PolicyDB = artifacts.require("./PolicyDB.sol");
 var CarrierDB = artifacts.require("./CarrierDB.sol");
+var BrokerDB = artifacts.require("./BrokerDB.sol");
 var expect = require("chai").expect;
 
 contract('COIManager', function(accounts) {
-  var doug, manager, coi, coiDb, perm, permdb, user, ownerdb, policy, policydb, carriedb;
+  var doug, manager, coi, coiDb, perm, permdb, user, ownerdb, policy, policydb, carriedb, brokerdb;
   let timeNow = Math.floor(Date.now() / 1000);
   let oneYearFromNow = timeNow + 31556926;
   let agency = accounts[1];
@@ -31,6 +32,7 @@ contract('COIManager', function(accounts) {
     policy = await Policy.new();
     policydb = await PolicyDB.new();
     carrierdb = await CarrierDB.new();
+    brokerdb = await BrokerDB.new();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -42,9 +44,11 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
+    await doug.addContract("brokerDB", brokerdb.address);
 
     await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"), web3.fromAscii("CNA"));
     await manager.createOwner(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+    await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), web3.fromAscii("admin"), web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
   });
 
   describe("Owner", function() {
@@ -58,6 +62,13 @@ contract('COIManager', function(accounts) {
     it("should login correctly", async function() {
       let result = await manager.login(web3.fromAscii("TestCreation@Carrier.com"), web3.fromAscii("admin"));
       expect(result.toNumber()).to.equal(1);
+    });
+  });
+
+  describe("Broker", function() {
+    it("should login correctly", async function() {
+      let result = await manager.login(web3.fromAscii("TestCreation@Broker.com"), web3.fromAscii("admin"));
+      expect(result.toNumber()).to.equal(2);
     });
   });
 
