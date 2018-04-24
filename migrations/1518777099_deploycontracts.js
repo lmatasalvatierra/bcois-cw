@@ -13,6 +13,7 @@ var Policy = artifacts.require("./Policy.sol");
 var PolicyDB = artifacts.require("./PolicyDB.sol");
 var CarrierDB = artifacts.require("./CarrierDB.sol");
 var BrokerDB = artifacts.require("./BrokerDB.sol");
+var stringsUtil = artifacts.require("./stringsUtil.sol")
 
 
 
@@ -25,6 +26,8 @@ module.exports = function(deployer) {
   deployer.link(DateTime, PolicyDB);
   deployer.deploy(CoiDB);
   deployer.deploy(Coi);
+  deployer.deploy(stringsUtil);
+  deployer.link(stringsUtil, COIManager);
   deployer.deploy(COIManager);
   deployer.deploy(Permission);
   deployer.deploy(PermissionDB);
