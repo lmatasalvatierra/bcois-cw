@@ -4,11 +4,11 @@ var expect = require("chai").expect;
 
 contract('DougEnabled', function(accounts) {
   let doug_enabled;
-  let testing_account = accounts[8];
-  let hacker_account = accounts[7];
+  let testing_account = accounts[0];
+  let hacker_account = accounts[1];
 
   beforeEach('setup doug_enabled object', async function () {
-    doug_enabled = await DougEnabled.deployed();
+    doug_enabled = await DougEnabled.new();
   });
 
   describe("setDougAddress", function() {

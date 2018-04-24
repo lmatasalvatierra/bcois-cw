@@ -1,3 +1,4 @@
+const web3Instance = require('web3')
 var Permission = artifacts.require("./Permission.sol");
 var PermissionDB = artifacts.require("./PermissionDB.sol");
 var COIManager = artifacts.require("./COIManager.sol");
@@ -43,20 +44,20 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
 
-    await manager.createOwner(web3.fromAscii("Test@Owner.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+    await manager.createOwner(web3Instance.utils.utf8ToHex("Test@Owner.com"), "admin", web3Instance.utils.utf8ToHex("cosa"), web3Instance.utils.utf8ToHex("Alcala 21"));
   });
 
   describe("Owner", function() {
     it("should be created correctly", async function() {
-      let values = await manager.getOwner(web3.fromAscii("Test@Owner.com"));
-      expect(web3.toAscii(values[0])).to.include("Test@Owner.com");
-      expect(web3.toAscii(values[1])).to.include("cosa");
-      expect(web3.toAscii(values[2])).to.include("Alcala 21");
+      let values = await manager.getOwner(web3Instance.utils.utf8ToHex("Test@Owner.com"));
+      expect(web3Instance.utils.hexToUtf8(values[0])).to.include("Test@Owner.com");
+      expect(web3Instance.utils.hexToUtf8(values[1])).to.include("cosa");
+      expect(web3Instance.utils.hexToUtf8(values[2])).to.include("Alcala 21");
     });
 
     it("should have added a certificate to Owner", async function() {
-      await manager.addCertificate(web3.fromAscii("Test@Owner.com"), 252342);
-      let values = await manager.getOwner(web3.fromAscii("Test@Owner.com"));
+      await manager.addCertificate(web3Instance.utils.utf8ToHex("Test@Owner.com"), 252342);
+      let values = await manager.getOwner(web3Instance.utils.utf8ToHex("Test@Owner.com"));
       expect(values[3][0].toNumber()).to.equal(252342);
     })
   });
