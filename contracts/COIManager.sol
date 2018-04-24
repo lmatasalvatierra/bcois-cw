@@ -7,6 +7,7 @@ import "./Permission.sol";
 import "./User.sol";
 import "./Policy.sol";
 import "./strings.sol";
+import "./stringsUtil.sol";
 
 contract COIManager is DougEnabled {
     using strings for *;
@@ -70,22 +71,18 @@ contract COIManager is DougEnabled {
         return result;
     }
 
-    function getPolicy(
-     uint policyNumber
-    )
+    function getPolicy(uint policyNumber)
     public view
-    returns(
-     uint _policyNumber,
-     uint _ownerId,
-     bytes32 _name,
-     DataHelper.Stage _status,
-     uint _effectiveDate,
-     uint _expirationDate,
-     uint _carrierId
-    )
+    returns(string policyString)
     {
         address policy = obtainControllerContract("policy");
-
+        uint _policyNumber;
+        uint _ownerId;
+        bytes32 _name;
+        DataHelper.Stage _status;
+        uint _effectiveDate;
+        uint _expirationDate;
+        uint _carrierId;
         (_policyNumber,
          _ownerId,
          _name,
@@ -94,7 +91,15 @@ contract COIManager is DougEnabled {
          _expirationDate,
          _carrierId
          ) = Policy(policy).getPolicy(policyNumber);
-         return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate, _carrierId);
+        var parts = new strings.slice[](7);
+        parts[0] = StringUtil.uintToString(_policyNumber).toSlice();
+        parts[1] = StringUtil.uintToString(_ownerId).toSlice();
+        parts[2] = StringUtil.bytes32ToString(_name).toSlice();
+        parts[3] = StringUtil.uintToString(uint(_status)).toSlice();
+        parts[4] = StringUtil.uintToString(_effectiveDate).toSlice();
+        parts[5] = StringUtil.uintToString(_expirationDate).toSlice();
+        parts[6] = StringUtil.uintToString(_carrierId).toSlice();
+        policyString = ";".toSlice().join(parts);
     }
 
     function getPolicyStatus(uint _policyNumber) public view returns (DataHelper.Stage _status) {
