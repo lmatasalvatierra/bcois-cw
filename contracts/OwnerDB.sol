@@ -17,13 +17,13 @@ contract OwnerDB is UserDB{
     function createOwner(
         uint index,
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _addressLine
     )
     public
     {
-        users[_email] = _password;
+        users[_email] = keccak256(_password);
         Owner storage owner = owners[index];
         owner.email = _email;
         owner.name = _name;

@@ -46,7 +46,7 @@ contract('COIManager', function(accounts) {
     await doug.addContract("carrierDB", carrierdb.address);
     await doug.addContract("brokerDB", brokerdb.address);
 
-    await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), web3.fromAscii("admin"), web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
+    await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), "admin", web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
   });
 
   describe("Broker", function() {

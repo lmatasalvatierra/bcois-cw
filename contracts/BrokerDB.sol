@@ -16,7 +16,7 @@ contract BrokerDB is UserDB {
     function createBroker(
         uint _brokerId,
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _contactPhone,
         bytes32 _addressLine
@@ -24,7 +24,7 @@ contract BrokerDB is UserDB {
     senderIsController("user")
     public
     {
-        users[_email] = _password;
+        users[_email] = keccak256(_password);
         Broker storage broker = brokers[_brokerId];
         broker.name = _name;
         broker.email = _email;

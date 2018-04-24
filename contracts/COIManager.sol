@@ -126,16 +126,16 @@ contract COIManager is DougEnabled {
     }
 
     // User Methods
-    function login(bytes32 email, bytes32 password) public view
+    function login(bytes32 email, bytes32 _passwordHash) public view
     returns (DataHelper.UserType result) {
         address user = obtainControllerContract("user");
-        result = User(user).login(email, password);
+        result = User(user).login(email, _passwordHash);
         return result;
     }
 
     function createOwner(
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _addressLine
     )
@@ -163,7 +163,7 @@ contract COIManager is DougEnabled {
 
     function createCarrier(
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name
     )
     public
@@ -186,7 +186,7 @@ contract COIManager is DougEnabled {
 
     function createBroker(
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _contactPhone,
         bytes32 _addressLine

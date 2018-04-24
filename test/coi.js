@@ -43,7 +43,7 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
 
-    await manager.createOwner(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("admin"), web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+    await manager.createOwner(web3.fromAscii("CertificateTest@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
     await manager.createCoi("CertificateTest@cosa.com");
   });
 

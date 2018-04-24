@@ -13,11 +13,11 @@ contract UserDB is Database {
         _;
     }
 
-    function login(bytes32 email, bytes32 password)
+    function login(bytes32 email, bytes32 _passwordHash)
     public
     view
     onlyExistingUser(email)
     returns (bool) {
-        return (users[email] == password);
+        return (users[email] == _passwordHash);
     }
 }
