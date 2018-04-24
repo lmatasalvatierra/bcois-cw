@@ -1,6 +1,6 @@
 pragma solidity ^0.4.4;
 
-library StringUtil {
+library stringsUtil {
     /// @dev Converts an unsigned integert to its string representation.
     /// @param v The number to be converted.
     function uintToBytes(uint v) pure internal returns (bytes32 ret) {
