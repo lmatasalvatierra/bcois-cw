@@ -50,13 +50,14 @@ contract('COIManager', function(accounts) {
 
   describe("Policy", function() {
     it("should get a Policy", async function() {
-      let values = await manager.getPolicy(1);
-      expect(values[0].toNumber()).to.equal(1);
-      expect(values[1].toNumber()).to.equal(1);
-      expect(web3.toAscii(values[2])).to.include("Workers Comp");
-      expect(values[3].toNumber()).to.equal(0);
-      expect(values[4].toNumber()).to.equal(timeNow);
-      expect(values[5].toNumber()).to.equal(oneYearFromNow);
+      let result = await manager.getPolicy(1);
+      const values = result.split(';')
+      expect(parseInt(values[0])).to.equal(1);
+      expect(parseInt(values[1])).to.equal(1);
+      expect(values[2]).to.include("Workers Comp");
+      expect(parseInt(values[3])).to.equal(0);
+      expect(parseInt(values[4])).to.equal(timeNow);
+      expect(parseInt(values[5])).to.equal(oneYearFromNow);
     });
 
     it("should cancel a Policy", async function() {
