@@ -6,8 +6,10 @@ import "./DougEnabled.sol";
 import "./Permission.sol";
 import "./User.sol";
 import "./Policy.sol";
+import "./strings.sol";
 
 contract COIManager is DougEnabled {
+    using strings for *;
     address owner;
 
     function COIManager() public {
