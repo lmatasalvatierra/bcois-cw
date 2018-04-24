@@ -23,7 +23,7 @@ contract OwnerDB is UserDB{
     )
     public
     {
-        users[_email] = _password;
+        users[_email] = keccak256(_password);
         Owner storage owner = owners[index];
         owner.email = _email;
         owner.name = _name;

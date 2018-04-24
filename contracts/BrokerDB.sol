@@ -24,7 +24,7 @@ contract BrokerDB is UserDB {
     senderIsController("user")
     public
     {
-        users[_email] = _password;
+        users[_email] = keccak256(_password);
         Broker storage broker = brokers[_brokerId];
         broker.name = _name;
         broker.email = _email;

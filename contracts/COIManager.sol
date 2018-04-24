@@ -126,10 +126,10 @@ contract COIManager is DougEnabled {
     }
 
     // User Methods
-    function login(bytes32 email, bytes32 password) public view
+    function login(bytes32 email, bytes32 _passwordHash) public view
     returns (DataHelper.UserType result) {
         address user = obtainControllerContract("user");
-        result = User(user).login(email, password);
+        result = User(user).login(email, _passwordHash);
         return result;
     }
 

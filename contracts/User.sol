@@ -18,24 +18,23 @@ contract User is Controller {
         return (indexes[email],userTypes[email]);
     }
 
-    function login(bytes32 email, bytes32 password) senderIsManager public view
+    function login(bytes32 email, bytes32 _passwordHash) senderIsManager public view
     returns (DataHelper.UserType result) {
         bool userExists;
         DataHelper.UserType user;
         (, user) = getUserCredentials(email);
         if(user == DataHelper.UserType.Owner){
             address ownerdb = obtainDBContract('ownerDB');
-            userExists = OwnerDB(ownerdb).login(email, password);
-            assert(userExists);
+            userExists = OwnerDB(ownerdb).login(email, _passwordHash);
             return user;
         } else if(user == DataHelper.UserType.Carrier){
             address carrierdb = obtainDBContract('carrierDB');
-            userExists = CarrierDB(carrierdb).login(email, password);
+            userExists = CarrierDB(carrierdb).login(email, _passwordHash);
             assert(userExists);
             return user;
         } else if(user == DataHelper.UserType.Broker){
             address brokerdb = obtainDBContract('brokerDB');
-            userExists = BrokerDB(brokerdb).login(email, password);
+            userExists = BrokerDB(brokerdb).login(email, _passwordHash);
             assert(userExists);
             return user;
         }

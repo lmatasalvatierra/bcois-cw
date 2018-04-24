@@ -20,7 +20,7 @@ contract CarrierDB is UserDB {
     senderIsController("user")
     public
     {
-        users[_email] = _password;
+        users[_email] = keccak256(_password);
         Carrier storage carrier = carriers[_naicCode];
         carrier.name = _name;
         carrier.email = _email;
