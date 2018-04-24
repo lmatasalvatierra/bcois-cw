@@ -17,7 +17,7 @@ contract OwnerDB is UserDB{
     function createOwner(
         uint index,
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _addressLine
     )

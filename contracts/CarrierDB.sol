@@ -15,7 +15,7 @@ contract CarrierDB is UserDB {
         bytes32 _name,
         uint _naicCode,
         bytes32 _email,
-        bytes32 _password
+        string _password
     )
     senderIsController("user")
     public

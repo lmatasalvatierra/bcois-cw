@@ -135,7 +135,7 @@ contract COIManager is DougEnabled {
 
     function createOwner(
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _addressLine
     )
@@ -163,7 +163,7 @@ contract COIManager is DougEnabled {
 
     function createCarrier(
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name
     )
     public
@@ -186,7 +186,7 @@ contract COIManager is DougEnabled {
 
     function createBroker(
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _contactPhone,
         bytes32 _addressLine

@@ -45,7 +45,7 @@ contract User is Controller {
 
     function createOwner(
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _addressLine
     )
@@ -81,7 +81,7 @@ contract User is Controller {
 
     function createCarrier(
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name
     )
     senderIsManager
@@ -110,7 +110,7 @@ contract User is Controller {
 
     function createBroker(
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _contactPhone,
         bytes32 _addressLine

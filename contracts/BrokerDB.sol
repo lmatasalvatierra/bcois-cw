@@ -16,7 +16,7 @@ contract BrokerDB is UserDB {
     function createBroker(
         uint _brokerId,
         bytes32 _email,
-        bytes32 _password,
+        string _password,
         bytes32 _name,
         bytes32 _contactPhone,
         bytes32 _addressLine
