@@ -49,10 +49,21 @@ contract COIManager is DougEnabled {
         Coi(addressCoi).addPolicy(certificateNumber, policyNumber);
     }
 
-    function getPoliciesOfCoi(uint certificateNumber) public view returns (uint[10] policies) {
+    function getPoliciesOfCoi(uint certificateNumber) public view returns (string coiString) {
         address addressCoi = obtainControllerContract("coi");
-
-        policies = Coi(addressCoi).getPoliciesOfCoi(certificateNumber);
+        uint[5] memory policies = Coi(addressCoi).getPoliciesOfCoi(certificateNumber);
+        var objects = new strings.slice[](10);
+        for(uint i = 0; i < policies.length; i++) {
+            if(policies[i] != 0){
+                objects[i*2] = getPolicy(policies[i]).toSlice();
+                if(policies[i+1] != 0){
+                    objects[(i*2)+1] = ",".toSlice();
+                }
+            } else {
+                break;
+            }
+        }
+        coiString = wrapObjectInArray("".toSlice().join(objects));
     }
 
     // Policy Methods
@@ -131,6 +142,14 @@ contract COIManager is DougEnabled {
         parts[0] = "{".toSlice();
         parts[1] = object.toSlice();
         parts[2] = "}".toSlice();
+        result = "".toSlice().join(parts);
+    }
+
+    function wrapObjectInArray(string object) internal pure returns (string result) {
+        var parts = new strings.slice[](3);
+        parts[0] = "[".toSlice();
+        parts[1] = object.toSlice();
+        parts[2] = "]".toSlice();
         result = "".toSlice().join(parts);
     }
 
