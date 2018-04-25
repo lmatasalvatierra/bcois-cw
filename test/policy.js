@@ -60,6 +60,14 @@ contract('COIManager', function(accounts) {
       expect(parseInt(policy.expiration_date)).to.equal(oneYearFromNow);
     });
 
+    it("should reject call of getting a policy", async function() {
+      try {
+        let result = await manager.getPolicy(2);
+      } catch (err) {
+        expect(err.message).to.include("VM Exception while processing transaction: revert");
+      }
+    });
+
     it("should cancel a Policy", async function() {
       await manager.cancelPolicy(1);
       let isCanceled = await manager.getPolicyStatus(1);
