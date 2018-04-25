@@ -6,8 +6,11 @@ import "./DougEnabled.sol";
 import "./Permission.sol";
 import "./User.sol";
 import "./Policy.sol";
+import "./strings.sol";
+import "./stringsUtil.sol";
 
 contract COIManager is DougEnabled {
+    using strings for *;
     address owner;
 
     function COIManager() public {
@@ -68,22 +71,18 @@ contract COIManager is DougEnabled {
         return result;
     }
 
-    function getPolicy(
-     uint policyNumber
-    )
+    function getPolicy(uint policyNumber)
     public view
-    returns(
-     uint _policyNumber,
-     uint _ownerId,
-     bytes32 _name,
-     DataHelper.Stage _status,
-     uint _effectiveDate,
-     uint _expirationDate,
-     uint _carrierId
-    )
+    returns(string policyString)
     {
         address policy = obtainControllerContract("policy");
-
+        uint _policyNumber;
+        uint _ownerId;
+        bytes32 _name;
+        DataHelper.Stage _status;
+        uint _effectiveDate;
+        uint _expirationDate;
+        uint _carrierId;
         (_policyNumber,
          _ownerId,
          _name,
@@ -92,7 +91,47 @@ contract COIManager is DougEnabled {
          _expirationDate,
          _carrierId
          ) = Policy(policy).getPolicy(policyNumber);
-         return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate, _carrierId);
+        var items = new strings.slice[](7);
+        items[0] = itemJson("policy_number", stringsUtil.uintToString(_policyNumber), false);
+        items[1] = itemJson("owner_id", stringsUtil.uintToString(_ownerId), false);
+        items[2] = itemJson("name",stringsUtil.bytes32ToString(_name), false);
+        items[3] = itemJson("status",stringsUtil.uintToString(uint(_status)), false);
+        items[4] = itemJson("effective_date",stringsUtil.uintToString(_effectiveDate), false);
+        items[5] = itemJson("expiration_date",stringsUtil.uintToString(_expirationDate), false);
+        items[6] = itemJson("carrierId",stringsUtil.uintToString(_carrierId), true);
+        policyString = wrapJsonObject("".toSlice().join(items));
+    }
+
+    function itemJson(
+        string key,
+        string value,
+        bool last
+    )
+    internal pure
+    returns (strings.slice itemFinal)
+    {
+        var item = new strings.slice[](8);
+        item[0] = '"'.toSlice();
+        item[1] = key.toSlice();
+        item[2] = '"'.toSlice();
+        item[3] = ":".toSlice();
+        item[4] = '"'.toSlice();
+        item[5] = value.toSlice();
+        item[6] = '"'.toSlice();
+        if(!last) {
+            item[7] = ",".toSlice();
+        } else {
+            item[7] = "".toSlice();
+        }
+        itemFinal = "".toSlice().join(item).toSlice();
+    }
+
+    function wrapJsonObject(string object) internal pure returns (string result) {
+        var parts = new strings.slice[](3);
+        parts[0] = "{".toSlice();
+        parts[1] = object.toSlice();
+        parts[2] = "}".toSlice();
+        result = "".toSlice().join(parts);
     }
 
     function getPolicyStatus(uint _policyNumber) public view returns (DataHelper.Stage _status) {

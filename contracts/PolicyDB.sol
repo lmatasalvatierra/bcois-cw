@@ -33,6 +33,7 @@ contract PolicyDB is Database {
         returns(uint, uint, bytes32, DataHelper.Stage, uint, uint, uint)
     {
         DataHelper.Policy storage policy = policies[_policyNumber];
+        assert(policy.ownerId != 0);
         return (policy.policyNumber, policy.ownerId, policy.name, policy.status, policy.effectiveDate, policy.expirationDate, policy.carrierId);
     }
 

@@ -50,13 +50,22 @@ contract('COIManager', function(accounts) {
 
   describe("Policy", function() {
     it("should get a Policy", async function() {
-      let values = await manager.getPolicy(1);
-      expect(values[0].toNumber()).to.equal(1);
-      expect(values[1].toNumber()).to.equal(1);
-      expect(web3.toAscii(values[2])).to.include("Workers Comp");
-      expect(values[3].toNumber()).to.equal(0);
-      expect(values[4].toNumber()).to.equal(timeNow);
-      expect(values[5].toNumber()).to.equal(oneYearFromNow);
+      let result = await manager.getPolicy(1);
+      policy = JSON.parse(result);
+      expect(parseInt(policy.owner_id)).to.equal(1);
+      expect(parseInt(policy.policy_number)).to.equal(1);
+      expect(policy.name).to.include("Workers Comp");
+      expect(parseInt(policy.status)).to.equal(0);
+      expect(parseInt(policy.effective_date)).to.equal(timeNow);
+      expect(parseInt(policy.expiration_date)).to.equal(oneYearFromNow);
+    });
+
+    it("should reject call of getting a policy", async function() {
+      try {
+        let result = await manager.getPolicy(2);
+      } catch (err) {
+        expect(err.message).to.include("VM Exception while processing transaction: revert");
+      }
     });
 
     it("should cancel a Policy", async function() {
