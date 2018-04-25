@@ -27,7 +27,7 @@ contract CoiDB is Database {
         cois[certificateNumber].numPolicies += 1;
     }
 
-    function getPoliciesOfCoi(uint certificateNumber) senderIsController("coi") public view returns (uint[10]) {
+    function getPoliciesOfCoi(uint certificateNumber) senderIsController("coi") public view returns (uint[5]) {
         return cois[certificateNumber].policyIds;
     }
 }

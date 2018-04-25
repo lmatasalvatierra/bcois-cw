@@ -25,7 +25,7 @@ contract Coi is Controller {
         CoiDB(coiDb).addPolicy(certificateNumber, policyNumber);
     }
 
-    function getPoliciesOfCoi(uint certificateNumber) senderIsManager public view returns (uint[10] policies) {
+    function getPoliciesOfCoi(uint certificateNumber) senderIsManager public view returns (uint[5] policies) {
         address coiDb = obtainDBContract("coiDB");
 
         policies = CoiDB(coiDb).getPoliciesOfCoi(certificateNumber);
