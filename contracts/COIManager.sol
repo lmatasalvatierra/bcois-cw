@@ -91,15 +91,47 @@ contract COIManager is DougEnabled {
          _expirationDate,
          _carrierId
          ) = Policy(policy).getPolicy(policyNumber);
-        var parts = new strings.slice[](7);
-        parts[0] = StringUtil.uintToString(_policyNumber).toSlice();
-        parts[1] = StringUtil.uintToString(_ownerId).toSlice();
-        parts[2] = StringUtil.bytes32ToString(_name).toSlice();
-        parts[3] = StringUtil.uintToString(uint(_status)).toSlice();
-        parts[4] = StringUtil.uintToString(_effectiveDate).toSlice();
-        parts[5] = StringUtil.uintToString(_expirationDate).toSlice();
-        parts[6] = StringUtil.uintToString(_carrierId).toSlice();
-        policyString = ";".toSlice().join(parts);
+        var items = new strings.slice[](7);
+        items[0] = itemJson("policy_number", stringsUtil.uintToString(_policyNumber), false);
+        items[1] = itemJson("owner_id", stringsUtil.uintToString(_ownerId), false);
+        items[2] = itemJson("name",stringsUtil.bytes32ToString(_name), false);
+        items[3] = itemJson("status",stringsUtil.uintToString(uint(_status)), false);
+        items[4] = itemJson("effective_date",stringsUtil.uintToString(_effectiveDate), false);
+        items[5] = itemJson("expiration_date",stringsUtil.uintToString(_expirationDate), false);
+        items[6] = itemJson("carrierId",stringsUtil.uintToString(_carrierId), true);
+        policyString = wrapJsonObject("".toSlice().join(items));
+    }
+
+    function itemJson(
+        string key,
+        string value,
+        bool last
+    )
+    internal pure
+    returns (strings.slice itemFinal)
+    {
+        var item = new strings.slice[](8);
+        item[0] = '"'.toSlice();
+        item[1] = key.toSlice();
+        item[2] = '"'.toSlice();
+        item[3] = ":".toSlice();
+        item[4] = '"'.toSlice();
+        item[5] = value.toSlice();
+        item[6] = '"'.toSlice();
+        if(!last) {
+            item[7] = ",".toSlice();
+        } else {
+            item[7] = "".toSlice();
+        }
+        itemFinal = "".toSlice().join(item).toSlice();
+    }
+
+    function wrapJsonObject(string object) internal pure returns (string result) {
+        var parts = new strings.slice[](3);
+        parts[0] = "{".toSlice();
+        parts[1] = object.toSlice();
+        parts[2] = "}".toSlice();
+        result = "".toSlice().join(parts);
     }
 
     function getPolicyStatus(uint _policyNumber) public view returns (DataHelper.Stage _status) {
