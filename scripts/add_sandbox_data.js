@@ -12,6 +12,9 @@ module.exports = async function(callback) {
         await manager.createCoi("CertificateTest@cosa.com");
         await manager.createOwner(web3.fromAscii("Hola@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
         await manager.createPolicy(1, web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1);
+        await manager.addPolicy(1, 1)
+        await manager.createPolicy(1, web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 1);
+        await manager.addPolicy(1, 2)
     } catch(e) {
         console.error(e);
     }
