@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.23;
 import "./DougEnabled.sol";
 
 contract Doug {
@@ -6,12 +6,12 @@ contract Doug {
 
     mapping (bytes32 => address) contracts;
 
-    function Doug() public  {
+    constructor() public {
         owner = msg.sender;
     }
 
     modifier isOwner() {
-        require(msg.sender == owner);
+        require(msg.sender == owner, "Sender is not the contract owner");
         _;
     }
 

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.23;
 
 library DataHelper {
     enum Stage { Active, Cancelled, Expired }
