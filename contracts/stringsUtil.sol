@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.23;
 
 library stringsUtil {
     /// @dev Converts an unsigned integert to its string representation.

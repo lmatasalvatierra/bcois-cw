@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.23;
 import "./Doug.sol";
 import "./DataHelper.sol";
 import "./Coi.sol";
