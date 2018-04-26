@@ -26,6 +26,7 @@ contract User is Controller {
         if(user == DataHelper.UserType.Owner){
             address ownerdb = obtainDBContract('ownerDB');
             userExists = OwnerDB(ownerdb).login(email, _passwordHash);
+            assert(userExists);
             return user;
         } else if(user == DataHelper.UserType.Carrier){
             address carrierdb = obtainDBContract('carrierDB');
