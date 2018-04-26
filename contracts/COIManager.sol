@@ -13,7 +13,7 @@ contract COIManager is DougEnabled {
     using strings for *;
     address owner;
 
-    function COIManager() public {
+    constructor() public {
         owner = msg.sender;
     }
 
@@ -52,7 +52,7 @@ contract COIManager is DougEnabled {
     function getPoliciesOfCoi(uint certificateNumber) public view returns (string coiString) {
         address addressCoi = obtainControllerContract("coi");
         uint[5] memory policies = Coi(addressCoi).getPoliciesOfCoi(certificateNumber);
-        var objects = new strings.slice[](10);
+        strings.slice[] memory objects = new strings.slice[](10);
         for(uint i = 0; i < policies.length; i++) {
             if(policies[i] != 0){
                 objects[i*2] = getPolicy(policies[i]).toSlice();
@@ -102,7 +102,7 @@ contract COIManager is DougEnabled {
          _expirationDate,
          _carrierId
          ) = Policy(policy).getPolicy(policyNumber);
-        var items = new strings.slice[](7);
+        strings.slice[] memory items = new strings.slice[](7);
         items[0] = itemJson("policy_number", stringsUtil.uintToString(_policyNumber), false);
         items[1] = itemJson("owner_id", stringsUtil.uintToString(_ownerId), false);
         items[2] = itemJson("name",stringsUtil.bytes32ToString(_name), false);
@@ -121,7 +121,7 @@ contract COIManager is DougEnabled {
     internal pure
     returns (strings.slice itemFinal)
     {
-        var item = new strings.slice[](8);
+        strings.slice[] memory item = new strings.slice[](8);
         item[0] = '"'.toSlice();
         item[1] = key.toSlice();
         item[2] = '"'.toSlice();
@@ -138,7 +138,7 @@ contract COIManager is DougEnabled {
     }
 
     function wrapJsonObject(string object) internal pure returns (string result) {
-        var parts = new strings.slice[](3);
+        strings.slice[] memory parts = new strings.slice[](3);
         parts[0] = "{".toSlice();
         parts[1] = object.toSlice();
         parts[2] = "}".toSlice();
@@ -146,7 +146,7 @@ contract COIManager is DougEnabled {
     }
 
     function wrapObjectInArray(string object) internal pure returns (string result) {
-        var parts = new strings.slice[](3);
+        strings.slice[] memory parts = new strings.slice[](3);
         parts[0] = "[".toSlice();
         parts[1] = object.toSlice();
         parts[2] = "]".toSlice();

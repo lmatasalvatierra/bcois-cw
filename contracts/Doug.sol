@@ -6,7 +6,7 @@ contract Doug {
 
     mapping (bytes32 => address) contracts;
 
-    function Doug() public  {
+    constructor() public {
         owner = msg.sender;
     }
 
