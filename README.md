@@ -11,7 +11,7 @@ You need to have installed ganache-cli and truffle framework to test this projec
 Start a testing RPC using this command:
 
 ```
-ganache-cli --port 7545 --accounts 5 --gasPrice 0 --networkId 5777
+ganache-cli --port 7545 --accounts 5 --gasPrice 0 --gasLimit 20000000 --networkId 5777 --unlock 0 --defaultBalanceEther 1000
 ```
 
 Compile & migrate the contracts:
