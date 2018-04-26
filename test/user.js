@@ -47,29 +47,32 @@ contract('COIManager', function(accounts) {
     await doug.addContract("carrierDB", carrierdb.address);
     await doug.addContract("brokerDB", brokerdb.address);
 
-    await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
     await manager.createOwner(web3.fromAscii("Test@Owner.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+    await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
     await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), "admin", web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
   });
 
   describe("Owner", function() {
     it("should login correctly", async function() {
       let result = await manager.login(web3.fromAscii("Test@Owner.com"), web3Instance.utils.keccak256("admin"));
-      expect(result.toNumber()).to.equal(0);
+      expect(result[0].toNumber()).to.equal(1);
+      expect(result[1].toNumber()).to.equal(0);
     });
   });
-  
+
   describe("Carrier", function() {
     it("should login correctly", async function() {
       let result = await manager.login(web3.fromAscii("TestCreation@Carrier.com"), web3Instance.utils.keccak256("admin"));
-      expect(result.toNumber()).to.equal(1);
+      expect(result[0].toNumber()).to.equal(2);
+      expect(result[1].toNumber()).to.equal(1);
     });
   });
 
   describe("Broker", function() {
     it("should login correctly", async function() {
       let result = await manager.login(web3.fromAscii("TestCreation@Broker.com"), web3Instance.utils.keccak256("admin"));
-      expect(result.toNumber()).to.equal(2);
+      expect(result[0].toNumber()).to.equal(3);
+      expect(result[1].toNumber()).to.equal(2);
     });
   });
 
