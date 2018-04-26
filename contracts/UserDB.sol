@@ -9,7 +9,7 @@ contract UserDB is Database {
     modifier onlyExistingUser(bytes32 email) {
         // Check if user exists or terminate
 
-        require(!(users[email] == 0x0));
+        require(!(users[email] == 0x0), "User does not exist");
         _;
     }
 

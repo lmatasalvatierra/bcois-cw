@@ -18,7 +18,7 @@ contract COIManager is DougEnabled {
     }
 
     modifier isAdmin() {
-        require(msg.sender == owner);
+        require(msg.sender == owner, "Sender is not an Administrator");
         _;
     }
     // COI Methods
@@ -43,7 +43,7 @@ contract COIManager is DougEnabled {
     }
 
     function addPolicy(uint certificateNumber, uint policyNumber) public {
-        require(getPolicyStatus(policyNumber) == DataHelper.Stage.Active);
+        require(getPolicyStatus(policyNumber) == DataHelper.Stage.Active, "The policy is not active");
         address addressCoi = obtainControllerContract("coi");
 
         Coi(addressCoi).addPolicy(certificateNumber, policyNumber);
@@ -271,7 +271,7 @@ contract COIManager is DougEnabled {
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {
         _contractAddress = Doug(DOUG).getContract(controller);
-        require (_contractAddress != 0x0);
+        require (_contractAddress != 0x0, "Controller contract has not been deployed");
         return _contractAddress;
     }
 }
