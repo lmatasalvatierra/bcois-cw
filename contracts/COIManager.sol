@@ -13,6 +13,16 @@ contract COIManager is DougEnabled {
     using strings for *;
     address owner;
 
+    event CreatePolicy
+    (
+        DataHelper.Stage status,
+        bytes32 insuranceType,
+        uint policyNumber,
+        uint ownerId,
+        uint effectiveDate,
+        uint expirationDate
+    );
+
     constructor() public {
         owner = msg.sender;
     }
@@ -75,11 +85,12 @@ contract COIManager is DougEnabled {
       uint _expirationDate,
       uint _carrierId
     )
-     public returns (uint result)
+     public
     {
         address policy = obtainControllerContract("policy");
+        uint result;
         result = Policy(policy).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate, _carrierId);
-        return result;
+        emit CreatePolicy(DataHelper.Stage.Active, _name, result, _ownerId, _effectiveDate, _expirationDate);
     }
 
     function getPolicy(uint policyNumber)
