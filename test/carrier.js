@@ -42,16 +42,14 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
-
-    await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
   });
 
   describe("Carrier", function() {
-    it("should get correctly", async function() {
-      let values = await manager.getCarrier(web3.fromAscii("TestCreation@Carrier.com"));
-      expect(web3.toAscii(values[2])).to.include("TestCreation@Carrier.com");
-      expect(values[1].toNumber()).to.equal(1);
-      expect(web3.toAscii(values[0])).to.include("CNA");
+    it("should create correctly", async function() {
+      const result = await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
+      expect(web3.toAscii(result.logs[0].args.email)).to.include("TestCreation@Carrier.com");
+      expect(result.logs[0].args.naicCode.toNumber()).to.equal(1);
+      expect(web3.toAscii(result.logs[0].args.name)).to.include("CNA");
     });
   });
 });

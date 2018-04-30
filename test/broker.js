@@ -51,11 +51,16 @@ contract('COIManager', function(accounts) {
 
   describe("Broker", function() {
     it("should get correctly", async function() {
-      let values = await manager.getBroker(web3.fromAscii("TestCreation@Broker.com"));
-      expect(web3.toAscii(values[0])).to.include("Coverwallet");
-      expect(web3.toAscii(values[1])).to.include("TestCreation@Broker.com");
-      expect(web3.toAscii(values[2])).to.include("2128677475");
-      expect(web3.toAscii(values[3])).to.include("Alcala 21");
+      const result = await manager.createBroker(
+        web3.fromAscii("TestCreation@Broker.com"),
+        "admin", web3.fromAscii("Coverwallet"),
+        web3.fromAscii("2128677475"),
+        web3.fromAscii("Alcala 21")
+      );
+      expect(web3.toAscii(result.logs[0].args.name)).to.include("Coverwallet");
+      expect(web3.toAscii(result.logs[0].args.email)).to.include("TestCreation@Broker.com");
+      expect(web3.toAscii(result.logs[0].args.contactPhone)).to.include("2128677475");
+      expect(web3.toAscii(result.logs[0].args.addressLine)).to.include("Alcala 21");
     });
   });
 });

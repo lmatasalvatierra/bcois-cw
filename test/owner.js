@@ -43,23 +43,20 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
-
-    await manager.createOwner(web3Instance.utils.utf8ToHex("Test@Owner.com"), "admin", web3Instance.utils.utf8ToHex("cosa"), web3Instance.utils.utf8ToHex("Alcala 21"));
   });
 
   describe("Owner", function() {
     it("should be created correctly", async function() {
-      let values = await manager.getOwner(web3Instance.utils.utf8ToHex("Test@Owner.com"));
-      expect(web3Instance.utils.hexToUtf8(values[0])).to.include("Test@Owner.com");
-      expect(web3Instance.utils.hexToUtf8(values[1])).to.include("cosa");
-      expect(web3Instance.utils.hexToUtf8(values[2])).to.include("Alcala 21");
+      const result = await manager.createOwner(
+        web3Instance.utils.utf8ToHex("Test@Owner.com"),
+        "admin",
+        web3Instance.utils.utf8ToHex("cosa"),
+        web3Instance.utils.utf8ToHex("Alcala 21")
+      );
+      expect(web3Instance.utils.hexToUtf8(result.logs[0].args.email)).to.include("Test@Owner.com");
+      expect(web3Instance.utils.hexToUtf8(result.logs[0].args.name)).to.include("cosa");
+      expect(web3Instance.utils.hexToUtf8(result.logs[0].args.addressLine)).to.include("Alcala 21");
     });
-
-    it("should have added a certificate to Owner", async function() {
-      await manager.addCertificate(web3Instance.utils.utf8ToHex("Test@Owner.com"), 252342);
-      let values = await manager.getOwner(web3Instance.utils.utf8ToHex("Test@Owner.com"));
-      expect(values[3][0].toNumber()).to.equal(252342);
-    })
   });
 
 });
