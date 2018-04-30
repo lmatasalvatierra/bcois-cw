@@ -17,6 +17,7 @@ contract COIManager is DougEnabled {
     (
         DataHelper.Stage status,
         bytes32 insuranceType,
+        bytes32 ownerEmail,
         uint policyNumber,
         uint ownerId,
         uint effectiveDate,
@@ -79,7 +80,7 @@ contract COIManager is DougEnabled {
     // Policy Methods
 
     function createPolicy(
-      uint _ownerId,
+      bytes32 _ownerEmail,
       bytes32 _name,
       uint _effectiveDate,
       uint _expirationDate,
@@ -88,9 +89,22 @@ contract COIManager is DougEnabled {
      public
     {
         address policy = obtainControllerContract("policy");
+        address user = obtainControllerContract("user");
         uint result;
-        result = Policy(policy).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate, _carrierId);
-        emit CreatePolicy(DataHelper.Stage.Active, _name, result, _ownerId, _effectiveDate, _expirationDate);
+        uint ownerId;
+        (ownerId,) = User(user).getUserCredentials(_ownerEmail);
+        if(ownerId != 0){
+            result = Policy(policy).createPolicy(
+                ownerId,
+                _name,
+                _effectiveDate,
+                _expirationDate,
+                _carrierId);
+                emit CreatePolicy(DataHelper.Stage.Active, _name, _ownerEmail, result, ownerId, _effectiveDate, _expirationDate);
+        }
+        else {
+            revert("Owner does no exist");
+        }
     }
 
     function getPolicy(uint policyNumber)
