@@ -45,9 +45,9 @@ contract('COIManager', function(accounts) {
 
     await manager.createOwner(web3.fromAscii("CertificateTest@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
     await manager.createCoi("CertificateTest@cosa.com");
-    await manager.createPolicy(1, web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1);
+    await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1);
     await manager.addPolicy(1, 1)
-    await manager.createPolicy(1, web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 1);
+    await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 1);
     await manager.addPolicy(1, 2)
   });
 
@@ -58,7 +58,7 @@ contract('COIManager', function(accounts) {
       expect(values[1].toNumber()).to.equal(1);
     });
 
-    it("add Policy to certificate", async function() {
+    it("get Policies of certificate", async function() {
       let result = await manager.getPoliciesOfCoi(1);
       const certificate = JSON.parse(result);
       expect(certificate.length).to.equal(2);
