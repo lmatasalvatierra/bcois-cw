@@ -112,29 +112,33 @@ contract COIManager is DougEnabled {
     returns(string policyString)
     {
         address policy = obtainControllerContract("policy");
+        address user = obtainControllerContract("user");
+        bytes32 _ownerName;
+        bytes32 _userName;
+        bytes32 _addressLine;
         uint _policyNumber;
         uint _ownerId;
         bytes32 _name;
         DataHelper.Stage _status;
         uint _effectiveDate;
         uint _expirationDate;
-        uint _carrierId;
         (_policyNumber,
          _ownerId,
          _name,
          _status,
          _effectiveDate,
          _expirationDate,
-         _carrierId
          ) = Policy(policy).getPolicy(policyNumber);
-        strings.slice[] memory items = new strings.slice[](7);
+        (_userName, _ownerName, _addressLine) = User(user).getOwner(_ownerId);
+        strings.slice[] memory items = new strings.slice[](8);
         items[0] = itemJson("policy_number", stringsUtil.uintToString(_policyNumber), false);
-        items[1] = itemJson("owner_id", stringsUtil.uintToString(_ownerId), false);
-        items[2] = itemJson("name",stringsUtil.bytes32ToString(_name), false);
-        items[3] = itemJson("status",stringsUtil.uintToString(uint(_status)), false);
-        items[4] = itemJson("effective_date",stringsUtil.uintToString(_effectiveDate), false);
-        items[5] = itemJson("expiration_date",stringsUtil.uintToString(_expirationDate), false);
-        items[6] = itemJson("carrierId",stringsUtil.uintToString(_carrierId), true);
+        items[1] = itemJson("user_email", stringsUtil.bytes32ToString(_userName), false);
+        items[2] = itemJson("insurance_type", stringsUtil.bytes32ToString(_name), false);
+        items[3] = itemJson("status", stringsUtil.uintToString(uint(_status)), false);
+        items[4] = itemJson("effective_date", stringsUtil.uintToString(_effectiveDate), false);
+        items[5] = itemJson("expiration_date", stringsUtil.uintToString(_expirationDate), false);
+        items[6] = itemJson("owner_name", stringsUtil.bytes32ToString(_ownerName), false);
+        items[7] = itemJson("address",stringsUtil.bytes32ToString(_addressLine), true);
         policyString = wrapJsonObject("".toSlice().join(items));
     }
 
