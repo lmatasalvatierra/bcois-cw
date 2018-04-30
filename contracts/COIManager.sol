@@ -23,6 +23,9 @@ contract COIManager is DougEnabled {
         uint effectiveDate,
         uint expirationDate
     );
+    event LogCreateOwner(bytes32 name, bytes32 email, bytes32 addressLine);
+    event LogCreateCarrier(bytes32 name, bytes32 email, uint naicCode);
+    event LogCreateBroker(bytes32 name, bytes32 email, bytes32 contactPhone, bytes32 addressLine);
 
     constructor() public {
         owner = msg.sender;
@@ -200,18 +203,6 @@ contract COIManager is DougEnabled {
         Policy(policy).changePolicyToExpired();
     }
 
-    // Permission Methods
-
-    function allowGuestToCheckCoi(bytes32 policyNumber, address guest) public {
-        address perm = obtainControllerContract("perm");
-        Permission(perm).addGuest(guest, policyNumber, msg.sender);
-    }
-
-    function setPermission(bytes32 policyNumber, address _agency, address _owner) private {
-        address perm = obtainControllerContract("perm");
-        Permission(perm).setPermission(policyNumber, _agency, _owner);
-    }
-
     // User Methods
     function login(bytes32 email, bytes32 _passwordHash) public view
     returns (uint userId, DataHelper.UserType userType) {
@@ -231,21 +222,12 @@ contract COIManager is DougEnabled {
         address user = obtainControllerContract("user");
 
         User(user).createOwner(_email, _password, _name, _addressLine);
+        emit LogCreateOwner(_name, _email, _addressLine);
     }
 
     function addCertificate(bytes32 email, uint id) public {
         address user = obtainControllerContract("user");
         User(user).addCertificate(email, id);
-    }
-
-    function getOwner(bytes32 email)
-    public
-    view
-    returns (bytes32 _email, bytes32 _name, bytes32 _addressLine, uint[20] _certificates)
-    {
-        address user = obtainControllerContract("user");
-        (_email, _name, _addressLine, _certificates) = User(user).getOwner(email);
-        return (_email, _name, _addressLine, _certificates);
     }
 
     function createCarrier(
@@ -258,17 +240,7 @@ contract COIManager is DougEnabled {
         address user = obtainControllerContract("user");
 
         User(user).createCarrier(_email, _password, _name);
-    }
-
-    function getCarrier(bytes32 email)
-    public
-    view
-    returns (bytes32 _name, uint _naicCode, bytes32 _email)
-    {
-        address user = obtainControllerContract("user");
-
-        (_name, _naicCode, _email) = User(user).getCarrier(email);
-        return (_name, _naicCode, _email);
+        emit LogCreateCarrier(_name, _email, 1);
     }
 
     function createBroker(
@@ -283,17 +255,7 @@ contract COIManager is DougEnabled {
         address user = obtainControllerContract("user");
 
         User(user).createBroker(_email, _password, _name, _contactPhone, _addressLine);
-    }
-
-    function getBroker(bytes32 email)
-    public
-    view
-    returns (bytes32 _name, bytes32 _email, bytes32 _contactPhone , bytes32 _addressLine)
-    {
-        address user = obtainControllerContract("user");
-
-        (_name, _email, _contactPhone, _addressLine) = User(user).getBroker(email);
-        return (_name, _email, _contactPhone, _addressLine);
+        emit LogCreateBroker(_name, _email, _contactPhone, _addressLine);
     }
 
     // Helper Methods
