@@ -1,13 +1,14 @@
 pragma solidity ^0.4.23;
 import "./Doug.sol";
-import "./DataHelper.sol";
-import "./Coi.sol";
 import "./DougEnabled.sol";
-import "./Permission.sol";
-import "./User.sol";
-import "./Policy.sol";
-import "./strings.sol";
-import "./stringsUtil.sol";
+import "./libraries/DataHelper.sol";
+import "./libraries/strings.sol";
+import "./libraries/stringsUtil.sol";
+import "./controllers/Coi.sol";
+import "./controllers/Permission.sol";
+import "./controllers/User.sol";
+import "./controllers/Policy.sol";
+
 
 contract COIManager is DougEnabled {
     using strings for *;

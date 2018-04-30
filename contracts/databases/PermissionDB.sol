@@ -1,6 +1,6 @@
 pragma solidity ^0.4.23;
 
-import "./DataHelper.sol";
+import "../libraries/DataHelper.sol";
 import "./Database.sol";
 
 contract PermissionDB is Database{

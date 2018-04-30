@@ -1,8 +1,8 @@
 
 pragma solidity ^0.4.23;
 import "./Controller.sol";
-import "./DataHelper.sol";
-import "./PolicyDB.sol";
+import "../libraries/DataHelper.sol";
+import "../databases/PolicyDB.sol";
 
 contract Policy is Controller {
     function createPolicy(

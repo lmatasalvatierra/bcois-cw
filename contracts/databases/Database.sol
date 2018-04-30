@@ -1,7 +1,7 @@
 pragma solidity ^0.4.23;
 
-import "./DougEnabled.sol";
-import "./Doug.sol";
+import "../DougEnabled.sol";
+import "../Doug.sol";
 
 contract Database is DougEnabled {
   modifier senderIsController(bytes32 controller) {

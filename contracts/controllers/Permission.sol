@@ -1,8 +1,8 @@
 pragma solidity ^0.4.23;
 
-import "./DataHelper.sol";
+import "../libraries/DataHelper.sol";
 import "./Controller.sol";
-import "./PermissionDB.sol";
+import "../databases/PermissionDB.sol";
 
 contract Permission is Controller{
     function setPermission(bytes32 policyNumber, address _agency, address _owner) senderIsManager public {
