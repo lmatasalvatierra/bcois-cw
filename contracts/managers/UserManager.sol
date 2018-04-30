@@ -1,13 +1,14 @@
 pragma solidity ^0.4.23;
 
-import "../DougEnabled.sol";
 import "../controllers/User.sol";
 import "../libraries/DataHelper.sol";
 
-contract UserManager is DougEnabled {
+contract UserManager {
     event LogCreateOwner(bytes32 name, bytes32 email, bytes32 addressLine);
     event LogCreateCarrier(bytes32 name, bytes32 email, uint naicCode);
     event LogCreateBroker(bytes32 name, bytes32 email, bytes32 contactPhone, bytes32 addressLine);
+
+    function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress);
 
     function login(bytes32 email, bytes32 _passwordHash) public view
     returns (uint userId, DataHelper.UserType userType) {
@@ -61,11 +62,5 @@ contract UserManager is DougEnabled {
 
         User(user).createBroker(_email, _password, _name, _contactPhone, _addressLine);
         emit LogCreateBroker(_name, _email, _contactPhone, _addressLine); 
-    }
-
-    function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {
-        _contractAddress = Doug(DOUG).getContract(controller);
-        require (_contractAddress != 0x0, "Controller contract has not been deployed");
-        return _contractAddress;
     }
 }

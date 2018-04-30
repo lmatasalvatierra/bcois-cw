@@ -1,12 +1,11 @@
 pragma solidity ^0.4.23;
 
-import "../DougEnabled.sol";
 import "../libraries/strings.sol";
 import "../libraries/stringsUtil.sol";
 import "../controllers/Policy.sol";
 import "../controllers/User.sol";
 
-contract PolicyManager is DougEnabled {
+contract PolicyManager {
     using strings for *;
 
     event CreatePolicy
@@ -19,6 +18,11 @@ contract PolicyManager is DougEnabled {
         uint effectiveDate,
         uint expirationDate
     );
+
+    function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress);
+    function itemJson(string key, string value, bool last) internal pure returns (strings.slice itemFinal);
+    function wrapJsonObject(string object) internal pure returns (string result);
+    function wrapObjectInArray(string object) internal pure returns (string result);
 
     function createPolicy(
     bytes32 _ownerEmail,
@@ -83,46 +87,6 @@ contract PolicyManager is DougEnabled {
         policyString = wrapJsonObject("".toSlice().join(items));
     }
 
-    function itemJson(
-      string key,
-      string value,
-      bool last
-    )
-    internal pure
-    returns (strings.slice itemFinal)
-    {
-        strings.slice[] memory item = new strings.slice[](8);
-        item[0] = '"'.toSlice();
-        item[1] = key.toSlice();
-        item[2] = '"'.toSlice();
-        item[3] = ":".toSlice();
-        item[4] = '"'.toSlice();
-        item[5] = value.toSlice();
-        item[6] = '"'.toSlice();
-        if(!last) {
-            item[7] = ",".toSlice();
-        } else {
-            item[7] = "".toSlice();
-        }
-        itemFinal = "".toSlice().join(item).toSlice();
-    }
-
-    function wrapJsonObject(string object) internal pure returns (string result) {
-        strings.slice[] memory parts = new strings.slice[](3);
-        parts[0] = "{".toSlice();
-        parts[1] = object.toSlice();
-        parts[2] = "}".toSlice();
-        result = "".toSlice().join(parts);
-    }
-
-    function wrapObjectInArray(string object) internal pure returns (string result) {
-        strings.slice[] memory parts = new strings.slice[](3);
-        parts[0] = "[".toSlice();
-        parts[1] = object.toSlice();
-        parts[2] = "]".toSlice();
-        result = "".toSlice().join(parts);
-    }
-
     function getPolicyStatus(uint _policyNumber) public view returns (DataHelper.Stage _status) {
         address policy = obtainControllerContract("policy");
 
@@ -139,11 +103,5 @@ contract PolicyManager is DougEnabled {
     function changePolicyToExpired() public {
         address policy = obtainControllerContract("policy");
         Policy(policy).changePolicyToExpired();
-    }
-
-    function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {
-        _contractAddress = Doug(DOUG).getContract(controller);
-        require (_contractAddress != 0x0, "Controller contract has not been deployed");
-        return _contractAddress;
     }
 }
