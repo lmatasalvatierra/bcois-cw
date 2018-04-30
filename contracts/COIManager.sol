@@ -8,9 +8,10 @@ import "./controllers/Coi.sol";
 import "./controllers/Permission.sol";
 import "./controllers/User.sol";
 import "./controllers/Policy.sol";
+import "./managers/UserManager.sol";
 
 
-contract COIManager is DougEnabled {
+contract COIManager is DougEnabled, UserManager {
     using strings for *;
     address owner;
 
@@ -24,9 +25,6 @@ contract COIManager is DougEnabled {
         uint effectiveDate,
         uint expirationDate
     );
-    event LogCreateOwner(bytes32 name, bytes32 email, bytes32 addressLine);
-    event LogCreateCarrier(bytes32 name, bytes32 email, uint naicCode);
-    event LogCreateBroker(bytes32 name, bytes32 email, bytes32 contactPhone, bytes32 addressLine);
 
     constructor() public {
         owner = msg.sender;
@@ -202,61 +200,6 @@ contract COIManager is DougEnabled {
     function changePolicyToExpired() public {
         address policy = obtainControllerContract("policy");
         Policy(policy).changePolicyToExpired();
-    }
-
-    // User Methods
-    function login(bytes32 email, bytes32 _passwordHash) public view
-    returns (uint userId, DataHelper.UserType userType) {
-        address user = obtainControllerContract("user");
-        (userId, userType) = User(user).login(email, _passwordHash);
-        return (userId, userType);
-    }
-
-    function createOwner(
-        bytes32 _email,
-        string _password,
-        bytes32 _name,
-        bytes32 _addressLine
-    )
-    public
-    {
-        address user = obtainControllerContract("user");
-
-        User(user).createOwner(_email, _password, _name, _addressLine);
-        emit LogCreateOwner(_name, _email, _addressLine);
-    }
-
-    function addCertificate(bytes32 email, uint id) public {
-        address user = obtainControllerContract("user");
-        User(user).addCertificate(email, id);
-    }
-
-    function createCarrier(
-        bytes32 _email,
-        string _password,
-        bytes32 _name
-    )
-    public
-    {
-        address user = obtainControllerContract("user");
-
-        User(user).createCarrier(_email, _password, _name);
-        emit LogCreateCarrier(_name, _email, 1);
-    }
-
-    function createBroker(
-        bytes32 _email,
-        string _password,
-        bytes32 _name,
-        bytes32 _contactPhone,
-        bytes32 _addressLine
-    )
-    public
-    {
-        address user = obtainControllerContract("user");
-
-        User(user).createBroker(_email, _password, _name, _contactPhone, _addressLine);
-        emit LogCreateBroker(_name, _email, _contactPhone, _addressLine);
     }
 
     // Helper Methods
