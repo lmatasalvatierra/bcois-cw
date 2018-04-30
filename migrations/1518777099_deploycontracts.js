@@ -14,7 +14,6 @@ var PolicyDB = artifacts.require("./databases/PolicyDB.sol");
 var CarrierDB = artifacts.require("./databases/CarrierDB.sol");
 var BrokerDB = artifacts.require("./databases/BrokerDB.sol");
 var stringsUtil = artifacts.require("./libraries/stringsUtil.sol");
-var UserManager = artifacts.require("./managers/UserManager.sol");
 
 
 
@@ -38,5 +37,4 @@ module.exports = function(deployer) {
   deployer.deploy(PolicyDB);
   deployer.deploy(CarrierDB);
   deployer.deploy(BrokerDB);
-  deployer.deploy(UserManager);
 };

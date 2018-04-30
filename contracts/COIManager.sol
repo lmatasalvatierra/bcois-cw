@@ -1,18 +1,12 @@
 pragma solidity ^0.4.23;
 import "./Doug.sol";
 import "./DougEnabled.sol";
-import "./libraries/DataHelper.sol";
-import "./libraries/strings.sol";
-import "./libraries/stringsUtil.sol";
-import "./controllers/Coi.sol";
-import "./controllers/User.sol";
-import "./controllers/Policy.sol";
 import "./managers/UserManager.sol";
 import "./managers/PolicyManager.sol";
+import "./managers/CertificateManager.sol";
 
 
-contract COIManager is DougEnabled, UserManager, PolicyManager {
-    using strings for *;
+contract COIManager is DougEnabled, UserManager, PolicyManager, CertificateManager {
     address owner;
 
     constructor() public {
@@ -23,25 +17,45 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         require(msg.sender == owner, "Sender is not an Administrator");
         _;
     }
-    // COI Methods
 
-    function createCoi(bytes32 email) public {
-        address addressCoi = obtainControllerContract("coi");
-        address user = obtainControllerContract("user");
-        uint ownerId;
-        (ownerId, ) = User(user).getUserCredentials(email);
-
-        uint result = Coi(addressCoi).createCoi(ownerId);
-        User(user).addCertificate(email, result);
+    function itemJson(
+      string key,
+      string value,
+      bool last
+    )
+    internal pure
+    returns (strings.slice itemFinal)
+    {
+        strings.slice[] memory item = new strings.slice[](8);
+        item[0] = '"'.toSlice();
+        item[1] = key.toSlice();
+        item[2] = '"'.toSlice();
+        item[3] = ":".toSlice();
+        item[4] = '"'.toSlice();
+        item[5] = value.toSlice();
+        item[6] = '"'.toSlice();
+        if(!last) {
+            item[7] = ",".toSlice();
+        } else {
+            item[7] = "".toSlice();
+        }
+        itemFinal = "".toSlice().join(item).toSlice();
     }
 
-    function getCoi(uint certificateNumber) public view
-        returns(uint _certificateNumber, uint _ownerId)
-    {
-        address addressCoi = obtainControllerContract("coi");
+    function wrapJsonObject(string object) internal pure returns (string result) {
+        strings.slice[] memory parts = new strings.slice[](3);
+        parts[0] = "{".toSlice();
+        parts[1] = object.toSlice();
+        parts[2] = "}".toSlice();
+        result = "".toSlice().join(parts);
+    }
 
-        (_certificateNumber, _ownerId) = Coi(addressCoi).getCoi(certificateNumber);
-        return (_certificateNumber, _ownerId);
+    function wrapObjectInArray(string object) internal pure returns (string result) {
+        strings.slice[] memory parts = new strings.slice[](3);
+        parts[0] = "[".toSlice();
+        parts[1] = object.toSlice();
+        parts[2] = "]".toSlice();
+        result = "".toSlice().join(parts);
     }
 
     function addPolicy(uint certificateNumber, uint policyNumber) public {
@@ -67,8 +81,6 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         }
         coiString = wrapObjectInArray("".toSlice().join(objects));
     }
-
-    // Helper Methods
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {
         _contractAddress = Doug(DOUG).getContract(controller);
