@@ -79,6 +79,17 @@ contract User is Controller {
         return (_email, _name, _addressLine, _certificates);
     }
 
+    function getOwner(uint _ownerId)
+    senderIsManager
+    public
+    view
+    returns (bytes32 _email, bytes32 _name, bytes32 _addressLine)
+    {
+        address ownerdb = obtainDBContract('ownerDB');
+        (_email, _name, _addressLine, ) = OwnerDB(ownerdb).getOwner(_ownerId);
+        return (_email, _name, _addressLine);
+    }
+
     // Carrier Methods
 
     function createCarrier(

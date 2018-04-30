@@ -52,12 +52,14 @@ contract('COIManager', function(accounts) {
     it("should get a Policy", async function() {
       let result = await manager.getPolicy(1);
       policy = JSON.parse(result);
-      expect(parseInt(policy.owner_id)).to.equal(2);
       expect(parseInt(policy.policy_number)).to.equal(1);
-      expect(policy.name).to.include("Workers Comp");
+      expect(policy.insurance_type).to.include("Workers Comp");
       expect(parseInt(policy.status)).to.equal(0);
       expect(parseInt(policy.effective_date)).to.equal(timeNow);
       expect(parseInt(policy.expiration_date)).to.equal(oneYearFromNow);
+      expect(policy.user_email).to.include("Hola@cosa.com");
+      expect(policy.owner_name).to.include("cosa");
+      expect(policy.address).to.include("Alcala 21");
     });
 
     it("should reject call of getting a policy", async function() {

@@ -5,7 +5,7 @@ module.exports = async function(callback) {
     let timeNow = Math.floor(Date.now() / 1000);
     let oneYearFromNow = timeNow + 31556926;
     try {
-        await manager.createOwner(web3.fromAscii("Test@Owner.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+        await manager.createOwner(web3.fromAscii("Test@Owner.com"), "admin", web3.fromAscii("DY"), web3.fromAscii("Alcala 21"));
         await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
         await manager.createOwner(web3.fromAscii("CertificateTest@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
         await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), "admin", web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
