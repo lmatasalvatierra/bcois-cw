@@ -1,8 +1,8 @@
 pragma solidity ^0.4.23;
 
 import "./Database.sol";
-import "./DataHelper.sol";
-import "./DateTime.sol";
+import "../libraries/DataHelper.sol";
+import "../libraries/DateTime.sol";
 
 contract PolicyDB is Database {
     uint numPolicies;

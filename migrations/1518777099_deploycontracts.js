@@ -1,19 +1,17 @@
 var Doug = artifacts.require("./Doug.sol");
-var DataHelper = artifacts.require("./DataHelper.sol");
+var DataHelper = artifacts.require("./libraries/DataHelper.sol");
 var DougEnabled = artifacts.require("./DougEnabled.sol");
-var CoiDB = artifacts.require("./CoiDB.sol");
-var Coi = artifacts.require("./Coi.sol");
+var CoiDB = artifacts.require("./databases/CoiDB.sol");
+var Coi = artifacts.require("./controllers/Coi.sol");
 var COIManager = artifacts.require("./COIManager.sol");
-var Permission = artifacts.require("./Permission.sol");
-var PermissionDB = artifacts.require("./PermissionDB.sol");
-var DateTime = artifacts.require("./DateTime.sol");
-var User = artifacts.require("./User.sol");
-var OwnerDB = artifacts.require("./OwnerDB.sol");
-var Policy = artifacts.require("./Policy.sol");
-var PolicyDB = artifacts.require("./PolicyDB.sol");
-var CarrierDB = artifacts.require("./CarrierDB.sol");
-var BrokerDB = artifacts.require("./BrokerDB.sol");
-var stringsUtil = artifacts.require("./stringsUtil.sol")
+var DateTime = artifacts.require("./libraries/DateTime.sol");
+var User = artifacts.require("./controllers/User.sol");
+var OwnerDB = artifacts.require("./databases/OwnerDB.sol");
+var Policy = artifacts.require("./controllers/Policy.sol");
+var PolicyDB = artifacts.require("./databases/PolicyDB.sol");
+var CarrierDB = artifacts.require("./databases/CarrierDB.sol");
+var BrokerDB = artifacts.require("./databases/BrokerDB.sol");
+var stringsUtil = artifacts.require("./libraries/stringsUtil.sol");
 
 
 
@@ -29,8 +27,6 @@ module.exports = function(deployer) {
   deployer.deploy(stringsUtil);
   deployer.link(stringsUtil, COIManager);
   deployer.deploy(COIManager);
-  deployer.deploy(Permission);
-  deployer.deploy(PermissionDB);
   deployer.deploy(User);
   deployer.deploy(OwnerDB);
   deployer.deploy(Policy);

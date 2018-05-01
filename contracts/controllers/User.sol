@@ -1,11 +1,11 @@
 pragma solidity ^0.4.23;
 
 import "./Controller.sol";
-import "./DataHelper.sol";
-import "./UserDB.sol";
-import "./OwnerDB.sol";
-import "./CarrierDB.sol";
-import "./BrokerDB.sol";
+import "../libraries/DataHelper.sol";
+import "../databases/UserDB.sol";
+import "../databases/OwnerDB.sol";
+import "../databases/CarrierDB.sol";
+import "../databases/BrokerDB.sol";
 
 contract User is Controller {
 

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.23;
 import "./Controller.sol";
-import "./DataHelper.sol";
-import "./CoiDB.sol";
+import "../libraries/DataHelper.sol";
+import "../databases/CoiDB.sol";
 
 contract Coi is Controller {
     function createCoi(uint ownerId) senderIsManager public returns (uint result) {

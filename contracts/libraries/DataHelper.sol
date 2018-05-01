@@ -3,8 +3,6 @@ pragma solidity ^0.4.23;
 library DataHelper {
     enum Stage { Active, Cancelled, Expired }
 
-    enum Permission { User, Owner, Agency, Government, Admin }
-
     enum UserType { Owner, Carrier, Broker }
 
     struct Endorsement {

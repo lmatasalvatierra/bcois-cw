@@ -1,19 +1,22 @@
 const web3Instance = require('web3')
-var Permission = artifacts.require("./Permission.sol");
-var PermissionDB = artifacts.require("./PermissionDB.sol");
-var COIManager = artifacts.require("./COIManager.sol");
-var Coi = artifacts.require("./Coi.sol");
 var Doug = artifacts.require("./Doug.sol");
-var CoiDB = artifacts.require("./CoiDB.sol");
-var User = artifacts.require("./User.sol");
-var Policy = artifacts.require("./Policy.sol");
-var OwnerDB = artifacts.require("./OwnerDB.sol");
-var PolicyDB = artifacts.require("./PolicyDB.sol");
-var CarrierDB = artifacts.require("./CarrierDB.sol");
+var DataHelper = artifacts.require("./libraries/DataHelper.sol");
+var DougEnabled = artifacts.require("./DougEnabled.sol");
+var CoiDB = artifacts.require("./databases/CoiDB.sol");
+var Coi = artifacts.require("./controllers/Coi.sol");
+var COIManager = artifacts.require("./COIManager.sol");
+var DateTime = artifacts.require("./libraries/DateTime.sol");
+var User = artifacts.require("./controllers/User.sol");
+var OwnerDB = artifacts.require("./databases/OwnerDB.sol");
+var Policy = artifacts.require("./controllers/Policy.sol");
+var PolicyDB = artifacts.require("./databases/PolicyDB.sol");
+var CarrierDB = artifacts.require("./databases/CarrierDB.sol");
+var BrokerDB = artifacts.require("./databases/BrokerDB.sol");
+var stringsUtil = artifacts.require("./libraries/stringsUtil.sol");
 var expect = require("chai").expect;
 
 contract('COIManager', function(accounts) {
-  var doug, manager, coi, coiDb, perm, permdb, user, ownerdb, policy, policydb, carriedb;
+  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb;
   let timeNow = Math.floor(Date.now() / 1000);
   let oneYearFromNow = timeNow + 31556926;
   let agency = accounts[1];
@@ -25,8 +28,6 @@ contract('COIManager', function(accounts) {
     manager = await COIManager.new();
     coi = await Coi.new();
     coiDb = await CoiDB.new();
-    perm = await Permission.new();
-    permdb = await PermissionDB.new();
     user = await User.new();
     ownerdb = await OwnerDB.new();
     policy = await Policy.new();
@@ -36,30 +37,25 @@ contract('COIManager', function(accounts) {
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
     await doug.addContract("coiDB", coiDb.address);
-    await doug.addContract("perm", perm.address);
-    await doug.addContract("permDB", permdb.address);
     await doug.addContract("user", user.address);
     await doug.addContract("ownerDB", ownerdb.address);
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
-
-    await manager.createOwner(web3Instance.utils.utf8ToHex("Test@Owner.com"), "admin", web3Instance.utils.utf8ToHex("cosa"), web3Instance.utils.utf8ToHex("Alcala 21"));
   });
 
   describe("Owner", function() {
     it("should be created correctly", async function() {
-      let values = await manager.getOwner(web3Instance.utils.utf8ToHex("Test@Owner.com"));
-      expect(web3Instance.utils.hexToUtf8(values[0])).to.include("Test@Owner.com");
-      expect(web3Instance.utils.hexToUtf8(values[1])).to.include("cosa");
-      expect(web3Instance.utils.hexToUtf8(values[2])).to.include("Alcala 21");
+      const result = await manager.createOwner(
+        web3Instance.utils.utf8ToHex("Test@Owner.com"),
+        "admin",
+        web3Instance.utils.utf8ToHex("cosa"),
+        web3Instance.utils.utf8ToHex("Alcala 21")
+      );
+      expect(web3Instance.utils.hexToUtf8(result.logs[0].args.email)).to.include("Test@Owner.com");
+      expect(web3Instance.utils.hexToUtf8(result.logs[0].args.name)).to.include("cosa");
+      expect(web3Instance.utils.hexToUtf8(result.logs[0].args.addressLine)).to.include("Alcala 21");
     });
-
-    it("should have added a certificate to Owner", async function() {
-      await manager.addCertificate(web3Instance.utils.utf8ToHex("Test@Owner.com"), 252342);
-      let values = await manager.getOwner(web3Instance.utils.utf8ToHex("Test@Owner.com"));
-      expect(values[3][0].toNumber()).to.equal(252342);
-    })
   });
 
 });

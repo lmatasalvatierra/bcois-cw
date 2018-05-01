@@ -1,7 +1,7 @@
 pragma solidity ^0.4.23;
 
 import "./Database.sol";
-import "./DataHelper.sol";
+import "../libraries/DataHelper.sol";
 
 contract CoiDB is Database {
     uint numCertificates;
