@@ -5,6 +5,9 @@ import "../libraries/DataHelper.sol";
 import "../databases/PolicyDB.sol";
 
 contract Policy is Controller {
+
+    mapping (uint => uint) carrierPolicies;
+
     function createPolicy(
         uint _ownerId,
         bytes32 _name,
@@ -16,7 +19,17 @@ contract Policy is Controller {
     {
         address policydb = obtainDBContract("policyDB");
         result = PolicyDB(policydb).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate, carrierId);
+        carrierPolicies[result] = carrierId;
         return result;
+    }
+
+    function isPolicyOfCarrier(uint policyNumber, uint carrierId) senderIsManager public view returns (bool) {
+        return (carrierPolicies[policyNumber] == carrierId);
+    }
+
+    function getNumPolicies() senderIsManager public view returns (uint numPolicies) {
+        address policydb = obtainDBContract("policyDB");
+        numPolicies = PolicyDB(policydb).getNumPolicies();
     }
 
     function getPolicy(
