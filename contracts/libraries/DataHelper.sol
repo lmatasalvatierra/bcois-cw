@@ -24,7 +24,6 @@ library DataHelper {
         DataHelper.Stage status;
         uint effectiveDate;
         uint expirationDate;
-        bool[10] includedCoverages;
         uint carrierId;
     }
 }
