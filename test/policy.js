@@ -43,6 +43,7 @@ contract('COIManager', function(accounts) {
     await doug.addContract("carrierDB", carrierdb.address);
 
     await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
+    await manager.createCarrier(web3.fromAscii("TestSTARR@Carrier.com"), "admin", web3.fromAscii("STARR"));
     await manager.createOwner(web3.fromAscii("Hola@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
     await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1);
   });
@@ -84,6 +85,14 @@ contract('COIManager', function(accounts) {
 
       let status = await manager.getPolicyStatus(2);
       expect(status.toNumber()).to.equal(2);
+    });
+
+    it("should cancel a Policy", async function() {
+      await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("BOP"), timeNow, oneYearFromNow, 1);
+      await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("GEneral Liability"), timeNow, oneYearFromNow, 1);
+      const response = await manager.getPoliciesOfCarrier(1);
+      const policies = JSON.parse(answer);
+      expect(polices.length).to.equal(2);
     });
   });
 });
