@@ -54,4 +54,8 @@ contract PolicyDB is Database {
             }
         }
     }
+
+    function getNumPolicies() senderIsController("policy") public view returns (uint) {
+        return numPolicies;
+    }
 }
