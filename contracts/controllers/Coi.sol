@@ -4,19 +4,19 @@ import "../libraries/DataHelper.sol";
 import "../databases/CoiDB.sol";
 
 contract Coi is Controller {
-    function createCoi(uint ownerId) senderIsManager public returns (uint result) {
+    function createCoi(uint ownerId, uint effectiveDate) senderIsManager public returns (uint certificateId) {
         address coiDb = obtainDBContract("coiDB");
-        result = CoiDB(coiDb).createCoi(ownerId);
-        return result;
+        certificateId = CoiDB(coiDb).createCoi(ownerId, effectiveDate);
+        return certificateId;
     }
 
     function getCoi(uint certificateNumber) senderIsManager public view
-        returns(uint _certificateNumber, uint _ownerId)
+        returns(uint _certificateNumber, uint _ownerId, uint _effectiveDate)
     {
         address coiDb = obtainDBContract("coiDB");
 
-        (_certificateNumber, _ownerId) = CoiDB(coiDb).getCoi(certificateNumber);
-        return (_certificateNumber, _ownerId);
+        (_certificateNumber, _ownerId, _effectiveDate) = CoiDB(coiDb).getCoi(certificateNumber);
+        return (_certificateNumber, _ownerId, _effectiveDate);
     }
 
     function addPolicy(uint certificateNumber, uint policyNumber) senderIsManager public {
