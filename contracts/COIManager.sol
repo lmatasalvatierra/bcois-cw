@@ -3,11 +3,19 @@ import "./Doug.sol";
 import "./DougEnabled.sol";
 import "./managers/UserManager.sol";
 import "./managers/PolicyManager.sol";
-import "./managers/CertificateManager.sol";
+import "./controllers/Coi.sol";
+import "./controllers/User.sol";
 
-
-contract COIManager is DougEnabled, UserManager, PolicyManager, CertificateManager {
+contract COIManager is DougEnabled, UserManager, PolicyManager {
     address owner;
+
+    event LogCreateCertificate
+    (
+        uint certificateNumber,
+        bytes32 ownerEmail,
+        bytes32 ownerName,
+        uint effectiveDate
+    );
 
     constructor() public {
         owner = msg.sender;
@@ -58,11 +66,36 @@ contract COIManager is DougEnabled, UserManager, PolicyManager, CertificateManag
         result = "".toSlice().join(parts);
     }
 
-    function addPolicy(uint certificateNumber, uint policyNumber) public {
-        require(getPolicyStatus(policyNumber) == DataHelper.Stage.Active, "The policy is not active");
+    function createCoi(bytes32 email, uint effectiveDate, uint[5] policies) public {
+        address addressCoi = obtainControllerContract("coi");
+        address user = obtainControllerContract("user");
+        address policy = obtainControllerContract("policy");
+        uint ownerId;
+        bytes32 ownerName;
+
+        (ownerId, , ownerName, ,) = User(user).getOwner(email);
+        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate);
+
+        for(uint i = 0; i < policies.length; i++) {
+            if(policies[i] != 0) {
+                require(Policy(policy).isPolicyValid(policies[i], ownerId));
+                Coi(addressCoi).addPolicy(id, policies[i]);
+            }
+            else {
+                break;
+            }
+        }
+        User(user).addCertificate(email, id);
+        emit LogCreateCertificate(id, email, ownerName, effectiveDate);
+    }
+
+    function getCoi(uint certificateNumber) public view
+        returns(uint _certificateNumber, uint _ownerId, uint _effectiveDate)
+    {
         address addressCoi = obtainControllerContract("coi");
 
-        Coi(addressCoi).addPolicy(certificateNumber, policyNumber);
+        (_certificateNumber, _ownerId, _effectiveDate) = Coi(addressCoi).getCoi(certificateNumber);
+        return (_certificateNumber, _ownerId, _effectiveDate);
     }
 
     function getPoliciesOfCoi(uint certificateNumber) public view returns (string coiString) {

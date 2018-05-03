@@ -42,25 +42,36 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
 
+    await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
     await manager.createOwner(web3.fromAscii("CertificateTest@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
-    await manager.createCoi("CertificateTest@cosa.com");
     await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1);
-    await manager.addPolicy(1, 1)
     await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 1);
-    await manager.addPolicy(1, 2)
   });
 
   describe("Certificate", function() {
-    it("should create coi with given details", async function() {
+    it("should create COI with given details", async function() {
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, [1, 2]);
       let values = await manager.getCoi(1);
       expect(values[0].toNumber()).to.equal(1);
-      expect(values[1].toNumber()).to.equal(1);
+      expect(values[1].toNumber()).to.equal(2);
+      expect(values[2].toNumber()).to.equal(timeNow);
     });
 
     it("get Policies of certificate", async function() {
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, [1, 2]);
       let result = await manager.getPoliciesOfCoi(1);
       const certificate = JSON.parse(result);
       expect(certificate.length).to.equal(2);
+    });
+
+    it("should reject creation of certificate with cancelled policy", async function() {
+      await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("General Liability"), timeNow, oneYearFromNow, 1);
+      await manager.cancelPolicy(3);
+      try {
+        await manager.createCoi("CertificateTest@cosa.com", timeNow, [3]);
+      } catch (err) {
+        expect(err.message).to.include("VM Exception while processing transaction: revert");
+      }
     });
   });
 });
