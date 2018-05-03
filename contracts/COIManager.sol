@@ -9,6 +9,14 @@ import "./controllers/User.sol";
 contract COIManager is DougEnabled, UserManager, PolicyManager {
     address owner;
 
+    event LogCreateCertificate
+    (
+        uint certificateNumber,
+        bytes32 ownerEmail,
+        bytes32 ownerName,
+        uint effectiveDate
+    );
+
     constructor() public {
         owner = msg.sender;
     }
@@ -63,8 +71,9 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         address user = obtainControllerContract("user");
         address policy = obtainControllerContract("policy");
         uint ownerId;
+        bytes32 ownerName;
 
-        (ownerId, ) = User(user).getUserCredentials(email);
+        (ownerId, , ownerName, ,) = User(user).getOwner(email);
         uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate);
 
         for(uint i = 0; i < policies.length; i++) {
@@ -77,6 +86,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
             }
         }
         User(user).addCertificate(email, id);
+        emit LogCreateCertificate(id, email, ownerName, effectiveDate);
     }
 
     function getCoi(uint certificateNumber) public view
