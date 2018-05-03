@@ -72,9 +72,9 @@ contract('COIManager', function(accounts) {
 
     it("should cancel a Policy", async function() {
       await manager.cancelPolicy(1);
-      let isCanceled = await manager.getPolicyStatus(1);
-      // Cancelled status = 1
-      expect(isCanceled.toNumber()).to.equal(1);
+      let response = await manager.getPolicy(1);
+      const policy = JSON.parse(response);
+      expect(+policy.status).to.equal(1);
     });
 
     it("should change a Policy state to expired", async function() {
@@ -83,16 +83,17 @@ contract('COIManager', function(accounts) {
       await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("BOP"), oneYearBeforeNow, oneDayBeforeNow, 1);
       await manager.changePolicyToExpired();
 
-      let status = await manager.getPolicyStatus(2);
-      expect(status.toNumber()).to.equal(2);
+      let response = await manager.getPolicy(2);
+      const policy = JSON.parse(response);
+      expect(+policy.status).to.equal(2);
     });
 
-    it("should cancel a Policy", async function() {
+    it("should get policies of a carrier", async function() {
       await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("BOP"), timeNow, oneYearFromNow, 1);
       await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("GEneral Liability"), timeNow, oneYearFromNow, 1);
       const response = await manager.getPoliciesOfCarrier(1);
-      const policies = JSON.parse(answer);
-      expect(polices.length).to.equal(2);
+      const policies = JSON.parse(response);
+      expect(policies.length).to.equal(3);
     });
   });
 });
