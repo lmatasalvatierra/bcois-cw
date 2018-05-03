@@ -72,11 +72,12 @@ contract User is Controller {
     senderIsManager
     public
     view
-    returns (bytes32 _email, bytes32 _name, bytes32 _addressLine, uint[20] _certificates)
+    returns (uint, bytes32 _email, bytes32 _name, bytes32 _addressLine, uint[20] _certificates)
     {
         address ownerdb = obtainDBContract('ownerDB');
         (_email, _name, _addressLine, _certificates) = OwnerDB(ownerdb).getOwner(indexes[email]);
-        return (_email, _name, _addressLine, _certificates);
+
+        return (indexes[_email], _email, _name, _addressLine, _certificates);
     }
 
     function getOwner(uint _ownerId)
