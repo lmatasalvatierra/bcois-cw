@@ -87,13 +87,6 @@ contract PolicyManager {
         policyString = wrapJsonObject("".toSlice().join(items));
     }
 
-    function getPolicyStatus(uint _policyNumber) public view returns (DataHelper.Stage _status) {
-        address policy = obtainControllerContract("policy");
-
-        (, , , _status, , , ) = Policy(policy).getPolicy(_policyNumber);
-        return _status;
-    }
-
     function cancelPolicy(uint _policyNumber) public {
         address policy = obtainControllerContract("policy");
 
