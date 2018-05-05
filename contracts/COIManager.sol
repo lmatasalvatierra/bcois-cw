@@ -90,21 +90,24 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
     }
 
     function getCoi(uint certificateNumber) public view
-        returns(uint _certificateNumber, uint _ownerId, uint _effectiveDate)
+        returns(uint _certificateNumber, bytes32 _ownerEmail, bytes32 _ownerName, uint _effectiveDate, string policies)
     {
         address addressCoi = obtainControllerContract("coi");
+        address user = obtainControllerContract("user");
+        uint ownerId;
 
-        (_certificateNumber, _ownerId, _effectiveDate) = Coi(addressCoi).getCoi(certificateNumber);
-        return (_certificateNumber, _ownerId, _effectiveDate);
+        (_certificateNumber, ownerId, _effectiveDate) = Coi(addressCoi).getCoi(certificateNumber);
+        (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerId);
+        policies = getPoliciesOfCoi(certificateNumber);
     }
 
-    function getPoliciesOfCoi(uint certificateNumber) public view returns (string coiString) {
+    function getPoliciesOfCoi(uint certificateNumber) private view returns (string coiString) {
         address addressCoi = obtainControllerContract("coi");
         uint[5] memory policies = Coi(addressCoi).getPoliciesOfCoi(certificateNumber);
         strings.slice[] memory objects = new strings.slice[](10);
         for(uint i = 0; i < policies.length; i++) {
             if(policies[i] != 0){
-                objects[i*2] = getPolicy(policies[i]).toSlice();
+                objects[i*2] = getPolicyForCertificateView(policies[i]).toSlice();
                 if(policies[i+1] != 0){
                     objects[(i*2)+1] = ",".toSlice();
                 }
