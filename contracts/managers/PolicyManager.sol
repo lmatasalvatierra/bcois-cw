@@ -144,4 +144,30 @@ contract PolicyManager {
         items[5] = itemJson("expiration_date", stringsUtil.uintToString(_expirationDate), true);
         policyString = wrapJsonObject("".toSlice().join(items));
     }
+
+    function getPolicyForCertificateView(uint policyNumber)
+    public view
+    returns(string policyString)
+    {
+        address policy = obtainControllerContract("policy");
+        uint _policyNumber;
+        bytes32 _name;
+        DataHelper.Stage _status;
+        uint _effectiveDate;
+        uint _expirationDate;
+        (_policyNumber,
+        ,
+        _name,
+        _status,
+        _effectiveDate,
+        _expirationDate,
+        ) = Policy(policy).getPolicy(policyNumber);
+        strings.slice[] memory items = new strings.slice[](5);
+        items[0] = itemJson("policy_number", stringsUtil.uintToString(_policyNumber), false);
+        items[1] = itemJson("insurance_type", stringsUtil.bytes32ToString(_name), false);
+        items[2] = itemJson("status", stringsUtil.uintToString(uint(_status)), false);
+        items[3] = itemJson("effective_date", stringsUtil.uintToString(_effectiveDate), false);
+        items[4] = itemJson("expiration_date", stringsUtil.uintToString(_expirationDate), true);
+        policyString = wrapJsonObject("".toSlice().join(items));
+    }
 }
