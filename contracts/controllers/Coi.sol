@@ -30,4 +30,9 @@ contract Coi is Controller {
 
         policies = CoiDB(coiDb).getPoliciesOfCoi(certificateNumber);
     }
+    function getNumCertificates() public view returns (uint numCertificates) {
+        address coiDb = obtainDBContract("coiDB");
+
+        numCertificates = CoiDB(coiDb).getNumCertificates();
+    }
 }
