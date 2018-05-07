@@ -4,9 +4,12 @@ import "../libraries/DataHelper.sol";
 import "../databases/CoiDB.sol";
 
 contract Coi is Controller {
+    mapping (uint => uint) brokerCertificates;
+
     function createCoi(uint ownerId, uint effectiveDate, uint brokerId) senderIsManager public returns (uint certificateId) {
         address coiDb = obtainDBContract("coiDB");
         certificateId = CoiDB(coiDb).createCoi(ownerId, effectiveDate, brokerId);
+        brokerCertificates[certificateId] = brokerId;
         return certificateId;
     }
 
@@ -30,6 +33,11 @@ contract Coi is Controller {
 
         policies = CoiDB(coiDb).getPoliciesOfCoi(certificateNumber);
     }
+
+    function isCoiOfBroker(uint certificateNumber, uint brokerId) senderIsManager public view returns (bool) {
+        return (brokerCertificates[certificateNumber] == brokerId); 
+    }
+
     function getNumCertificates() public view returns (uint numCertificates) {
         address coiDb = obtainDBContract("coiDB");
 
