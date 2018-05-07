@@ -66,7 +66,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         result = "".toSlice().join(parts);
     }
 
-    function createCoi(bytes32 email, uint effectiveDate, uint[5] policies) public {
+    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, uint[5] policies) public {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         address policy = obtainControllerContract("policy");
@@ -74,7 +74,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         bytes32 ownerName;
 
         (ownerId, , ownerName, ,) = User(user).getOwner(email);
-        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate);
+        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate, brokerId);
 
         for(uint i = 0; i < policies.length; i++) {
             if(policies[i] != 0) {
@@ -116,6 +116,41 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
             }
         }
         coiString = wrapObjectInArray("".toSlice().join(objects));
+    }
+
+    function getSummaryOfCoi(uint _certificateNumber) public view returns (string coiSummary) {
+        address addressCoi = obtainControllerContract("coi");
+        address user = obtainControllerContract("user");
+        uint ownerId;
+        bytes32 _ownerEmail;
+        bytes32 _ownerName;
+        uint _effectiveDate;
+
+        (, ownerId, _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
+        (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerId);
+        strings.slice[] memory items = new strings.slice[](6);
+        items[0] = itemJson("user_email", stringsUtil.bytes32ToString(_ownerEmail), false);
+        items[1] = itemJson("user_name", stringsUtil.bytes32ToString(_ownerName), false);
+        items[2] = itemJson("certificate_number", stringsUtil.uintToString(_certificateNumber), false);
+        items[3] = itemJson("effective_date", stringsUtil.uintToString(_effectiveDate), true);
+        coiSummary = wrapJsonObject("".toSlice().join(items));
+    }
+
+    function getCoisOfBroker(uint _brokerId) public view returns (string json) {
+        address addressCoi = obtainControllerContract("coi");
+        strings.slice[] memory objects = new strings.slice[](100);
+        uint numCertificates;
+        uint last;
+        numCertificates = Coi(addressCoi).getNumCertificates();
+        for(uint i = 1; i <= numCertificates; i++) {
+            if(Coi(addressCoi).isCoiOfBroker(i, _brokerId)){
+                objects[i*2] = getSummaryOfCoi(i).toSlice();
+                objects[(i*2)+1] = ",".toSlice();
+                last = (i*2)+1;
+            }
+        }
+        objects[last] = "".toSlice();
+        json = wrapObjectInArray("".toSlice().join(objects));
     }
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress) {
