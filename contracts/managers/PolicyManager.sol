@@ -100,7 +100,7 @@ contract PolicyManager {
 
     function getPoliciesOfCarrier(uint carrierId) public view returns (string json) {
         address policy = obtainControllerContract("policy");
-        strings.slice[] memory objects = new strings.slice[](20);
+        strings.slice[] memory objects = new strings.slice[](100);
         uint numPolicies = Policy(policy).getNumPolicies();
         uint last;
         for(uint i = 1; i <= numPolicies; i++) {
