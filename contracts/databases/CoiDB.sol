@@ -7,12 +7,13 @@ contract CoiDB is Database {
     uint numCertificates;
     mapping (uint => DataHelper.CoI) cois;
 
-    function createCoi(uint _ownerId, uint _effectiveDate) senderIsController("coi") public returns (uint)
+    function createCoi(uint _ownerId, uint _effectiveDate, uint _brokerId) senderIsController("coi") public returns (uint)
     {
         numCertificates++;
         DataHelper.CoI storage coi = cois[numCertificates];
         coi.certificateNumber = numCertificates;
         coi.ownerId = _ownerId;
+        coi.brokerId = _brokerId;
         coi.effectiveDate = _effectiveDate;
         return numCertificates;
     }

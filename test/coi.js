@@ -50,7 +50,7 @@ contract('COIManager', function(accounts) {
 
   describe("Certificate", function() {
     it("should create COI with given details", async function() {
-      const certificate = await manager.createCoi("CertificateTest@cosa.com", timeNow, [1, 2]);
+      const certificate = await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [1, 2]);
       expect(certificate.logs[0].args.certificateNumber.toNumber()).to.equal(1);
       expect(web3.toAscii(certificate.logs[0].args.ownerEmail)).to.include("CertificateTest@cosa.com");
       expect(web3.toAscii(certificate.logs[0].args.ownerName)).to.include("cosa");
@@ -58,7 +58,7 @@ contract('COIManager', function(accounts) {
     });
 
     it("get values of certificate", async function() {
-      await manager.createCoi("CertificateTest@cosa.com", timeNow, [1, 2]);
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [1, 2]);
       let values = await manager.getCoi(1);
       expect(values[0].toNumber()).to.equal(1);
       expect(web3.toAscii(values[1])).to.include("CertificateTest@cosa.com")
@@ -71,7 +71,7 @@ contract('COIManager', function(accounts) {
       await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("General Liability"), timeNow, oneYearFromNow, 1);
       await manager.cancelPolicy(3);
       try {
-        await manager.createCoi("CertificateTest@cosa.com", timeNow, [3]);
+        await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [3]);
       } catch (err) {
         expect(err.message).to.include("VM Exception while processing transaction: revert");
       }

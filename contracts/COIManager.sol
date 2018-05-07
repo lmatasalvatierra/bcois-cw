@@ -66,7 +66,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         result = "".toSlice().join(parts);
     }
 
-    function createCoi(bytes32 email, uint effectiveDate, uint[5] policies) public {
+    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, uint[5] policies) public {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         address policy = obtainControllerContract("policy");
@@ -74,7 +74,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         bytes32 ownerName;
 
         (ownerId, , ownerName, ,) = User(user).getOwner(email);
-        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate);
+        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate, brokerId);
 
         for(uint i = 0; i < policies.length; i++) {
             if(policies[i] != 0) {
