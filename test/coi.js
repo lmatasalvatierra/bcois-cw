@@ -15,7 +15,7 @@ var stringsUtil = artifacts.require("./libraries/stringsUtil.sol");
 var expect = require("chai").expect;
 
 contract('COIManager', function(accounts) {
-  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb;
+  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb, brokerdb;
   let timeNow = Math.floor(Date.now() / 1000);
   let oneYearFromNow = timeNow + 31556926;
   let agency = accounts[1];
@@ -32,6 +32,7 @@ contract('COIManager', function(accounts) {
     policy = await Policy.new();
     policydb = await PolicyDB.new();
     carrierdb = await CarrierDB.new();
+    brokerdb = await BrokerDB.new();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -41,9 +42,11 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
+    await doug.addContract("brokerDB", brokerdb.address);
 
     await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
     await manager.createOwner(web3.fromAscii("CertificateTest@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
+    await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), "admin", web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
     await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1);
     await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 1);
   });
@@ -75,6 +78,14 @@ contract('COIManager', function(accounts) {
       } catch (err) {
         expect(err.message).to.include("VM Exception while processing transaction: revert");
       }
+    });
+
+    it("get summary of broker certificates", async function() {
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [1]);
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [2]);
+      const result = await manager.getCoisOfBroker(3);
+      const certificates = JSON.parse(result);
+      expect(certificates.length).to.equal(2);
     });
   });
 });
