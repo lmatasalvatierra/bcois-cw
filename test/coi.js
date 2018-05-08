@@ -87,5 +87,13 @@ contract('COIManager', function(accounts) {
       const certificates = JSON.parse(result);
       expect(certificates.length).to.equal(2);
     });
+
+    it("get summary of owner certificates", async function() {
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [1]);
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [2]);
+      const result = await manager.getCoisOfOwner(2);
+      const certificates = JSON.parse(result);
+      expect(certificates.length).to.equal(2);
+    });
   });
 });

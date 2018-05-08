@@ -128,7 +128,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
 
         (, ownerId, , _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
         (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerId);
-        strings.slice[] memory items = new strings.slice[](6);
+        strings.slice[] memory items = new strings.slice[](4);
         items[0] = itemJson("user_email", stringsUtil.bytes32ToString(_ownerEmail), false);
         items[1] = itemJson("user_name", stringsUtil.bytes32ToString(_ownerName), false);
         items[2] = itemJson("certificate_number", stringsUtil.uintToString(_certificateNumber), false);
@@ -148,6 +148,38 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
                 objects[(i*2)+1] = ",".toSlice();
                 last = (i*2)+1;
             }
+        }
+        objects[last] = "".toSlice();
+        json = wrapObjectInArray("".toSlice().join(objects));
+    }
+
+    function getSummaryOfCoiForOwner(uint _certificateNumber) public view returns (string coiSummary) {
+        address addressCoi = obtainControllerContract("coi");
+        address user = obtainControllerContract("user");
+        uint _brokerId;
+        bytes32 _brokerName;
+        uint _effectiveDate;
+
+        (, , _brokerId, _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
+        (_brokerName, , ,) = User(user).getBroker(_brokerId);
+        strings.slice[] memory items = new strings.slice[](3);
+        items[0] = itemJson("broker_name", stringsUtil.bytes32ToString(_brokerName), false);
+        items[1] = itemJson("certificate_number", stringsUtil.uintToString(_certificateNumber), false);
+        items[2] = itemJson("effective_date", stringsUtil.uintToString(_effectiveDate), true);
+        coiSummary = wrapJsonObject("".toSlice().join(items));
+    }
+
+    function getCoisOfOwner(uint _ownerId) public view returns (string json) {
+        address user = obtainControllerContract("user");
+        strings.slice[] memory objects = new strings.slice[](40);
+        uint numCertificates;
+        uint[20] memory certificates;
+        uint last;
+        (certificates, numCertificates) = User(user).getOwnerCertificates(_ownerId);
+        for(uint i = 0; i < numCertificates; i++) {
+            objects[i*2] = getSummaryOfCoiForOwner(certificates[i]).toSlice();
+            objects[(i*2)+1] = ",".toSlice();
+            last = (i*2)+1;
         }
         objects[last] = "".toSlice();
         json = wrapObjectInArray("".toSlice().join(objects));
