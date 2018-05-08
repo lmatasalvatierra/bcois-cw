@@ -75,7 +75,7 @@ contract User is Controller {
     returns (uint, bytes32 _email, bytes32 _name, bytes32 _addressLine, uint[20] _certificates)
     {
         address ownerdb = obtainDBContract('ownerDB');
-        (_email, _name, _addressLine, _certificates) = OwnerDB(ownerdb).getOwner(indexes[email]);
+        (_email, _name, _addressLine, _certificates, ) = OwnerDB(ownerdb).getOwner(indexes[email]);
 
         return (indexes[_email], _email, _name, _addressLine, _certificates);
     }
@@ -87,7 +87,7 @@ contract User is Controller {
     returns (bytes32 _email, bytes32 _name, bytes32 _addressLine)
     {
         address ownerdb = obtainDBContract('ownerDB');
-        (_email, _name, _addressLine, ) = OwnerDB(ownerdb).getOwner(_ownerId);
+        (_email, _name, _addressLine, ,) = OwnerDB(ownerdb).getOwner(_ownerId);
         return (_email, _name, _addressLine);
     }
 

@@ -18,10 +18,10 @@ contract CoiDB is Database {
         return numCertificates;
     }
 
-    function getCoi(uint certificateNumber) senderIsController("coi") public view returns(uint, uint, uint)
+    function getCoi(uint certificateNumber) senderIsController("coi") public view returns(uint, uint, uint, uint)
     {
         DataHelper.CoI storage coi = cois[certificateNumber];
-        return (coi.certificateNumber, coi.ownerId, coi.effectiveDate);
+        return (coi.certificateNumber, coi.ownerId, coi.brokerId, coi.effectiveDate);
     }
 
     function addPolicy(uint certificateNumber, uint policyNumber) senderIsController("coi") public {
@@ -34,6 +34,6 @@ contract CoiDB is Database {
     }
 
     function getNumCertificates() senderIsController("coi") public view returns (uint) {
-        return numCertificates; 
+        return numCertificates;
     }
 }

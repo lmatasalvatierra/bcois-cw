@@ -96,7 +96,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         address user = obtainControllerContract("user");
         uint ownerId;
 
-        (_certificateNumber, ownerId, _effectiveDate) = Coi(addressCoi).getCoi(certificateNumber);
+        (_certificateNumber, ownerId, , _effectiveDate) = Coi(addressCoi).getCoi(certificateNumber);
         (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerId);
         policies = getPoliciesOfCoi(certificateNumber);
     }
@@ -126,7 +126,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         bytes32 _ownerName;
         uint _effectiveDate;
 
-        (, ownerId, _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
+        (, ownerId, , _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
         (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerId);
         strings.slice[] memory items = new strings.slice[](6);
         items[0] = itemJson("user_email", stringsUtil.bytes32ToString(_ownerEmail), false);
