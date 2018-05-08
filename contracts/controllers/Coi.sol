@@ -14,12 +14,12 @@ contract Coi is Controller {
     }
 
     function getCoi(uint certificateNumber) senderIsManager public view
-        returns(uint _certificateNumber, uint _ownerId, uint _effectiveDate)
+        returns(uint _certificateNumber, uint _ownerId, uint _brokerId, uint _effectiveDate)
     {
         address coiDb = obtainDBContract("coiDB");
 
-        (_certificateNumber, _ownerId, _effectiveDate) = CoiDB(coiDb).getCoi(certificateNumber);
-        return (_certificateNumber, _ownerId, _effectiveDate);
+        (_certificateNumber, _ownerId, _brokerId, _effectiveDate) = CoiDB(coiDb).getCoi(certificateNumber);
+        return (_certificateNumber, _ownerId, _brokerId, _effectiveDate);
     }
 
     function addPolicy(uint certificateNumber, uint policyNumber) senderIsManager public {
@@ -35,7 +35,7 @@ contract Coi is Controller {
     }
 
     function isCoiOfBroker(uint certificateNumber, uint brokerId) senderIsManager public view returns (bool) {
-        return (brokerCertificates[certificateNumber] == brokerId); 
+        return (brokerCertificates[certificateNumber] == brokerId);
     }
 
     function getNumCertificates() public view returns (uint numCertificates) {

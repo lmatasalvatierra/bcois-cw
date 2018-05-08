@@ -38,8 +38,8 @@ contract OwnerDB is UserDB{
     function getOwner(uint _owner)
     public
     view
-    returns (bytes32, bytes32, bytes32, uint[20])
+    returns (bytes32, bytes32, bytes32, uint[20], uint)
     {
-        return (owners[_owner].email, owners[_owner].name, owners[_owner].addressLine, owners[_owner].certificates);
+        return (owners[_owner].email, owners[_owner].name, owners[_owner].addressLine, owners[_owner].certificates, owners[_owner].numCertificates);
     }
 }
