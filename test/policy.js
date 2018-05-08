@@ -71,10 +71,9 @@ contract('COIManager', function(accounts) {
     });
 
     it("should cancel a Policy", async function() {
-      await manager.cancelPolicy(1);
-      let response = await manager.getPolicy(1);
-      const policy = JSON.parse(response);
-      expect(+policy.status).to.equal(1);
+      const response = await manager.cancelPolicy(1);
+      expect(response.logs[0].args.policyNumber.toNumber()).to.equal(1);
+      expect(response.logs[0].args.status.toNumber()).to.equal(1);
     });
 
     it("should change a Policy state to expired", async function() {

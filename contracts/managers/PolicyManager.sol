@@ -18,6 +18,7 @@ contract PolicyManager {
         uint effectiveDate,
         uint expirationDate
     );
+    event LogCancelPolicy(uint policyNumber, DataHelper.Stage status);
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress);
     function itemJson(string key, string value, bool last) internal pure returns (strings.slice itemFinal);
@@ -91,6 +92,7 @@ contract PolicyManager {
         address policy = obtainControllerContract("policy");
 
         Policy(policy).cancelPolicy(_policyNumber);
+        emit LogCancelPolicy(_policyNumber, DataHelper.Stage.Cancelled);
     }
 
     function changePolicyToExpired() public {
