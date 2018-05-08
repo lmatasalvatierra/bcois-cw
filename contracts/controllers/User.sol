@@ -91,6 +91,17 @@ contract User is Controller {
         return (_email, _name, _addressLine);
     }
 
+    function getOwnerCertificates(uint _ownerId)
+    senderIsManager
+    public
+    view
+    returns (uint[20] certificates, uint numCertificates)
+    {
+        address ownerdb = obtainDBContract('ownerDB');
+        (, , , certificates, numCertificates) = OwnerDB(ownerdb).getOwner(_ownerId);
+        return (certificates, numCertificates);
+    }
+
     // Carrier Methods
 
     function createCarrier(
@@ -148,6 +159,17 @@ contract User is Controller {
         address brokerdb = obtainDBContract('brokerDB');
 
         (_name, _email, _contactPhone, _addressLine) = BrokerDB(brokerdb).getBroker(indexes[email]);
+        return (_name, _email, _contactPhone, _addressLine);
+    }
+
+    function getBroker(uint _brokerId)
+    public
+    view
+    returns (bytes32 _name, bytes32 _email, bytes32 _contactPhone , bytes32 _addressLine)
+    {
+        address brokerdb = obtainDBContract('brokerDB');
+
+        (_name, _email, _contactPhone, _addressLine) = BrokerDB(brokerdb).getBroker(_brokerId);
         return (_name, _email, _contactPhone, _addressLine);
     }
 }
