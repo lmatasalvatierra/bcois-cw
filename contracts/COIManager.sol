@@ -66,7 +66,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         result = "".toSlice().join(parts);
     }
 
-    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, uint[5] policies) public {
+    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, uint[5] policies) external {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         address policy = obtainControllerContract("policy");
@@ -89,7 +89,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         emit LogCreateCertificate(id, email, ownerName, effectiveDate);
     }
 
-    function getCoi(uint certificateNumber) public view
+    function getCoi(uint certificateNumber) external view
         returns(uint _certificateNumber, bytes32 _ownerEmail, bytes32 _ownerName, uint _effectiveDate, string policies)
     {
         address addressCoi = obtainControllerContract("coi");
@@ -101,7 +101,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         policies = getPoliciesOfCoi(certificateNumber);
     }
 
-    function getPoliciesOfCoi(uint certificateNumber) private view returns (string coiString) {
+    function getPoliciesOfCoi(uint certificateNumber) internal view returns (string coiString) {
         address addressCoi = obtainControllerContract("coi");
         uint[5] memory policies = Coi(addressCoi).getPoliciesOfCoi(certificateNumber);
         strings.slice[] memory objects = new strings.slice[](10);
@@ -118,7 +118,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         coiString = wrapObjectInArray("".toSlice().join(objects));
     }
 
-    function getSummaryOfCoi(uint _certificateNumber) public view returns (string coiSummary) {
+    function getSummaryOfCoiForBroker(uint _certificateNumber) internal view returns (string coiSummary) {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         uint ownerId;
@@ -136,7 +136,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         coiSummary = wrapJsonObject("".toSlice().join(items));
     }
 
-    function getCoisOfBroker(uint _brokerId) public view returns (string json) {
+    function getCoisOfBroker(uint _brokerId) external view returns (string json) {
         address addressCoi = obtainControllerContract("coi");
         strings.slice[] memory objects = new strings.slice[](100);
         uint numCertificates;
@@ -144,7 +144,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         numCertificates = Coi(addressCoi).getNumCertificates();
         for(uint i = 1; i <= numCertificates; i++) {
             if(Coi(addressCoi).isCoiOfBroker(i, _brokerId)){
-                objects[i*2] = getSummaryOfCoi(i).toSlice();
+                objects[i*2] = getSummaryOfCoiForBroker(i).toSlice();
                 objects[(i*2)+1] = ",".toSlice();
                 last = (i*2)+1;
             }
@@ -153,7 +153,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         json = wrapObjectInArray("".toSlice().join(objects));
     }
 
-    function getSummaryOfCoiForOwner(uint _certificateNumber) public view returns (string coiSummary) {
+    function getSummaryOfCoiForOwner(uint _certificateNumber) internal view returns (string coiSummary) {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         uint _brokerId;
@@ -169,7 +169,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         coiSummary = wrapJsonObject("".toSlice().join(items));
     }
 
-    function getCoisOfOwner(uint _ownerId) public view returns (string json) {
+    function getCoisOfOwner(uint _ownerId) external view returns (string json) {
         address user = obtainControllerContract("user");
         strings.slice[] memory objects = new strings.slice[](40);
         uint numCertificates;
