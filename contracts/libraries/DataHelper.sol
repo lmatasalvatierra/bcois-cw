@@ -27,5 +27,6 @@ library DataHelper {
         uint effectiveDate;
         uint expirationDate;
         uint carrierId;
+        bytes16 policyUUID;
     }
 }
