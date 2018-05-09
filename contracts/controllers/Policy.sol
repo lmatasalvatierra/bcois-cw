@@ -60,13 +60,6 @@ contract Policy is Controller {
         return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate, _carrierId);
     }
 
-    function getPolicyStatus(uint _policyNumber) senderIsManager public view returns (DataHelper.Stage _status) {
-        address policydb = obtainDBContract("policyDB");
-
-        (, , , _status, , , ) = PolicyDB(policydb).getPolicy(_policyNumber);
-        return _status;
-    }
-
     function isPolicyValid(uint _policyNumber, uint _ownerId) senderIsManager public view returns (bool) {
         address policydb = obtainDBContract("policyDB");
         uint ownerId;

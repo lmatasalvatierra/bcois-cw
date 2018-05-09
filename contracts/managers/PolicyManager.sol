@@ -32,7 +32,7 @@ contract PolicyManager {
     uint _expirationDate,
     uint _carrierId
     )
-    public
+    external
     {
         address policy = obtainControllerContract("policy");
         address user = obtainControllerContract("user");
@@ -54,7 +54,7 @@ contract PolicyManager {
     }
 
     function getPolicy(uint policyNumber)
-    public view
+    external view
     returns(string policyString)
     {
         address policy = obtainControllerContract("policy");
@@ -88,19 +88,19 @@ contract PolicyManager {
         policyString = wrapJsonObject("".toSlice().join(items));
     }
 
-    function cancelPolicy(uint _policyNumber) public {
+    function cancelPolicy(uint _policyNumber) external {
         address policy = obtainControllerContract("policy");
 
         Policy(policy).cancelPolicy(_policyNumber);
         emit LogCancelPolicy(_policyNumber, DataHelper.Stage.Cancelled);
     }
 
-    function changePolicyToExpired() public {
+    function changePolicyToExpired() external {
         address policy = obtainControllerContract("policy");
         Policy(policy).changePolicyToExpired();
     }
 
-    function getPoliciesOfCarrier(uint carrierId) public view returns (string json) {
+    function getPoliciesOfCarrier(uint carrierId) external view returns (string json) {
         address policy = obtainControllerContract("policy");
         strings.slice[] memory objects = new strings.slice[](100);
         uint numPolicies = Policy(policy).getNumPolicies();
@@ -117,7 +117,7 @@ contract PolicyManager {
     }
 
     function getSummaryOfPolicy(uint policyNumber)
-    public view
+    internal view
     returns(string policyString)
     {
         address policy = obtainControllerContract("policy");
@@ -148,7 +148,7 @@ contract PolicyManager {
     }
 
     function getPolicyForCertificateView(uint policyNumber)
-    public view
+    internal view
     returns(string policyString)
     {
         address policy = obtainControllerContract("policy");
