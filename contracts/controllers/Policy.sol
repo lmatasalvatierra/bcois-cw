@@ -13,12 +13,13 @@ contract Policy is Controller {
         bytes32 _name,
         uint _effectiveDate,
         uint _expirationDate,
-        uint carrierId
+        uint carrierId,
+        bytes16 _policyUUID
     )
         senderIsManager public returns (uint result)
     {
         address policydb = obtainDBContract("policyDB");
-        result = PolicyDB(policydb).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate, carrierId);
+        result = PolicyDB(policydb).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate, carrierId, _policyUUID);
         carrierPolicies[result] = carrierId;
         return result;
     }

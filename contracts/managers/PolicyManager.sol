@@ -16,7 +16,8 @@ contract PolicyManager {
         uint policyNumber,
         uint ownerId,
         uint effectiveDate,
-        uint expirationDate
+        uint expirationDate,
+        bytes16 policyUUID
     );
     event LogCancelPolicy(uint policyNumber, DataHelper.Stage status);
 
@@ -30,7 +31,8 @@ contract PolicyManager {
     bytes32 _name,
     uint _effectiveDate,
     uint _expirationDate,
-    uint _carrierId
+    uint _carrierId,
+    bytes16 _policyUUID
     )
     external
     {
@@ -45,8 +47,9 @@ contract PolicyManager {
               _name,
               _effectiveDate,
               _expirationDate,
-              _carrierId);
-              emit CreatePolicy(DataHelper.Stage.Active, _name, _ownerEmail, result, ownerId, _effectiveDate, _expirationDate);
+              _carrierId,
+              _policyUUID);
+              emit CreatePolicy(DataHelper.Stage.Active, _name, _ownerEmail, result, ownerId, _effectiveDate, _expirationDate, _policyUUID);
         }
         else {
             revert("Owner does no exist");
