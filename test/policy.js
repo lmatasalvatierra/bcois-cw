@@ -66,9 +66,9 @@ contract('COIManager', function(accounts) {
     });
 
     it("should get a Policy", async function() {
-      let result = await manager.getPolicy(1);
-      policy = JSON.parse(result);
-      expect(parseInt(policy.policy_number)).to.equal(1);
+      let result = await manager.getPolicy.call(policyUUID);
+      const policy = JSON.parse(result);
+      expect("0x" + policy.policy_uuid).to.equal(policyUUID);
       expect(policy.insurance_type).to.include("Workers Comp");
       expect(parseInt(policy.status)).to.equal(0);
       expect(parseInt(policy.effective_date)).to.equal(timeNow);
@@ -78,7 +78,7 @@ contract('COIManager', function(accounts) {
       expect(policy.address).to.include("Alcala 21");
     });
 
-    it("should reject call of getting a policy", async function() {
+    it("should reject call of getting a policy because doesn't exist", async function() {
       try {
         let result = await manager.getPolicy(2);
       } catch (err) {
@@ -87,8 +87,8 @@ contract('COIManager', function(accounts) {
     });
 
     it("should cancel a Policy", async function() {
-      const response = await manager.cancelPolicy(1);
-      expect(response.logs[0].args.policyNumber.toNumber()).to.equal(1);
+      const response = await manager.cancelPolicy(policyUUID);
+      expect(response.logs[0].args.policyUUID).to.include(policyUUID);
       expect(response.logs[0].args.status.toNumber()).to.equal(1);
     });
 
@@ -99,7 +99,7 @@ contract('COIManager', function(accounts) {
       await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("BOP"), oneYearBeforeNow, oneDayBeforeNow, 1, policy1UUID);
       await manager.changePolicyToExpired();
 
-      let response = await manager.getPolicy(2);
+      let response = await manager.getPolicy.call(policy1UUID);
       const policy = JSON.parse(response);
       expect(+policy.status).to.equal(2);
     });
