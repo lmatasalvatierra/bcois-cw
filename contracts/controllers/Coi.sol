@@ -22,13 +22,13 @@ contract Coi is Controller {
         return (_certificateNumber, _ownerId, _brokerId, _effectiveDate);
     }
 
-    function addPolicy(uint certificateNumber, uint policyNumber) senderIsManager public {
+    function addPolicy(uint certificateNumber, bytes16 policyUUID) senderIsManager public {
         address coiDb = obtainDBContract("coiDB");
 
-        CoiDB(coiDb).addPolicy(certificateNumber, policyNumber);
+        CoiDB(coiDb).addPolicy(certificateNumber, policyUUID);
     }
 
-    function getPoliciesOfCoi(uint certificateNumber) senderIsManager public view returns (uint[5] policies) {
+    function getPoliciesOfCoi(uint certificateNumber) senderIsManager public view returns (bytes16[5] policies) {
         address coiDb = obtainDBContract("coiDB");
 
         policies = CoiDB(coiDb).getPoliciesOfCoi(certificateNumber);

@@ -24,12 +24,12 @@ contract CoiDB is Database {
         return (coi.certificateNumber, coi.ownerId, coi.brokerId, coi.effectiveDate);
     }
 
-    function addPolicy(uint certificateNumber, uint policyNumber) senderIsController("coi") public {
-        cois[certificateNumber].policyIds[cois[certificateNumber].numPolicies] = policyNumber;
+    function addPolicy(uint certificateNumber, bytes16 policyUUID) senderIsController("coi") public {
+        cois[certificateNumber].policyIds[cois[certificateNumber].numPolicies] = policyUUID;
         cois[certificateNumber].numPolicies += 1;
     }
 
-    function getPoliciesOfCoi(uint certificateNumber) senderIsController("coi") public view returns (uint[5]) {
+    function getPoliciesOfCoi(uint certificateNumber) senderIsController("coi") public view returns (bytes16[5]) {
         return cois[certificateNumber].policyIds;
     }
 
