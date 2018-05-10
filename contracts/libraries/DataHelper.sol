@@ -15,7 +15,7 @@ library DataHelper {
         uint ownerId;
         uint brokerId;
         uint effectiveDate;
-        uint[5] policyIds;
+        bytes16[5] policyIds;
         uint numPolicies;
     }
 

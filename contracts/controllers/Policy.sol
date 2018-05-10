@@ -90,12 +90,14 @@ contract Policy is Controller {
         return (_ownerId, _name, _status, _effectiveDate, _expirationDate, _carrierId);
     }
 
-    function isPolicyValid(uint _policyNumber, uint _ownerId) senderIsManager public view returns (bool) {
+    function isPolicyValid(bytes16 _policyUUID, uint _ownerId) senderIsManager public view returns (bool) {
         address policydb = obtainDBContract("policyDB");
         uint ownerId;
         DataHelper.Stage status;
+        uint policyNumber;
 
-        (, ownerId , , status, , , ) = PolicyDB(policydb).getPolicy(_policyNumber);
+        policyNumber = PolicyDB(policydb).getPolicyNumber(_policyUUID);
+        (, ownerId , , status, , , ) = PolicyDB(policydb).getPolicy(policyNumber);
         return (_ownerId == ownerId && status == DataHelper.Stage.Active);
     }
 

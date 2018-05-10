@@ -66,7 +66,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         result = "".toSlice().join(parts);
     }
 
-    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, uint[5] policies) external {
+    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, bytes16[5] policies) external {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         address policy = obtainControllerContract("policy");
@@ -103,10 +103,10 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
 
     function getPoliciesOfCoi(uint certificateNumber) internal view returns (string coiString) {
         address addressCoi = obtainControllerContract("coi");
-        uint[5] memory policies = Coi(addressCoi).getPoliciesOfCoi(certificateNumber);
+        bytes16[5] memory policies = Coi(addressCoi).getPoliciesOfCoi(certificateNumber);
         strings.slice[] memory objects = new strings.slice[](10);
         for(uint i = 0; i < policies.length; i++) {
-            if(policies[i] != 0){
+            if(policies[i] != 0x0){
                 objects[i*2] = getPolicyForCertificateView(policies[i]).toSlice();
                 if(policies[i+1] != 0){
                     objects[(i*2)+1] = ",".toSlice();
