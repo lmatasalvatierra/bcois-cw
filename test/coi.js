@@ -70,8 +70,8 @@ contract('COIManager', function(accounts) {
 
     it("get values of certificate", async function() {
       await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [policy1UUID, policy2UUID], certificate1UUID);
-      let values = await manager.getCoi(1);
-      expect(values[0].toNumber()).to.equal(1);
+      let values = await manager.getCoi(certificate1UUID);
+      expect(values[0]).to.equal(certificate1UUID);
       expect(web3.toAscii(values[1])).to.include("CertificateTest@cosa.com")
       expect(web3.toAscii(values[2])).to.include("cosa");
       expect(values[3].toNumber()).to.equal(timeNow);
