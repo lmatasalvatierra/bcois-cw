@@ -14,12 +14,22 @@ contract Coi is Controller {
     }
 
     function getCoi(uint certificateNumber) senderIsManager public view
-        returns(uint _certificateNumber, uint _ownerId, uint _brokerId, uint _effectiveDate)
+        returns(bytes16 _certificateUUID, uint _ownerId, uint _brokerId, uint _effectiveDate)
     {
         address coiDb = obtainDBContract("coiDB");
 
-        (_certificateNumber, _ownerId, _brokerId, _effectiveDate) = CoiDB(coiDb).getCoi(certificateNumber);
-        return (_certificateNumber, _ownerId, _brokerId, _effectiveDate);
+        (_certificateUUID, _ownerId, _brokerId, _effectiveDate) = CoiDB(coiDb).getCoi(certificateNumber);
+        return (_certificateUUID, _ownerId, _brokerId, _effectiveDate);
+    }
+
+    function getCoi(bytes16 certificateUUID) senderIsManager public view
+        returns(bytes16 _certificateUUID, uint _ownerId, uint _brokerId, uint _effectiveDate)
+    {
+        address coiDb = obtainDBContract("coiDB");
+
+        uint certificateNumber = CoiDB(coiDb).getCoiNumber(certificateUUID);
+        (_certificateUUID, _ownerId, _brokerId, _effectiveDate) = CoiDB(coiDb).getCoi(certificateNumber);
+        return (_certificateUUID, _ownerId, _brokerId, _effectiveDate);
     }
 
     function addPolicy(uint certificateNumber, bytes16 policyUUID) senderIsManager public {
@@ -28,9 +38,10 @@ contract Coi is Controller {
         CoiDB(coiDb).addPolicy(certificateNumber, policyUUID);
     }
 
-    function getPoliciesOfCoi(uint certificateNumber) senderIsManager public view returns (bytes16[5] policies) {
+    function getPoliciesOfCoi(bytes16 certificateUUID) senderIsManager public view returns (bytes16[5] policies) {
         address coiDb = obtainDBContract("coiDB");
 
+        uint certificateNumber = CoiDB(coiDb).getCoiNumber(certificateUUID);
         policies = CoiDB(coiDb).getPoliciesOfCoi(certificateNumber);
     }
 

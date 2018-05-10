@@ -21,10 +21,11 @@ contract CoiDB is Database {
         return numCertificates;
     }
 
-    function getCoi(uint certificateNumber) senderIsController("coi") public view returns(uint, uint, uint, uint)
+    function getCoi(uint certificateNumber) senderIsController("coi") public view returns(bytes16, uint, uint, uint)
     {
         DataHelper.CoI storage coi = cois[certificateNumber];
-        return (coi.certificateNumber, coi.ownerId, coi.brokerId, coi.effectiveDate);
+        require(coi.ownerId != 0, "The certificate does not exist");
+        return (coi.certificateUUID, coi.ownerId, coi.brokerId, coi.effectiveDate);
     }
 
     function addPolicy(uint certificateNumber, bytes16 policyUUID) senderIsController("coi") public {
@@ -38,5 +39,9 @@ contract CoiDB is Database {
 
     function getNumCertificates() senderIsController("coi") public view returns (uint) {
         return numCertificates;
+    }
+
+    function getCoiNumber(bytes16 _certificateUUID) senderIsController("coi") public view returns (uint){
+        return uuidToId[_certificateUUID];
     }
 }
