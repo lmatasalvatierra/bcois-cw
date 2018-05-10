@@ -6,15 +6,18 @@ import "../libraries/DataHelper.sol";
 contract CoiDB is Database {
     uint numCertificates;
     mapping (uint => DataHelper.CoI) cois;
+    mapping (bytes16 => uint) uuidToId;
 
-    function createCoi(uint _ownerId, uint _effectiveDate, uint _brokerId) senderIsController("coi") public returns (uint)
+    function createCoi(uint _ownerId, uint _effectiveDate, uint _brokerId, bytes16 _certificateUUID) senderIsController("coi") public returns (uint)
     {
         numCertificates++;
+        uuidToId[_certificateUUID] = numCertificates;
         DataHelper.CoI storage coi = cois[numCertificates];
         coi.certificateNumber = numCertificates;
         coi.ownerId = _ownerId;
         coi.brokerId = _brokerId;
         coi.effectiveDate = _effectiveDate;
+        coi.certificateUUID = _certificateUUID;
         return numCertificates;
     }
 

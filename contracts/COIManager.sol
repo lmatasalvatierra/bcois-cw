@@ -14,7 +14,8 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         uint certificateNumber,
         bytes32 ownerEmail,
         bytes32 ownerName,
-        uint effectiveDate
+        uint effectiveDate,
+        bytes16 certificateUUID
     );
 
     constructor() public {
@@ -66,7 +67,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         result = "".toSlice().join(parts);
     }
 
-    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, bytes16[5] policies) external {
+    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, bytes16[5] policies, bytes16 certificateUUID) external {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         address policy = obtainControllerContract("policy");
@@ -74,7 +75,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         bytes32 ownerName;
 
         (ownerId, , ownerName, ,) = User(user).getOwner(email);
-        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate, brokerId);
+        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate, brokerId, certificateUUID);
 
         for(uint i = 0; i < policies.length; i++) {
             if(policies[i] != 0) {
@@ -86,7 +87,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
             }
         }
         User(user).addCertificate(email, id);
-        emit LogCreateCertificate(id, email, ownerName, effectiveDate);
+        emit LogCreateCertificate(id, email, ownerName, effectiveDate, certificateUUID);
     }
 
     function getCoi(uint certificateNumber) external view

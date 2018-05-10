@@ -17,6 +17,7 @@ library DataHelper {
         uint effectiveDate;
         bytes16[5] policyIds;
         uint numPolicies;
+        bytes16 certificateUUID;
     }
 
     struct Policy {

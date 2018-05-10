@@ -6,9 +6,9 @@ import "../databases/CoiDB.sol";
 contract Coi is Controller {
     mapping (uint => uint) brokerCertificates;
 
-    function createCoi(uint ownerId, uint effectiveDate, uint brokerId) senderIsManager public returns (uint certificateId) {
+    function createCoi(uint ownerId, uint effectiveDate, uint brokerId, bytes16 certificateUUID) senderIsManager public returns (uint certificateId) {
         address coiDb = obtainDBContract("coiDB");
-        certificateId = CoiDB(coiDb).createCoi(ownerId, effectiveDate, brokerId);
+        certificateId = CoiDB(coiDb).createCoi(ownerId, effectiveDate, brokerId, certificateUUID);
         brokerCertificates[certificateId] = brokerId;
         return certificateId;
     }
