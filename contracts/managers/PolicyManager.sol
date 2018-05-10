@@ -16,9 +16,10 @@ contract PolicyManager {
         uint policyNumber,
         uint ownerId,
         uint effectiveDate,
-        uint expirationDate
+        uint expirationDate,
+        bytes16 policyUUID
     );
-    event LogCancelPolicy(uint policyNumber, DataHelper.Stage status);
+    event LogCancelPolicy(bytes16 policyUUID, DataHelper.Stage status);
 
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress);
     function itemJson(string key, string value, bool last) internal pure returns (strings.slice itemFinal);
@@ -30,9 +31,10 @@ contract PolicyManager {
     bytes32 _name,
     uint _effectiveDate,
     uint _expirationDate,
-    uint _carrierId
+    uint _carrierId,
+    bytes16 _policyUUID
     )
-    public
+    external
     {
         address policy = obtainControllerContract("policy");
         address user = obtainControllerContract("user");
@@ -45,16 +47,17 @@ contract PolicyManager {
               _name,
               _effectiveDate,
               _expirationDate,
-              _carrierId);
-              emit CreatePolicy(DataHelper.Stage.Active, _name, _ownerEmail, result, ownerId, _effectiveDate, _expirationDate);
+              _carrierId,
+              _policyUUID);
+              emit CreatePolicy(DataHelper.Stage.Active, _name, _ownerEmail, result, ownerId, _effectiveDate, _expirationDate, _policyUUID);
         }
         else {
             revert("Owner does no exist");
         }
     }
 
-    function getPolicy(uint policyNumber)
-    public view
+    function getPolicy(bytes16 policyUUID)
+    external view
     returns(string policyString)
     {
         address policy = obtainControllerContract("policy");
@@ -62,22 +65,21 @@ contract PolicyManager {
         bytes32 _ownerName;
         bytes32 _userName;
         bytes32 _addressLine;
-        uint _policyNumber;
         uint _ownerId;
         bytes32 _name;
         DataHelper.Stage _status;
         uint _effectiveDate;
         uint _expirationDate;
-        (_policyNumber,
+        (
         _ownerId,
         _name,
         _status,
         _effectiveDate,
         _expirationDate,
-        ) = Policy(policy).getPolicy(policyNumber);
+        ) = Policy(policy).getPolicy(policyUUID);
         (_userName, _ownerName, _addressLine) = User(user).getOwner(_ownerId);
         strings.slice[] memory items = new strings.slice[](8);
-        items[0] = itemJson("policy_number", stringsUtil.uintToString(_policyNumber), false);
+        items[0] = itemJson("policy_uuid", stringsUtil.uuidToString(policyUUID), false);
         items[1] = itemJson("user_email", stringsUtil.bytes32ToString(_userName), false);
         items[2] = itemJson("insurance_type", stringsUtil.bytes32ToString(_name), false);
         items[3] = itemJson("status", stringsUtil.uintToString(uint(_status)), false);
@@ -88,19 +90,19 @@ contract PolicyManager {
         policyString = wrapJsonObject("".toSlice().join(items));
     }
 
-    function cancelPolicy(uint _policyNumber) public {
+    function cancelPolicy(bytes16 _policyUUID) external {
         address policy = obtainControllerContract("policy");
 
-        Policy(policy).cancelPolicy(_policyNumber);
-        emit LogCancelPolicy(_policyNumber, DataHelper.Stage.Cancelled);
+        Policy(policy).cancelPolicy(_policyUUID);
+        emit LogCancelPolicy(_policyUUID, DataHelper.Stage.Cancelled);
     }
 
-    function changePolicyToExpired() public {
+    function changePolicyToExpired() external {
         address policy = obtainControllerContract("policy");
         Policy(policy).changePolicyToExpired();
     }
 
-    function getPoliciesOfCarrier(uint carrierId) public view returns (string json) {
+    function getPoliciesOfCarrier(uint carrierId) external view returns (string json) {
         address policy = obtainControllerContract("policy");
         strings.slice[] memory objects = new strings.slice[](100);
         uint numPolicies = Policy(policy).getNumPolicies();
@@ -117,19 +119,19 @@ contract PolicyManager {
     }
 
     function getSummaryOfPolicy(uint policyNumber)
-    public view
+    internal view
     returns(string policyString)
     {
         address policy = obtainControllerContract("policy");
         address user = obtainControllerContract("user");
         bytes32 _userName;
-        uint _policyNumber;
+        bytes16 _policyUUID;
         uint _ownerId;
         bytes32 _name;
         DataHelper.Stage _status;
         uint _effectiveDate;
         uint _expirationDate;
-        (_policyNumber,
+        (_policyUUID,
         _ownerId,
         _name,
         _status,
@@ -138,7 +140,7 @@ contract PolicyManager {
         ) = Policy(policy).getPolicy(policyNumber);
         (_userName, ,) = User(user).getOwner(_ownerId);
         strings.slice[] memory items = new strings.slice[](6);
-        items[0] = itemJson("policy_number", stringsUtil.uintToString(_policyNumber), false);
+        items[0] = itemJson("policy_uuid", stringsUtil.uuidToString(_policyUUID), false);
         items[1] = itemJson("user_email", stringsUtil.bytes32ToString(_userName), false);
         items[2] = itemJson("insurance_type", stringsUtil.bytes32ToString(_name), false);
         items[3] = itemJson("status", stringsUtil.uintToString(uint(_status)), false);
@@ -148,16 +150,16 @@ contract PolicyManager {
     }
 
     function getPolicyForCertificateView(uint policyNumber)
-    public view
+    internal view
     returns(string policyString)
     {
         address policy = obtainControllerContract("policy");
-        uint _policyNumber;
+        bytes16 _policyUUID;
         bytes32 _name;
         DataHelper.Stage _status;
         uint _effectiveDate;
         uint _expirationDate;
-        (_policyNumber,
+        (_policyUUID,
         ,
         _name,
         _status,
@@ -165,7 +167,7 @@ contract PolicyManager {
         _expirationDate,
         ) = Policy(policy).getPolicy(policyNumber);
         strings.slice[] memory items = new strings.slice[](5);
-        items[0] = itemJson("policy_number", stringsUtil.uintToString(_policyNumber), false);
+        items[0] = itemJson("policy_uuid", stringsUtil.uuidToString(_policyUUID), false);
         items[1] = itemJson("insurance_type", stringsUtil.bytes32ToString(_name), false);
         items[2] = itemJson("status", stringsUtil.uintToString(uint(_status)), false);
         items[3] = itemJson("effective_date", stringsUtil.uintToString(_effectiveDate), false);

@@ -13,12 +13,13 @@ contract Policy is Controller {
         bytes32 _name,
         uint _effectiveDate,
         uint _expirationDate,
-        uint carrierId
+        uint carrierId,
+        bytes16 _policyUUID
     )
         senderIsManager public returns (uint result)
     {
         address policydb = obtainDBContract("policyDB");
-        result = PolicyDB(policydb).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate, carrierId);
+        result = PolicyDB(policydb).createPolicy(_ownerId, _name, _effectiveDate, _expirationDate, carrierId, _policyUUID);
         carrierPolicies[result] = carrierId;
         return result;
     }
@@ -38,7 +39,7 @@ contract Policy is Controller {
     senderIsManager
     public view
     returns(
-      uint _policyNumber,
+      bytes16 _policyUUID,
       uint _ownerId,
       bytes32 _name,
       DataHelper.Stage _status,
@@ -49,7 +50,7 @@ contract Policy is Controller {
     {
         address policydb = obtainDBContract("policyDB");
 
-        (_policyNumber,
+        (_policyUUID,
          _ownerId,
          _name,
          _status,
@@ -57,14 +58,36 @@ contract Policy is Controller {
          _expirationDate,
          _carrierId
         ) = PolicyDB(policydb).getPolicy(policyNumber);
-        return (_policyNumber, _ownerId, _name, _status, _effectiveDate, _expirationDate, _carrierId);
+        return (_policyUUID, _ownerId, _name, _status, _effectiveDate, _expirationDate, _carrierId);
     }
 
-    function getPolicyStatus(uint _policyNumber) senderIsManager public view returns (DataHelper.Stage _status) {
+    function getPolicy(
+      bytes16 policyUUID
+    )
+    senderIsManager
+    public view
+    returns(
+      uint _ownerId,
+      bytes32 _name,
+      DataHelper.Stage _status,
+      uint _effectiveDate,
+      uint _expirationDate,
+      uint _carrierId
+    )
+    {
         address policydb = obtainDBContract("policyDB");
+        uint policyNumber;
+        policyNumber = PolicyDB(policydb).getPolicyNumber(policyUUID);
 
-        (, , , _status, , , ) = PolicyDB(policydb).getPolicy(_policyNumber);
-        return _status;
+        (,
+         _ownerId,
+         _name,
+         _status,
+         _effectiveDate,
+         _expirationDate,
+         _carrierId
+        ) = PolicyDB(policydb).getPolicy(policyNumber);
+        return (_ownerId, _name, _status, _effectiveDate, _expirationDate, _carrierId);
     }
 
     function isPolicyValid(uint _policyNumber, uint _ownerId) senderIsManager public view returns (bool) {
@@ -76,10 +99,12 @@ contract Policy is Controller {
         return (_ownerId == ownerId && status == DataHelper.Stage.Active);
     }
 
-    function cancelPolicy(uint _policyNumber) senderIsManager public {
+    function cancelPolicy(bytes16 _policyUUID) senderIsManager public {
         address policydb = obtainDBContract("policyDB");
+        uint policyNumber;
+        policyNumber = PolicyDB(policydb).getPolicyNumber(_policyUUID);
 
-        PolicyDB(policydb).updateStatus(_policyNumber, DataHelper.Stage.Cancelled);
+        PolicyDB(policydb).updateStatus(policyNumber, DataHelper.Stage.Cancelled);
     }
 
     function changePolicyToExpired() senderIsManager public {

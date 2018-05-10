@@ -13,6 +13,9 @@ var CarrierDB = artifacts.require("./databases/CarrierDB.sol");
 var BrokerDB = artifacts.require("./databases/BrokerDB.sol");
 var stringsUtil = artifacts.require("./libraries/stringsUtil.sol");
 var expect = require("chai").expect;
+const uuidv4 = require('uuid/v4');
+const uuidToHex = require('uuid-to-hex');
+const hexToUuid = require('hex-to-uuid');
 
 contract('COIManager', function(accounts) {
   var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb, brokerdb;
@@ -21,6 +24,8 @@ contract('COIManager', function(accounts) {
   let agency = accounts[1];
   let owner = accounts[2];
   let guest = accounts[6];
+  const policy1UUID = uuidToHex(uuidv4(), true);
+  const policy2UUID = uuidToHex(uuidv4(), true);
 
   beforeEach('setup manager', async function () {
     doug = await Doug.new();
@@ -47,8 +52,8 @@ contract('COIManager', function(accounts) {
     await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
     await manager.createOwner(web3.fromAscii("CertificateTest@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
     await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), "admin", web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
-    await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1);
-    await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 1);
+    await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1, policy1UUID);
+    await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 1, policy2UUID);
   });
 
   describe("Certificate", function() {
@@ -71,7 +76,7 @@ contract('COIManager', function(accounts) {
     });
 
     it("should reject creation of certificate with cancelled policy", async function() {
-      await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("General Liability"), timeNow, oneYearFromNow, 1);
+      await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("General Liability"), timeNow, oneYearFromNow, 1, policy1UUID);
       await manager.cancelPolicy(3);
       try {
         await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [3]);
