@@ -14,7 +14,8 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         uint certificateNumber,
         bytes32 ownerEmail,
         bytes32 ownerName,
-        uint effectiveDate
+        uint effectiveDate,
+        bytes16 certificateUUID
     );
 
     constructor() public {
@@ -66,7 +67,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         result = "".toSlice().join(parts);
     }
 
-    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, uint[5] policies) external {
+    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, bytes16[5] policies, bytes16 certificateUUID) external {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         address policy = obtainControllerContract("policy");
@@ -74,7 +75,7 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         bytes32 ownerName;
 
         (ownerId, , ownerName, ,) = User(user).getOwner(email);
-        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate, brokerId);
+        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate, brokerId, certificateUUID);
 
         for(uint i = 0; i < policies.length; i++) {
             if(policies[i] != 0) {
@@ -86,27 +87,27 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
             }
         }
         User(user).addCertificate(email, id);
-        emit LogCreateCertificate(id, email, ownerName, effectiveDate);
+        emit LogCreateCertificate(id, email, ownerName, effectiveDate, certificateUUID);
     }
 
-    function getCoi(uint certificateNumber) external view
-        returns(uint _certificateNumber, bytes32 _ownerEmail, bytes32 _ownerName, uint _effectiveDate, string policies)
+    function getCoi(bytes16 certificateUUID) external view
+        returns(bytes16 _certificateUUID, bytes32 _ownerEmail, bytes32 _ownerName, uint _effectiveDate, string policies)
     {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         uint ownerId;
 
-        (_certificateNumber, ownerId, , _effectiveDate) = Coi(addressCoi).getCoi(certificateNumber);
+        (_certificateUUID, ownerId, , _effectiveDate) = Coi(addressCoi).getCoi(certificateUUID);
         (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerId);
-        policies = getPoliciesOfCoi(certificateNumber);
+        policies = getPoliciesOfCoi(certificateUUID);
     }
 
-    function getPoliciesOfCoi(uint certificateNumber) internal view returns (string coiString) {
+    function getPoliciesOfCoi(bytes16 certificateUUID) internal view returns (string coiString) {
         address addressCoi = obtainControllerContract("coi");
-        uint[5] memory policies = Coi(addressCoi).getPoliciesOfCoi(certificateNumber);
+        bytes16[5] memory policies = Coi(addressCoi).getPoliciesOfCoi(certificateUUID);
         strings.slice[] memory objects = new strings.slice[](10);
         for(uint i = 0; i < policies.length; i++) {
-            if(policies[i] != 0){
+            if(policies[i] != 0x0){
                 objects[i*2] = getPolicyForCertificateView(policies[i]).toSlice();
                 if(policies[i+1] != 0){
                     objects[(i*2)+1] = ",".toSlice();
@@ -124,14 +125,15 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         uint ownerId;
         bytes32 _ownerEmail;
         bytes32 _ownerName;
+        bytes16 _certificateUUID;
         uint _effectiveDate;
 
-        (, ownerId, , _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
+        (_certificateUUID, ownerId, , _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
         (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerId);
         strings.slice[] memory items = new strings.slice[](4);
         items[0] = itemJson("user_email", stringsUtil.bytes32ToString(_ownerEmail), false);
         items[1] = itemJson("user_name", stringsUtil.bytes32ToString(_ownerName), false);
-        items[2] = itemJson("certificate_number", stringsUtil.uintToString(_certificateNumber), false);
+        items[2] = itemJson("certificate_uuid", stringsUtil.uuidToString(_certificateUUID), false);
         items[3] = itemJson("effective_date", stringsUtil.uintToString(_effectiveDate), true);
         coiSummary = wrapJsonObject("".toSlice().join(items));
     }
@@ -159,12 +161,13 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         uint _brokerId;
         bytes32 _brokerName;
         uint _effectiveDate;
+        bytes16 _certificateUUID;
 
-        (, , _brokerId, _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
+        (_certificateUUID, , _brokerId, _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
         (_brokerName, , ,) = User(user).getBroker(_brokerId);
         strings.slice[] memory items = new strings.slice[](3);
         items[0] = itemJson("broker_name", stringsUtil.bytes32ToString(_brokerName), false);
-        items[1] = itemJson("certificate_number", stringsUtil.uintToString(_certificateNumber), false);
+        items[1] = itemJson("certificate_uuid", stringsUtil.uuidToString(_certificateUUID), false);
         items[2] = itemJson("effective_date", stringsUtil.uintToString(_effectiveDate), true);
         coiSummary = wrapJsonObject("".toSlice().join(items));
     }

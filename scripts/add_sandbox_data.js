@@ -12,11 +12,13 @@ module.exports = async function(callback) {
         await manager.createOwner(web3.fromAscii("Test3@Owner.com"), "admin", web3.fromAscii("Roberto Carlos"), web3.fromAscii("Alcala 21"));
         await manager.createBroker(web3.fromAscii("Test4@Broker.com"), "admin", web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
         await manager.createOwner(web3.fromAscii("Test5@Owner.com"), "admin", web3.fromAscii("Pedro Pablo"), web3.fromAscii("Alcala 21"));
-        await manager.createPolicy(web3.fromAscii("Test5@Owner.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 2, uuidToHex(uuidv4(), true));
-        await manager.createPolicy(web3.fromAscii("Test5@Owner.com"), web3.fromAscii("General Liability"), timeNow, oneYearFromNow, 2, uuidToHex(uuidv4(), true));
+        const policy1UUID = uuidToHex(uuidv4(), true);
+        const policy2UUID = uuidToHex(uuidv4(), true);
+        await manager.createPolicy(web3.fromAscii("Test5@Owner.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 2, policy1UUID);
+        await manager.createPolicy(web3.fromAscii("Test5@Owner.com"), web3.fromAscii("General Liability"), timeNow, oneYearFromNow, 2, policy2UUID);
         await manager.createPolicy(web3.fromAscii("Test1@Owner.com"), web3.fromAscii("Workers Compensation"), timeNow, oneYearFromNow, 2, uuidToHex(uuidv4(), true));
         await manager.createPolicy(web3.fromAscii("Test1@Owner.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 2, uuidToHex(uuidv4(), true));
-        await manager.createCoi("Test5@Owner.com", timeNow, 4, [1, 2]);
+        await manager.createCoi("Test5@Owner.com", timeNow, 4, [policy1UUID, policy2UUID], uuidToHex(uuidv4(), true));
     } catch(e) {
         console.error(e);
     }
