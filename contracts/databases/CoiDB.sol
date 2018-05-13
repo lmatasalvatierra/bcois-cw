@@ -8,24 +8,24 @@ contract CoiDB is Database {
     mapping (uint => DataHelper.CoI) cois;
     mapping (bytes16 => uint) uuidToId;
 
-    function createCoi(uint _ownerId, uint _effectiveDate, uint _brokerId, bytes16 _certificateUUID) senderIsController("coi") public returns (uint)
+    function createCoi(bytes16 _ownerUUID, uint _effectiveDate, bytes16 _brokerUUID, bytes16 _certificateUUID) senderIsController("coi") public returns (uint)
     {
         numCertificates++;
         uuidToId[_certificateUUID] = numCertificates;
         DataHelper.CoI storage coi = cois[numCertificates];
         coi.certificateNumber = numCertificates;
-        coi.ownerId = _ownerId;
-        coi.brokerId = _brokerId;
+        coi.ownerUUID = _ownerUUID;
+        coi.brokerUUID = _brokerUUID;
         coi.effectiveDate = _effectiveDate;
         coi.certificateUUID = _certificateUUID;
         return numCertificates;
     }
 
-    function getCoi(uint certificateNumber) senderIsController("coi") public view returns(bytes16, uint, uint, uint)
+    function getCoi(uint certificateNumber) senderIsController("coi") public view returns(bytes16, bytes16, bytes16, uint)
     {
         DataHelper.CoI storage coi = cois[certificateNumber];
-        require(coi.ownerId != 0, "The certificate does not exist");
-        return (coi.certificateUUID, coi.ownerId, coi.brokerId, coi.effectiveDate);
+        require(coi.ownerUUID != 0, "The certificate does not exist");
+        return (coi.certificateUUID, coi.ownerUUID, coi.brokerUUID, coi.effectiveDate);
     }
 
     function addPolicy(uint certificateNumber, bytes16 policyUUID) senderIsController("coi") public {
