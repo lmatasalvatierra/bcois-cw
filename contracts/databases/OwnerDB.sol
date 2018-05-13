@@ -1,8 +1,8 @@
 pragma solidity ^0.4.23;
 
-import "./UserDB.sol";
+import "./Database.sol";
 
-contract OwnerDB is UserDB{
+contract OwnerDB is Database {
 
     struct Owner {
         bytes32 email;
@@ -12,34 +12,32 @@ contract OwnerDB is UserDB{
         uint numCertificates;
     }
 
-    mapping (uint => Owner) owners;
+    mapping (bytes16 => Owner) owners;
 
     function createOwner(
-        uint index,
+        bytes16 _userUUID,
         bytes32 _email,
-        string _password,
         bytes32 _name,
         bytes32 _addressLine
     )
     public
     {
-        users[_email] = keccak256(_password);
-        Owner storage owner = owners[index];
+        Owner storage owner = owners[_userUUID];
         owner.email = _email;
         owner.name = _name;
         owner.addressLine = _addressLine;
     }
 
-    function addCertificate(uint _owner, uint id) public {
-        owners[_owner].certificates[owners[_owner].numCertificates] = id;
-        owners[_owner].numCertificates++;
+    function addCertificate(bytes16 _userUUID, uint _certificateNumber) public {
+        owners[_userUUID].certificates[owners[_userUUID].numCertificates] = _certificateNumber;
+        owners[_userUUID].numCertificates++;
     }
 
-    function getOwner(uint _owner)
+    function getOwner(bytes16 _userUUID)
     public
     view
     returns (bytes32, bytes32, bytes32, uint[20], uint)
     {
-        return (owners[_owner].email, owners[_owner].name, owners[_owner].addressLine, owners[_owner].certificates, owners[_owner].numCertificates);
+        return (owners[_userUUID].email, owners[_userUUID].name, owners[_userUUID].addressLine, owners[_userUUID].certificates, owners[_userUUID].numCertificates);
     }
 }
