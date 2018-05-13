@@ -12,10 +12,14 @@ var PolicyDB = artifacts.require("./databases/PolicyDB.sol");
 var CarrierDB = artifacts.require("./databases/CarrierDB.sol");
 var BrokerDB = artifacts.require("./databases/BrokerDB.sol");
 var stringsUtil = artifacts.require("./libraries/stringsUtil.sol");
+var UserDB = artifacts.require("./databases/UserDB.sol");
 var expect = require("chai").expect;
+const uuidv4 = require('uuid/v4');
+const uuidToHex = require('uuid-to-hex');
+const hexToUuid = require('hex-to-uuid');
 
 contract('COIManager', function(accounts) {
-  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb;
+  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb, userdb;
   let timeNow = Math.floor(Date.now() / 1000);
   let oneYearFromNow = timeNow + 31556926;
   let agency = accounts[1];
@@ -32,6 +36,7 @@ contract('COIManager', function(accounts) {
     policy = await Policy.new();
     policydb = await PolicyDB.new();
     carrierdb = await CarrierDB.new();
+    userdb = await UserDB.new();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -41,13 +46,15 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
+    await doug.addContract("userDB", userdb.address);
   });
 
   describe("Carrier", function() {
     it("should create correctly", async function() {
-      const result = await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
+      const carrier1UUID = uuidToHex(uuidv4(), true);
+      const result = await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"), carrier1UUID);
       expect(web3.toAscii(result.logs[0].args.email)).to.include("TestCreation@Carrier.com");
-      expect(result.logs[0].args.naicCode.toNumber()).to.equal(1);
+      expect(result.logs[0].args.userUUID).to.include(carrier1UUID);
       expect(web3.toAscii(result.logs[0].args.name)).to.include("CNA");
     });
   });
