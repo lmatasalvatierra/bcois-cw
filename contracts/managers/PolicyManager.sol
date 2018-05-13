@@ -13,8 +13,7 @@ contract PolicyManager {
         DataHelper.Stage status,
         bytes32 insuranceType,
         bytes32 ownerEmail,
-        uint policyNumber,
-        uint ownerId,
+        bytes16 ownerUUID,
         uint effectiveDate,
         uint expirationDate,
         bytes16 policyUUID
@@ -31,7 +30,7 @@ contract PolicyManager {
     bytes32 _name,
     uint _effectiveDate,
     uint _expirationDate,
-    uint _carrierId,
+    bytes16 _carrierUUID,
     bytes16 _policyUUID
     )
     external
@@ -39,17 +38,17 @@ contract PolicyManager {
         address policy = obtainControllerContract("policy");
         address user = obtainControllerContract("user");
         uint result;
-        uint ownerId;
-        (ownerId,) = User(user).getUserCredentials(_ownerEmail);
-        if(ownerId != 0){
+        bytes16 ownerUUID;
+        (ownerUUID,) = User(user).getUserCredentials(_ownerEmail);
+        if(ownerUUID != 0x0){
             result = Policy(policy).createPolicy(
-              ownerId,
+              ownerUUID,
               _name,
               _effectiveDate,
               _expirationDate,
-              _carrierId,
+              _carrierUUID,
               _policyUUID);
-              emit CreatePolicy(DataHelper.Stage.Active, _name, _ownerEmail, result, ownerId, _effectiveDate, _expirationDate, _policyUUID);
+              emit CreatePolicy(DataHelper.Stage.Active, _name, _ownerEmail, ownerUUID, _effectiveDate, _expirationDate, _policyUUID);
         }
         else {
             revert("Owner does no exist");
@@ -65,19 +64,20 @@ contract PolicyManager {
         bytes32 _ownerName;
         bytes32 _userName;
         bytes32 _addressLine;
-        uint _ownerId;
         bytes32 _name;
         DataHelper.Stage _status;
         uint _effectiveDate;
         uint _expirationDate;
+        bytes16 _ownerUUID;
         (
-        _ownerId,
+        _ownerUUID,
+        ,
         _name,
         _status,
         _effectiveDate,
-        _expirationDate,
+        _expirationDate
         ) = Policy(policy).getPolicy(policyUUID);
-        (_userName, _ownerName, _addressLine) = User(user).getOwner(_ownerId);
+        (_userName, _ownerName, _addressLine) = User(user).getOwner(_ownerUUID);
         strings.slice[] memory items = new strings.slice[](8);
         items[0] = itemJson("policy_uuid", stringsUtil.uuidToString(policyUUID), false);
         items[1] = itemJson("user_email", stringsUtil.bytes32ToString(_userName), false);
@@ -102,13 +102,13 @@ contract PolicyManager {
         Policy(policy).changePolicyToExpired();
     }
 
-    function getPoliciesOfCarrier(uint carrierId) external view returns (string json) {
+    function getPoliciesOfCarrier(bytes16 _carrierUUID) external view returns (string json) {
         address policy = obtainControllerContract("policy");
         strings.slice[] memory objects = new strings.slice[](100);
         uint numPolicies = Policy(policy).getNumPolicies();
         uint last;
         for(uint i = 1; i <= numPolicies; i++) {
-            if(Policy(policy).isPolicyOfCarrier(i, carrierId)){
+            if(Policy(policy).isPolicyOfCarrier(i, _carrierUUID)){
                 objects[i*2] = getSummaryOfPolicy(i).toSlice();
                 objects[(i*2)+1] = ",".toSlice();
                 last = (i*2)+1;
@@ -125,20 +125,21 @@ contract PolicyManager {
         address policy = obtainControllerContract("policy");
         address user = obtainControllerContract("user");
         bytes32 _userName;
-        bytes16 _policyUUID;
-        uint _ownerId;
         bytes32 _name;
+        bytes16 _policyUUID;
+        bytes16 _ownerUUID;
         DataHelper.Stage _status;
         uint _effectiveDate;
         uint _expirationDate;
         (_policyUUID,
-        _ownerId,
+        _ownerUUID,
+        ,
         _name,
         _status,
         _effectiveDate,
-        _expirationDate,
+        _expirationDate
         ) = Policy(policy).getPolicy(policyNumber);
-        (_userName, ,) = User(user).getOwner(_ownerId);
+        (_userName, ,) = User(user).getOwner(_ownerUUID);
         strings.slice[] memory items = new strings.slice[](6);
         items[0] = itemJson("policy_uuid", stringsUtil.uuidToString(_policyUUID), false);
         items[1] = itemJson("user_email", stringsUtil.bytes32ToString(_userName), false);
@@ -159,10 +160,11 @@ contract PolicyManager {
         uint _effectiveDate;
         uint _expirationDate;
         (,
+        ,
         _name,
         _status,
         _effectiveDate,
-        _expirationDate,
+        _expirationDate
         ) = Policy(policy).getPolicy(policyUUID);
         strings.slice[] memory items = new strings.slice[](5);
         items[0] = itemJson("policy_uuid", stringsUtil.uuidToString(policyUUID), false);

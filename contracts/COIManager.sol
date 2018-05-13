@@ -67,26 +67,27 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         result = "".toSlice().join(parts);
     }
 
-    function createCoi(bytes32 email, uint effectiveDate, uint brokerId, bytes16[5] policies, bytes16 certificateUUID) external {
+    function createCoi(bytes32 email, uint effectiveDate, bytes16 brokerUUID, bytes16[5] policies, bytes16 certificateUUID) external {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
         address policy = obtainControllerContract("policy");
-        uint ownerId;
+        bytes16 ownerUUID;
         bytes32 ownerName;
 
-        (ownerId, , ownerName, ,) = User(user).getOwner(email);
-        uint id = Coi(addressCoi).createCoi(ownerId, effectiveDate, brokerId, certificateUUID);
+        (ownerUUID,) = User(user).getUserCredentials(email);
+        (, ownerName, ) = User(user).getOwner(ownerUUID);
+        uint id = Coi(addressCoi).createCoi(ownerUUID, effectiveDate, brokerUUID, certificateUUID);
 
         for(uint i = 0; i < policies.length; i++) {
             if(policies[i] != 0) {
-                require(Policy(policy).isPolicyValid(policies[i], ownerId));
+                require(Policy(policy).isPolicyValid(policies[i], ownerUUID));
                 Coi(addressCoi).addPolicy(id, policies[i]);
             }
             else {
                 break;
             }
         }
-        User(user).addCertificate(email, id);
+        User(user).addCertificate(ownerUUID, id);
         emit LogCreateCertificate(id, email, ownerName, effectiveDate, certificateUUID);
     }
 
@@ -95,10 +96,10 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
     {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
-        uint ownerId;
+        bytes16 ownerUUID;
 
-        (_certificateUUID, ownerId, , _effectiveDate) = Coi(addressCoi).getCoi(certificateUUID);
-        (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerId);
+        (_certificateUUID, ownerUUID, , _effectiveDate) = Coi(addressCoi).getCoi(certificateUUID);
+        (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerUUID);
         policies = getPoliciesOfCoi(certificateUUID);
     }
 
@@ -122,14 +123,14 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
     function getSummaryOfCoiForBroker(uint _certificateNumber) internal view returns (string coiSummary) {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
-        uint ownerId;
+        bytes16 _ownerUUID;
         bytes32 _ownerEmail;
         bytes32 _ownerName;
         bytes16 _certificateUUID;
         uint _effectiveDate;
 
-        (_certificateUUID, ownerId, , _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
-        (_ownerEmail, _ownerName, ) = User(user).getOwner(ownerId);
+        (_certificateUUID, _ownerUUID, , _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
+        (_ownerEmail, _ownerName, ) = User(user).getOwner(_ownerUUID);
         strings.slice[] memory items = new strings.slice[](4);
         items[0] = itemJson("user_email", stringsUtil.bytes32ToString(_ownerEmail), false);
         items[1] = itemJson("user_name", stringsUtil.bytes32ToString(_ownerName), false);
@@ -138,14 +139,14 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         coiSummary = wrapJsonObject("".toSlice().join(items));
     }
 
-    function getCoisOfBroker(uint _brokerId) external view returns (string json) {
+    function getCoisOfBroker(bytes16 _brokerUUID) external view returns (string json) {
         address addressCoi = obtainControllerContract("coi");
         strings.slice[] memory objects = new strings.slice[](100);
         uint numCertificates;
         uint last;
         numCertificates = Coi(addressCoi).getNumCertificates();
         for(uint i = 1; i <= numCertificates; i++) {
-            if(Coi(addressCoi).isCoiOfBroker(i, _brokerId)){
+            if(Coi(addressCoi).isCoiOfBroker(i, _brokerUUID)){
                 objects[i*2] = getSummaryOfCoiForBroker(i).toSlice();
                 objects[(i*2)+1] = ",".toSlice();
                 last = (i*2)+1;
@@ -158,13 +159,13 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
     function getSummaryOfCoiForOwner(uint _certificateNumber) internal view returns (string coiSummary) {
         address addressCoi = obtainControllerContract("coi");
         address user = obtainControllerContract("user");
-        uint _brokerId;
         bytes32 _brokerName;
         uint _effectiveDate;
         bytes16 _certificateUUID;
+        bytes16 _brokerUUID;
 
-        (_certificateUUID, , _brokerId, _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
-        (_brokerName, , ,) = User(user).getBroker(_brokerId);
+        (_certificateUUID, , _brokerUUID, _effectiveDate) = Coi(addressCoi).getCoi(_certificateNumber);
+        (_brokerName, , ,) = User(user).getBroker(_brokerUUID);
         strings.slice[] memory items = new strings.slice[](3);
         items[0] = itemJson("broker_name", stringsUtil.bytes32ToString(_brokerName), false);
         items[1] = itemJson("certificate_uuid", stringsUtil.uuidToString(_certificateUUID), false);
@@ -172,13 +173,13 @@ contract COIManager is DougEnabled, UserManager, PolicyManager {
         coiSummary = wrapJsonObject("".toSlice().join(items));
     }
 
-    function getCoisOfOwner(uint _ownerId) external view returns (string json) {
+    function getCoisOfOwner(bytes16 _ownerUUID) external view returns (string json) {
         address user = obtainControllerContract("user");
         strings.slice[] memory objects = new strings.slice[](40);
         uint numCertificates;
         uint[20] memory certificates;
         uint last;
-        (certificates, numCertificates) = User(user).getOwnerCertificates(_ownerId);
+        (certificates, numCertificates) = User(user).getOwnerCertificates(_ownerUUID);
         for(uint i = 0; i < numCertificates; i++) {
             objects[i*2] = getSummaryOfCoiForOwner(certificates[i]).toSlice();
             objects[(i*2)+1] = ",".toSlice();
