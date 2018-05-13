@@ -12,13 +12,14 @@ var PolicyDB = artifacts.require("./databases/PolicyDB.sol");
 var CarrierDB = artifacts.require("./databases/CarrierDB.sol");
 var BrokerDB = artifacts.require("./databases/BrokerDB.sol");
 var stringsUtil = artifacts.require("./libraries/stringsUtil.sol");
+var UserDB = artifacts.require("./databases/UserDB.sol");
 var expect = require("chai").expect;
 const uuidv4 = require('uuid/v4');
 const uuidToHex = require('uuid-to-hex');
 const hexToUuid = require('hex-to-uuid');
 
 contract('COIManager', function(accounts) {
-  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb, brokerdb;
+  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb, brokerdb, userdb;
   let timeNow = Math.floor(Date.now() / 1000);
   let oneYearFromNow = timeNow + 31556926;
   let agency = accounts[1];
@@ -28,6 +29,9 @@ contract('COIManager', function(accounts) {
   const policy2UUID = uuidToHex(uuidv4(), true);
   const certificate1UUID = uuidToHex(uuidv4(), true);
   const certificate2UUID = uuidToHex(uuidv4(), true);
+  const ownerUUID = uuidToHex(uuidv4(), true);
+  const carrierUUID = uuidToHex(uuidv4(), true);
+  const brokerUUID = uuidToHex(uuidv4(), true);
 
   beforeEach('setup manager', async function () {
     doug = await Doug.new();
@@ -40,6 +44,7 @@ contract('COIManager', function(accounts) {
     policydb = await PolicyDB.new();
     carrierdb = await CarrierDB.new();
     brokerdb = await BrokerDB.new();
+    userdb = await UserDB.new();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -50,17 +55,18 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
     await doug.addContract("brokerDB", brokerdb.address);
+    await doug.addContract("userDB", userdb.address);
 
-    await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
-    await manager.createOwner(web3.fromAscii("CertificateTest@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
-    await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), "admin", web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"));
+    await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"), carrierUUID);
+    await manager.createOwner(web3.fromAscii("CertificateTest@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"), ownerUUID);
+    await manager.createBroker(web3.fromAscii("TestCreation@Broker.com"), "admin", web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"), brokerUUID);
     await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1, policy1UUID);
     await manager.createPolicy(web3.fromAscii("CertificateTest@cosa.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, 1, policy2UUID);
   });
 
   describe("Certificate", function() {
     it("should create COI with given details", async function() {
-      const certificate = await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [policy1UUID, policy2UUID], certificate1UUID);
+      const certificate = await manager.createCoi("CertificateTest@cosa.com", timeNow, brokerUUID, [policy1UUID, policy2UUID], certificate1UUID);
       expect(certificate.logs[0].args.certificateNumber.toNumber()).to.equal(1);
       expect(web3.toAscii(certificate.logs[0].args.ownerEmail)).to.include("CertificateTest@cosa.com");
       expect(web3.toAscii(certificate.logs[0].args.ownerName)).to.include("cosa");
@@ -69,7 +75,7 @@ contract('COIManager', function(accounts) {
     });
 
     it("get values of certificate", async function() {
-      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [policy1UUID, policy2UUID], certificate1UUID);
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, brokerUUID, [policy1UUID, policy2UUID], certificate1UUID);
       let values = await manager.getCoi(certificate1UUID);
       expect(values[0]).to.equal(certificate1UUID);
       expect(web3.toAscii(values[1])).to.include("CertificateTest@cosa.com")
@@ -89,17 +95,17 @@ contract('COIManager', function(accounts) {
     });
 
     it("get summary of broker certificates", async function() {
-      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [policy1UUID], certificate1UUID);
-      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [policy2UUID], certificate2UUID);
-      const result = await manager.getCoisOfBroker(3);
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, brokerUUID, [policy1UUID], certificate1UUID);
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, brokerUUID, [policy2UUID], certificate2UUID);
+      const result = await manager.getCoisOfBroker(brokerUUID);
       const certificates = JSON.parse(result);
       expect(certificates.length).to.equal(2);
     });
 
     it("get summary of owner certificates", async function() {
-      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [policy1UUID], certificate1UUID);
-      await manager.createCoi("CertificateTest@cosa.com", timeNow, 3, [policy2UUID], certificate2UUID);
-      const result = await manager.getCoisOfOwner(2);
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, brokerUUID, [policy1UUID], certificate1UUID);
+      await manager.createCoi("CertificateTest@cosa.com", timeNow, brokerUUID, [policy2UUID], certificate2UUID);
+      const result = await manager.getCoisOfOwner(ownerUUID);
       const certificates = JSON.parse(result);
       expect(certificates.length).to.equal(2);
     });

@@ -1,38 +1,23 @@
 pragma solidity ^0.4.23;
 
-import "./UserDB.sol";
+import "./Database.sol";
 
-contract CarrierDB is UserDB {
-    struct Carrier {
-        bytes32 name;
-        uint naicCode;
-        bytes32 email;
-    }
+contract CarrierDB is Database {
 
-    mapping (uint => Carrier) carriers;
+    mapping (bytes16 => bytes32) carriers;
 
-    function createCarrier(
-        bytes32 _name,
-        uint _naicCode,
-        bytes32 _email,
-        string _password
-    )
+    function createCarrier(bytes16 _userUUID, bytes32 _name)
     senderIsController("user")
     public
     {
-        users[_email] = keccak256(_password);
-        Carrier storage carrier = carriers[_naicCode];
-        carrier.name = _name;
-        carrier.email = _email;
-        carrier.naicCode = _naicCode;
+        carriers[_userUUID] = _name;
     }
 
-    function getCarrier(uint _naicCode)
-    senderIsController("user")
+    function getCarrier(bytes16 _userUUID) senderIsController("user")
     public
     view
-    returns (bytes32, uint, bytes32)
+    returns (bytes32)
     {
-        return (carriers[_naicCode].name, carriers[_naicCode].naicCode, carriers[_naicCode].email);
+        return (carriers[_userUUID]);
     }
 }

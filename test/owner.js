@@ -13,10 +13,14 @@ var PolicyDB = artifacts.require("./databases/PolicyDB.sol");
 var CarrierDB = artifacts.require("./databases/CarrierDB.sol");
 var BrokerDB = artifacts.require("./databases/BrokerDB.sol");
 var stringsUtil = artifacts.require("./libraries/stringsUtil.sol");
+var UserDB = artifacts.require("./databases/UserDB.sol");
 var expect = require("chai").expect;
+const uuidv4 = require('uuid/v4');
+const uuidToHex = require('uuid-to-hex');
+const hexToUuid = require('hex-to-uuid');
 
 contract('COIManager', function(accounts) {
-  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb;
+  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb, userdb;
   let timeNow = Math.floor(Date.now() / 1000);
   let oneYearFromNow = timeNow + 31556926;
   let agency = accounts[1];
@@ -33,6 +37,7 @@ contract('COIManager', function(accounts) {
     policy = await Policy.new();
     policydb = await PolicyDB.new();
     carrierdb = await CarrierDB.new();
+    userdb = await UserDB.new();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -42,6 +47,7 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
+    await doug.addContract("userDB", userdb.address);
   });
 
   describe("Owner", function() {
@@ -50,7 +56,8 @@ contract('COIManager', function(accounts) {
         web3Instance.utils.utf8ToHex("Test@Owner.com"),
         "admin",
         web3Instance.utils.utf8ToHex("cosa"),
-        web3Instance.utils.utf8ToHex("Alcala 21")
+        web3Instance.utils.utf8ToHex("Alcala 21"),
+        uuidToHex(uuidv4(), true)
       );
       expect(web3Instance.utils.hexToUtf8(result.logs[0].args.email)).to.include("Test@Owner.com");
       expect(web3Instance.utils.hexToUtf8(result.logs[0].args.name)).to.include("cosa");

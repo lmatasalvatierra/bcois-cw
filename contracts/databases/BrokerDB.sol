@@ -1,22 +1,20 @@
 pragma solidity ^0.4.23;
 
-import "./UserDB.sol";
+import "./Database.sol";
 
-contract BrokerDB is UserDB {
+contract BrokerDB is Database {
     struct Broker {
-        uint brokerId;
-        bytes32 name;
         bytes32 email;
+        bytes32 name;
         bytes32 contactPhone;
         bytes32 addressLine;
     }
 
-    mapping (uint => Broker) brokers;
+    mapping (bytes16 => Broker) brokers;
 
     function createBroker(
-        uint _brokerId,
+        bytes16 _userUUID,
         bytes32 _email,
-        string _password,
         bytes32 _name,
         bytes32 _contactPhone,
         bytes32 _addressLine
@@ -24,21 +22,18 @@ contract BrokerDB is UserDB {
     senderIsController("user")
     public
     {
-        users[_email] = keccak256(_password);
-        Broker storage broker = brokers[_brokerId];
-        broker.name = _name;
+        Broker storage broker = brokers[_userUUID];
         broker.email = _email;
-        broker.brokerId = _brokerId;
+        broker.name = _name;
         broker.contactPhone = _contactPhone;
         broker.addressLine = _addressLine;
     }
 
-    function getBroker(uint _brokerId)
-    senderIsController("user")
+    function getBroker(bytes16 _brokerUUID) senderIsController("user")
     public
     view
     returns (bytes32, bytes32, bytes32, bytes32)
     {
-        return (brokers[_brokerId].name, brokers[_brokerId].email, brokers[_brokerId].contactPhone, brokers[_brokerId].addressLine);
+        return (brokers[_brokerUUID].email , brokers[_brokerUUID].name, brokers[_brokerUUID].contactPhone, brokers[_brokerUUID].addressLine);
     }
 }

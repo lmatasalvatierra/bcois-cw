@@ -12,13 +12,14 @@ var PolicyDB = artifacts.require("./databases/PolicyDB.sol");
 var CarrierDB = artifacts.require("./databases/CarrierDB.sol");
 var BrokerDB = artifacts.require("./databases/BrokerDB.sol");
 var stringsUtil = artifacts.require("./libraries/stringsUtil.sol");
+var UserDB = artifacts.require("./databases/UserDB.sol");
 var expect = require("chai").expect;
 const uuidv4 = require('uuid/v4');
 const uuidToHex = require('uuid-to-hex');
 const hexToUuid = require('hex-to-uuid');
 
 contract('COIManager', function(accounts) {
-  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb;
+  var doug, manager, coi, coiDb, user, ownerdb, policy, policydb, carriedb, userdb;
   let timeNow = Math.floor(Date.now() / 1000);
   let oneYearFromNow = timeNow + 31556926;
   let agency = accounts[1];
@@ -26,6 +27,9 @@ contract('COIManager', function(accounts) {
   let guest = accounts[6];
   const uuid = uuidv4();
   const policyUUID = uuidToHex(uuid, true);
+  const ownerUUID = uuidToHex(uuidv4(), true);
+  const carrier1UUID = uuidToHex(uuidv4(), true);
+  const carrier2UUID = uuidToHex(uuidv4(), true);
 
   beforeEach('setup manager', async function () {
     doug = await Doug.new();
@@ -37,6 +41,7 @@ contract('COIManager', function(accounts) {
     policy = await Policy.new();
     policydb = await PolicyDB.new();
     carrierdb = await CarrierDB.new();
+    userdb = await UserDB.new();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -46,19 +51,20 @@ contract('COIManager', function(accounts) {
     await doug.addContract("policy", policy.address);
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
+    await doug.addContract("userDB", userdb.address);
 
-    await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"));
-    await manager.createCarrier(web3.fromAscii("TestSTARR@Carrier.com"), "admin", web3.fromAscii("STARR"));
-    await manager.createOwner(web3.fromAscii("Hola@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"));
-    await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, 1, policyUUID);
+    await manager.createCarrier(web3.fromAscii("TestCreation@Carrier.com"), "admin", web3.fromAscii("CNA"), carrier1UUID);
+    await manager.createCarrier(web3.fromAscii("TestSTARR@Carrier.com"), "admin", web3.fromAscii("STARR"), carrier2UUID);
+    await manager.createOwner(web3.fromAscii("Hola@cosa.com"), "admin", web3.fromAscii("cosa"), web3.fromAscii("Alcala 21"), ownerUUID);
+    await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("Workers Comp"), timeNow, oneYearFromNow, carrier1UUID, policyUUID);
   });
 
   describe("Policy", function() {
     it("should create a policy with given values", async function() {
-      const result = await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("General Liability"), timeNow, oneYearFromNow, 1, policyUUID);
+      const result = await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("General Liability"), timeNow, oneYearFromNow, carrier1UUID, policyUUID);
       expect(result.logs[0].args.status.toNumber()).to.equal(0);
       expect(web3.toAscii(result.logs[0].args.insuranceType)).to.include("General Liability");
-      expect(result.logs[0].args.ownerId.toNumber()).to.equal(3);
+      expect(result.logs[0].args.ownerUUID).to.include(ownerUUID);
       expect(result.logs[0].args.effectiveDate.toNumber()).to.equal(timeNow);
       expect(result.logs[0].args.expirationDate.toNumber()).to.equal(oneYearFromNow);
       expect(web3.toAscii(result.logs[0].args.ownerEmail)).to.include("Hola@cosa.com");
@@ -96,7 +102,7 @@ contract('COIManager', function(accounts) {
       let oneYearBeforeNow = timeNow - 31556926;
       let oneDayBeforeNow = timeNow - 86400;
       const policy1UUID = uuidToHex(uuidv4(), true);
-      await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("BOP"), oneYearBeforeNow, oneDayBeforeNow, 1, policy1UUID);
+      await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("BOP"), oneYearBeforeNow, oneDayBeforeNow, carrier1UUID, policy1UUID);
       await manager.changePolicyToExpired();
 
       let response = await manager.getPolicy.call(policy1UUID);
@@ -107,9 +113,9 @@ contract('COIManager', function(accounts) {
     it("should get policies of a carrier", async function() {
       const policy1UUID = uuidToHex(uuidv4(), true);
       const policy2UUID = uuidToHex(uuidv4(), true);
-      await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("BOP"), timeNow, oneYearFromNow, 1, policy1UUID);
-      await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("GEneral Liability"), timeNow, oneYearFromNow, 1, policy2UUID);
-      const response = await manager.getPoliciesOfCarrier(1);
+      await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("BOP"), timeNow, oneYearFromNow, carrier1UUID, policy1UUID);
+      await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("GEneral Liability"), timeNow, oneYearFromNow, carrier1UUID, policy2UUID);
+      const response = await manager.getPoliciesOfCarrier(carrier1UUID);
       const policies = JSON.parse(response);
       expect(policies.length).to.equal(3);
     });

@@ -8,6 +8,7 @@ var OwnerDB = artifacts.require("./OwnerDB.sol");
 var PolicyDB = artifacts.require("./PolicyDB.sol");
 var CarrierDB = artifacts.require("./CarrierDB.sol");
 var BrokerDB = artifacts.require("./BrokerDB.sol");
+var UserDB = artifacts.require("./UserDB.sol");
 
 module.exports = async function(callback) {
     var doug = await Doug.deployed();
@@ -20,6 +21,7 @@ module.exports = async function(callback) {
     var policydb = await PolicyDB.deployed();
     var carrierdb = await CarrierDB.deployed();
     var brokerdb = await BrokerDB.deployed();
+    var userdb = await UserDB.deployed();
 
     await doug.addContract("coiManager", manager.address);
     await doug.addContract("coi", coi.address);
@@ -30,5 +32,6 @@ module.exports = async function(callback) {
     await doug.addContract("policyDB", policydb.address);
     await doug.addContract("carrierDB", carrierdb.address);
     await doug.addContract("brokerDB", brokerdb.address);
+    await doug.addContract("userDB", userdb.address);
 };
  
