@@ -15,11 +15,21 @@ contract User is Controller {
     }
 
     function login(bytes32 email, bytes32 _passwordHash) senderIsManager public view
-    returns (bytes16 userUUID, DataHelper.UserType userType) {
+    returns (bytes16 userUUID, DataHelper.UserType userType, bytes32 name) {
         address userdb = obtainDBContract('userDB');
         (userUUID, userType) = UserDB(userdb).login(email, _passwordHash);
         require(userUUID != 0, "User does not exist");
-        return (userUUID, userType);
+        if(userType == DataHelper.UserType.Owner) {
+            address ownerdb = obtainDBContract('ownerDB');
+            (, name, , ,) = OwnerDB(ownerdb).getOwner(userUUID);
+        } else if(userType == DataHelper.UserType.Carrier) {
+            address carrierdb = obtainDBContract('carrierDB');
+            name = CarrierDB(carrierdb).getCarrier(userUUID);
+        } else if(userType == DataHelper.UserType.Broker) {
+            address brokerdb = obtainDBContract('brokerDB');
+            (,name, , ) = BrokerDB(brokerdb).getBroker(userUUID);
+        }
+        return (userUUID, userType, name);
     }
 
     // Owner Methods
