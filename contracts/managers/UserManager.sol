@@ -11,9 +11,9 @@ contract UserManager {
     function obtainControllerContract(bytes32 controller) private view returns (address _contractAddress);
 
     function login(bytes32 email, bytes32 _passwordHash) external view
-    returns (bytes16 userUUID, DataHelper.UserType userType) {
+    returns (bytes16 userUUID, DataHelper.UserType userType, bytes32 name) {
         address user = obtainControllerContract("user");
-        (userUUID, userType) = User(user).login(email, _passwordHash);
+        (userUUID, userType, name) = User(user).login(email, _passwordHash);
     }
 
     function createOwner(

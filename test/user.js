@@ -64,6 +64,7 @@ contract('COIManager', function(accounts) {
       let result = await manager.login(web3.fromAscii("Test@Owner.com"), web3Instance.utils.keccak256("admin"));
       expect(result[0]).to.include(ownerUUID);
       expect(result[1].toNumber()).to.equal(0);
+      expect(web3.toAscii(result[2])).to.include("cosa");
     });
   });
 
@@ -72,6 +73,7 @@ contract('COIManager', function(accounts) {
       let result = await manager.login(web3.fromAscii("TestCreation@Carrier.com"), web3Instance.utils.keccak256("admin"));
       expect(result[0]).to.equal(carrierUUID);
       expect(result[1].toNumber()).to.equal(1);
+      expect(web3.toAscii(result[2])).to.include("CNA");
     });
   });
 
@@ -80,6 +82,7 @@ contract('COIManager', function(accounts) {
       let result = await manager.login(web3.fromAscii("TestCreation@Broker.com"), web3Instance.utils.keccak256("admin"));
       expect(result[0]).to.equal(brokerUUID);
       expect(result[1].toNumber()).to.equal(2);
+      expect(web3.toAscii(result[2])).to.include("Coverwallet");
     });
   });
 
