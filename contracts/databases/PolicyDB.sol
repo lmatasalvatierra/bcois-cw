@@ -8,6 +8,7 @@ contract PolicyDB is Database {
     uint numPolicies;
     mapping (uint => DataHelper.Policy) policies;
     mapping (bytes16 => uint) uuidToId;
+    bytes16[] policiesUUID;
 
     function createPolicy(
         bytes16 _ownerUUID,
@@ -21,6 +22,7 @@ contract PolicyDB is Database {
     {
         numPolicies++;
         uuidToId[_policyUUID] = numPolicies;
+        policiesUUID.push(_policyUUID);
         DataHelper.Policy storage policy = policies[numPolicies];
         policy.policyNumber = numPolicies;
         policy.ownerUUID = _ownerUUID;
@@ -63,7 +65,11 @@ contract PolicyDB is Database {
         return numPolicies;
     }
 
-    function getPolicyNumber(bytes16 policyUUID) public view returns (uint) {
+    function getPolicyNumber(bytes16 policyUUID) senderIsController("policy")  public view returns (uint) {
         return uuidToId[policyUUID];
+    }
+
+    function getPoliciesUUID() senderIsController("policy") public view returns (bytes16[]) {
+        return policiesUUID;
     }
 }

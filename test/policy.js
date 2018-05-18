@@ -119,5 +119,13 @@ contract('COIManager', function(accounts) {
       const policies = JSON.parse(response);
       expect(policies.length).to.equal(3);
     });
+
+    it("should get all Policies UUID", async function() {
+      const policy1UUID = uuidToHex(uuidv4(), true);
+      await manager.createPolicy(web3.fromAscii("Hola@cosa.com"), web3.fromAscii("General Liability"), timeNow, oneYearFromNow, carrier1UUID, policy1UUID);
+      const response = await manager.getPoliciesUUID();
+      expect(response[0]).to.include(policyUUID);
+      expect(response[1]).to.include(policy1UUID);
+    });
   });
 });

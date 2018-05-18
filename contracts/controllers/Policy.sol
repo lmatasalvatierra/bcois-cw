@@ -111,4 +111,9 @@ contract Policy is Controller {
         address policydb = obtainDBContract("policyDB");
         PolicyDB(policydb).changeToExpired();
     }
+
+    function getPoliciesUUID() senderIsManager public view returns (bytes16[] _policiesUUID) {
+        address policydb = obtainDBContract("policyDB");
+        _policiesUUID = PolicyDB(policydb).getPoliciesUUID();
+    }
 }

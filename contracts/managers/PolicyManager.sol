@@ -174,4 +174,9 @@ contract PolicyManager {
         items[4] = itemJson("expiration_date", stringsUtil.uintToString(_expirationDate), true);
         policyString = wrapJsonObject("".toSlice().join(items));
     }
+
+    function getPoliciesUUID() external view returns (bytes16[] _policiesUUID) {
+        address policy = obtainControllerContract("policy");
+        _policiesUUID = Policy(policy).getPoliciesUUID();
+    }
 }
