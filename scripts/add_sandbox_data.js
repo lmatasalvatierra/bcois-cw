@@ -1,5 +1,4 @@
 var COIManager = artifacts.require("./COIManager.sol");
-const web3Instance = require('web3')
 const uuidv4 = require('uuid/v4');
 const uuidToHex = require('uuid-to-hex');
 
@@ -13,11 +12,11 @@ module.exports = async function(callback) {
         const owner3UUID = uuidToHex(uuidv4(), true);
         const carrierUUID = uuidToHex(uuidv4(), true);
         const brokerUUID = uuidToHex(uuidv4(), true);
-        await manager.createOwner(web3.fromAscii("Test1@Owner.com"), web3Instance.utils.keccak256("admin"), web3.fromAscii("Luis Miguel"), web3.fromAscii("Alcala 21"), owner1UUID);
-        await manager.createCarrier(web3.fromAscii("Test2@Carrier.com"), web3Instance.utils.keccak256("admin"), web3.fromAscii("CNA"), carrierUUID);
-        await manager.createOwner(web3.fromAscii("Test3@Owner.com"), web3Instance.utils.keccak256("admin"), web3.fromAscii("Roberto Carlos"), web3.fromAscii("Alcala 21"), owner2UUID);
-        await manager.createBroker(web3.fromAscii("Test4@Broker.com"), web3Instance.utils.keccak256("admin"), web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"), brokerUUID);
-        await manager.createOwner(web3.fromAscii("Test5@Owner.com"), web3Instance.utils.keccak256("admin"), web3.fromAscii("Pedro Pablo"), web3.fromAscii("Alcala 21"), owner3UUID);
+        await manager.createOwner(web3.fromAscii("Test1@Owner.com"), web3.sha3("admin"), web3.fromAscii("Luis Miguel"), web3.fromAscii("Alcala 21"), owner1UUID);
+        await manager.createCarrier(web3.fromAscii("Test2@Carrier.com"), web3.sha3("admin"), web3.fromAscii("CNA"), carrierUUID);
+        await manager.createOwner(web3.fromAscii("Test3@Owner.com"), web3.sha3("admin"), web3.fromAscii("Roberto Carlos"), web3.fromAscii("Alcala 21"), owner2UUID);
+        await manager.createBroker(web3.fromAscii("Test4@Broker.com"), web3.sha3("admin"), web3.fromAscii("Coverwallet"), web3.fromAscii("2128677475"), web3.fromAscii("Alcala 21"), brokerUUID);
+        await manager.createOwner(web3.fromAscii("Test5@Owner.com"), web3.sha3("admin"), web3.fromAscii("Pedro Pablo"), web3.fromAscii("Alcala 21"), owner3UUID);
         const policy1UUID = uuidToHex(uuidv4(), true);
         const policy2UUID = uuidToHex(uuidv4(), true);
         await manager.createPolicy(web3.fromAscii("Test5@Owner.com"), web3.fromAscii("Business Owners Policy"), timeNow, oneYearFromNow, carrierUUID, policy1UUID);
